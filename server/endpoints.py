@@ -25,6 +25,9 @@ EDITOR_RESP = 'Editor'
 EDITOR = 'ejc369@nyu.edu'
 DATE_RESP = 'Date'
 DATE = '2024-09-24'
+JOURNAL_NAME_EP = '/journal-name'
+JOURNAL_NAME_RESP = 'Journal Name'
+JOURNAL_NAME = 'wema'
 
 
 @api.route(HELLO_EP)
@@ -68,4 +71,17 @@ class JournalTitle(Resource):
             TITLE_RESP: TITLE,
             EDITOR_RESP: EDITOR,
             DATE_RESP: DATE,
+        }
+
+@api.route(JOURNAL_NAME_EP)
+class JournalName(Resource):
+    """
+    This is our group dev env assignment.
+    """
+    def get(self):
+        """
+        Shows our journal name which is wema.
+        """
+        return {
+            JOURNAL_NAME_RESP: JOURNAL_NAME,
         }
