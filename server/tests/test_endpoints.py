@@ -30,3 +30,15 @@ def test_title():
     assert ep.TITLE_RESP in resp_json
     assert isinstance(resp_json[ep.TITLE_RESP], str)
     assert len(resp_json[ep.TITLE_RESP]) > 0
+
+
+def test_journal_name():
+    resp = TEST_CLIENT.get(ep.JOURNAL_NAME_EP)
+    resp_json = resp.get_json()
+
+    assert ep.JOURNAL_NAME_RESP in resp_json
+
+    journal_name = resp_json[ep.JOURNAL_NAME_RESP]
+    assert isinstance(journal_name, str)
+    assert len(journal_name) > 0
+    assert journal_name == ep.JOURNAL_NAME

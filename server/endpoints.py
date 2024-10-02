@@ -73,6 +73,7 @@ class JournalTitle(Resource):
             DATE_RESP: DATE,
         }
 
+
 @api.route(JOURNAL_NAME_EP)
 class JournalName(Resource):
     """
