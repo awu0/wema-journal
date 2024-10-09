@@ -14,6 +14,6 @@ Use a virtual environment to install the packages:
 
 To build production, type `make prod`.
 
-## Running the development serverg
+## Running the development server
 To run the development server, run in terminal:
 ```./local.sh```
