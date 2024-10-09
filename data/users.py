@@ -24,3 +24,12 @@ def get_users():
         },
     }
     return users
+
+
+def delete_users(id):
+    users = get_users()
+    if id in users:
+        del users[id]
+        return id
+    else:
+        return None
