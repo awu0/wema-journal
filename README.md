@@ -1,7 +1,7 @@
 # wema-journal
 > Forked from [gcallah/demo-repo4](https://github.com/gcallah/demo-repo4)
 
-A app developed by **WEMA** (Willam, Eric, Matthew, Aaron)
+A app developed by **WEMA** (William, Eric, Matthew, Aaron)
 
 ## Installing for development
 Use a virtual environment to install the packages:
