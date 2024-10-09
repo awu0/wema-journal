@@ -1,8 +1,19 @@
-# flask-api
-Forked from [gcallah/demo-repo4](https://github.com/gcallah/demo-repo4)
+# wema-journal
+> Forked from [gcallah/demo-repo4](https://github.com/gcallah/demo-repo4)
 
-An example flask rest API server.
+A app developed by **WEMA** (Willam, Eric, Matthew, Aaron)
+
+## Installing for development
+Use a virtual environment to install the packages:
+
+1. Create the virtual environment
+```python3 -m venv venv```
+2. Activate the environment
+```source venv/bin/activate```
+3. Run `make dev_env` to install the developer dependencies
 
 To build production, type `make prod`.
 
-To create the env for a new developer, run `make dev_env`.
+## Running the development serverg
+To run the development server, run in terminal:
+```./local.sh```
