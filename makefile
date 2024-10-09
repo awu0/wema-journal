@@ -21,6 +21,9 @@ all_tests: FORCE
 test_server:
 	cd $(API_DIR); make tests
 
+test_data:
+	cd $(DB_DIR); make tests
+
 dev_env: FORCE
 	pip install -r $(REQ_DIR)/requirements-dev.txt
 	@echo "You should set PYTHONPATH to: "
