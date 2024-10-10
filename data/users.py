@@ -34,6 +34,7 @@ def delete_users(id):
     else:
         return None
 
+
 def read():
     """
     Our contract:
@@ -43,3 +44,11 @@ def read():
     """
     users = get_users()
     return users
+
+
+def main():
+    print(read())
+
+
+if __name__ == '__main__':
+    main()
