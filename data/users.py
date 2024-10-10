@@ -45,6 +45,26 @@ def read():
     users = get_users()
     return users
 
+def update_users(user_name, new_level):
+    """
+    Update the user's level in the users dictionary.
+    
+    Args:
+        user_name (str): The name of the user to update.
+        new_level (int): The new level to assign to the user.
+        
+    Returns:
+        dict or None: The updated user data if the user exists, None otherwise.
+    """
+    users = get_users()
+    
+    if user_name in users:
+        users[user_name][LEVEL] = new_level
+        return users[user_name]
+    else:
+        return None
+
+
 
 def main():
     print(read())
