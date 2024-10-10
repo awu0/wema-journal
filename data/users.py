@@ -45,7 +45,7 @@ def read():
     users = get_users()
     return users
 
-def update_users(user_name, new_level):
+def update_users(uname, new_level):
     """
     Update the user's level in the users dictionary.
     
@@ -58,9 +58,9 @@ def update_users(user_name, new_level):
     """
     users = get_users()
     
-    if user_name in users:
-        users[user_name][LEVEL] = new_level
-        return users[user_name]
+    if uname in users:
+        users[uname][LEVEL] = new_level
+        return users[uname]
     else:
         return None
 
