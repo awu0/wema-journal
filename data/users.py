@@ -33,3 +33,13 @@ def delete_users(id):
         return id
     else:
         return None
+
+def read():
+    """
+    Our contract:
+        - No arguments.
+        - Returns a dictionary of users keyed on user email.
+        - Each user email must be the key for another dictionary.
+    """
+    users = get_users()
+    return users
