@@ -34,12 +34,12 @@ USERS_EP = '/users'
 USERS_RESP = 'Users'
 USERS = '''
 {
-    "Callahan": {
-        LEVEL: 0,
-    },
-    "Reddy": {
-        LEVEL: 1,
-    },
+  "Callahan": {
+    "level": 0
+  },
+  "Reddy": {
+    "level": 1
+  }
 }
 '''
 
