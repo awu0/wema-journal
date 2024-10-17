@@ -3,7 +3,8 @@
 
 A app developed by **WEMA** (William, Eric, Matthew, Aaron)
 
-## Installing for development
+## Development
+### Installing for development
 Use a virtual environment to install the packages:
 
 1. Create the virtual environment
@@ -12,8 +13,11 @@ Use a virtual environment to install the packages:
 ```source venv/bin/activate```
 3. Run `make dev_env` to install the developer dependencies
 
-To build production, type `make prod`.
-
-## Running the development server
+### Running the development server
 To run the development server, run in terminal:
 ```./local.sh```
+
+
+## Production
+### Build
+To build production, type `make prod`.
