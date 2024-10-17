@@ -27,6 +27,13 @@ def get_users():
     return USERS
 
 
+def add_user(name, level):
+    users = get_users()
+    if name not in users:
+        users[name] = {LEVEL: level}
+    return None
+
+
 def delete_users(id):
     users = get_users()
     if id in users:
