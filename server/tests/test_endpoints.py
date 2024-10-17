@@ -42,3 +42,11 @@ def test_journal_name():
     assert isinstance(journal_name, str)
     assert len(journal_name) > 0
     assert journal_name == ep.JOURNAL_NAME
+
+
+def test_getting_users():
+    pass
+
+
+def test_deleting_users():
+    pass

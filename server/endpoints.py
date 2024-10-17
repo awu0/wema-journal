@@ -91,6 +91,20 @@ class JournalName(Resource):
         }
 
 
+@api.route(USERS_EP)
+class Users(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting journal people.
+    """
+
+    def get(self):
+        """
+        Retrieve the journal people.
+        """
+        return users.read()
+
+
 @api.route(f'{USERS_EP}/<_id>')
 class PersonDelete(Resource):
     @api.response(HTTPStatus.OK, 'Success')
