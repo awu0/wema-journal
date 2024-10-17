@@ -14,6 +14,7 @@ USERS = {
     },
 }
 
+
 def get_users():
     """
     Our contract:
