@@ -1,6 +1,12 @@
 import users as usrs
 
 
+def test_add_new_user(self):
+    result = usrs.add_user("Johnson", 2)
+    self.assertIn("Johnson", result)
+    self.assertEqual(result["Johnson"]['level'], 2)
+
+
 def test_get_users():
     users = usrs.get_users()
     assert isinstance(users, dict)
