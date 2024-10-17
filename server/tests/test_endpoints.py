@@ -46,7 +46,7 @@ def test_journal_name():
 
 def test_getting_users():
     resp_json = resp.get_json()
-    assert ep.USERS_EP in resp_json
+    assert ep.USERS_RESP in resp_json
 
 
 def test_deleting_users():
