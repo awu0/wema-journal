@@ -45,6 +45,7 @@ def test_journal_name():
 
 
 def test_getting_users():
+    resp = TEST_CLIENT.get(ep.USERS_EP)
     resp_json = resp.get_json()
     assert ep.USERS_RESP in resp_json
 
