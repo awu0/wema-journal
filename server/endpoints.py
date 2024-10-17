@@ -86,3 +86,10 @@ class JournalName(Resource):
         return {
             JOURNAL_NAME_RESP: JOURNAL_NAME,
         }
+
+@api.route(f'{PEOPLE_EP}/<_id>')
+class PersonDelete(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'No such person')
+    def delete(self, _id):
+        pass
