@@ -31,7 +31,7 @@ def add_user(name, level):
     users = get_users()
     if name not in users:
         users[name] = {LEVEL: level}
-    return None
+    return users
 
 
 def delete_users(id):
