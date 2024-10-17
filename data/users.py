@@ -5,6 +5,14 @@ This module interfaces to our user data.
 LEVEL = 'level'
 MIN_USER_NAME_LEN = 2
 
+USERS = {
+    "Callahan": {
+        LEVEL: 0,
+    },
+    "Reddy": {
+        LEVEL: 1,
+    },
+}
 
 def get_users():
     """
@@ -15,15 +23,7 @@ def get_users():
         - That dictionary must at least include a LEVEL member that has an int
         value.
     """
-    users = {
-        "Callahan": {
-            LEVEL: 0,
-        },
-        "Reddy": {
-            LEVEL: 1,
-        },
-    }
-    return users
+    return USERS
 
 
 def delete_users(id):
