@@ -19,12 +19,12 @@ def test_update_users():
     user_name = "Callahan"
     new_level = 2
     users = usrs.update_users(user_name, new_level)
-    
+
     assert user_name in users, "User should be found and updated."
     assert users[user_name]['level'] == new_level, "User level should be updated to 2."
 
     # Test case 2: Try to update a non-existing user
     non_existing_user = "NonExistentUser"
     users = usrs.update_users(non_existing_user, new_level)
-    
+
     assert non_existing_user not in users, "Non-existing user should not be added to the dictionary."
