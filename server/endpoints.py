@@ -2,13 +2,15 @@
 This is the file containing all of the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
-# from http import HTTPStatus
+from http import HTTPStatus
 
 from flask import Flask  # , request
 from flask_restx import Resource, Api  # Namespace, fields
 from flask_cors import CORS
 
-# import werkzeug.exceptions as wz
+import werkzeug.exceptions as wz
+
+from data import users
 
 app = Flask(__name__)
 CORS(app)
@@ -28,6 +30,7 @@ DATE = '2024-09-24'
 JOURNAL_NAME_EP = '/journal-name'
 JOURNAL_NAME_RESP = 'Journal Name'
 JOURNAL_NAME = 'wema'
+USERS_EP = '/users'
 
 
 @api.route(HELLO_EP)
@@ -87,14 +90,16 @@ class JournalName(Resource):
             JOURNAL_NAME_RESP: JOURNAL_NAME,
         }
 
-@api.route(f'{PEOPLE_EP}/<_id>')
+
+@api.route(f'{USERS_EP}/<_id>')
 class PersonDelete(Resource):
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'No such person')
     def delete(self, _id):
-        ret = ppl.delete_users(_id)
+        ret = users.delete_users(_id)
         print(f'{ret=}')
+
         if ret is not None:
-            return {'Deleted' : ret}
+            return {'Deleted': ret}
         else:
             return wz.NotFound(f'No such person: {_id}')
