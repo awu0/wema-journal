@@ -32,16 +32,7 @@ JOURNAL_NAME_RESP = 'Journal Name'
 JOURNAL_NAME = 'wema'
 USERS_EP = '/users'
 USERS_RESP = 'Users'
-USERS = '''
-{
-  "Callahan": {
-    "level": 0
-  },
-  "Reddy": {
-    "level": 1
-  }
-}
-'''
+USERS = {'Callahan': {'level': 0}, 'Reddy': {'level': 1}}
 
 
 @api.route(HELLO_EP)
