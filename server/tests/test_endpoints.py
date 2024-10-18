@@ -47,7 +47,7 @@ def test_journal_name():
 def test_getting_users():
     resp = TEST_CLIENT.get(ep.USERS_EP)
     resp_json = resp.get_json()
-    assert resp_json == get_users()
+    assert resp_json == ep.USERS
 
 
 def test_deleting_users():
