@@ -114,8 +114,8 @@ class PersonDelete(Resource):
         if ret is not None:
             return {'Deleted': ret}
         else:
-            return wz.NotFound(f'No such person: {_id}')
-        
+            return wz.NotFound(f'No such person: {_id}')      
+
 
 @api.route(f'{USERS_EP}/<name>/<int:level>')
 class UsersCreate(Resource):
