@@ -31,8 +31,6 @@ JOURNAL_NAME_EP = '/journal-name'
 JOURNAL_NAME_RESP = 'Journal Name'
 JOURNAL_NAME = 'wema'
 USERS_EP = '/users'
-USERS_RESP = 'Users'
-USERS = {'Callahan': {'level': 0}, 'Reddy': {'level': 1}}
 
 
 @api.route(HELLO_EP)
@@ -99,7 +97,6 @@ class Users(Resource):
     This class handles creating, reading, updating
     and deleting journal people.
     """
-
     def get(self):
         """
         Retrieve the journal people.
@@ -114,15 +111,15 @@ class PersonDelete(Resource):
     def delete(self, _id):
         ret = users.delete_users(_id)
         print(f'{ret=}')
-
         if ret is not None:
             return {'Deleted': ret}
         else:
             return wz.NotFound(f'No such person: {_id}')
         
-        
+
 @api.route(f'{USERS_EP}/<name>/<int:level>')
-class PersonCreate(Resource):
+class UsersCreate(Resource):
+    """ Add user to db"""
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     def put(self, name, level):
