@@ -119,3 +119,15 @@ class PersonDelete(Resource):
             return {'Deleted': ret}
         else:
             return wz.NotFound(f'No such person: {_id}')
+        
+        
+@api.route(f'{USERS_EP}/<name>/<int:level>')
+class PersonCreate(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    def put(self, name, level):
+        ret = users.add_user(name, level)
+        return {
+            'Message': 'User added successfully!',
+            'Return': ret
+        }
