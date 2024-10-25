@@ -1,21 +1,21 @@
 """
 Manages the roles each user can have for our journal
 """
+from enum import Enum
 
-AUTHOR_CODE = "AU"
-EDITOR_CODE = "ED"
-REFREE_CODE = "RE"
 
-roles = {
-    AUTHOR_CODE: "Author",
-    EDITOR_CODE: "Editor",
-    REFREE_CODE: "Referee",
-}
+class Role(Enum):
+    AUTHOR = "author"
+    EDITOR = "editor"
+    REFEREE = "referee"
 
-MH_ROLES = [AUTHOR_CODE, EDITOR_CODE, REFREE_CODE]
+
+MH_ROLES = [Role.AUTHOR, Role.EDITOR, Role.REFEREE]
+
 
 def get_roles() -> dict:
-    return roles
+    return {role.name: role.value for role in Role}
+
 
 def get_masthead_roles() -> dict:
     mh_roles = get_roles()
@@ -27,12 +27,9 @@ def get_masthead_roles() -> dict:
         del mh_roles[del_role]
     return mh_roles
 
-def get_role_codes() -> list:
-    return list(roles.keys())
 
-
-def is_valid_role(code: str) -> bool:
-    return code in roles
+def is_valid_role(role: str) -> bool:
+    return role.lower() in {role.value for role in Role}
 
 
 def main():
