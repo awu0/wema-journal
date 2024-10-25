@@ -2,7 +2,7 @@ import users as usrs
 
 
 def test_add_new_user():
-    result = usrs.add_user("Johnson", 2)
+    result = usrs.add_user("Johnson", 2, "Author")
     assert "Johnson" in result, "The new user 'Johnson' should be added."
     assert result["Johnson"][usrs.LEVEL] == 2, "The new user's level should be set to 2."
 
