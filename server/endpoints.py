@@ -111,7 +111,6 @@ class Users(Resource):
         return users.get_users_as_dict()
 
 
-# TODO: update with User class
 @api.route(f"{USERS_EP}/<_email>")
 class UserDelete(Resource):
     @api.response(HTTPStatus.OK, "Success")
