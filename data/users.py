@@ -47,7 +47,8 @@ def delete_users(id):
 
 
 def check_valid_user(name, level, role):
-    if name not in users:
+    users = get_users()
+    if name in users:
         raise ValueError(f'Duplicate name: {name}')
     if not rls.is_valid_role(role):
         raise ValueError(f'Invalid role: {role}')
