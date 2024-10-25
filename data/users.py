@@ -63,7 +63,7 @@ def get_users_as_dict():
     """
     Get users as dict for JSON parsing
     """
-    return {user.name: user.to_dict() for user in USERS}
+    return {user.email: user.to_dict() for user in USERS}
 
 
 def create_user(name: str, email: str, role: str, affliation: str):
