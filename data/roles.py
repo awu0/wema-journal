@@ -17,6 +17,10 @@ def get_roles() -> dict:
     return roles
 
 
+def get_role_codes() -> list:
+    return list(roles.keys())
+
+
 def is_valid_role(code: str) -> bool:
     return code in roles
 
