@@ -3,6 +3,7 @@ This module interfaces to our user data.
 """
 
 # import re
+import data.roles as rls
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -29,9 +30,9 @@ def get_users():
     return USERS
 
 
-def add_user(name, level):
+def add_user(name, level, role):
     users = get_users()
-    if name not in users:
+    if check_valid_user(name, level, role):
         users[name] = {LEVEL: level}
     return users
 
@@ -43,6 +44,14 @@ def delete_users(id):
         return id
     else:
         return None
+
+
+def check_valid_user(name, level, role):
+    if name not in users:
+        raise ValueError(f'Duplicate name: {name}')
+    if not rls.is_valid_role(role):
+        raise ValueError(f'Invalid role: {role}')
+    return True
 
 
 def read():
