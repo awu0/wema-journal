@@ -28,8 +28,8 @@ def get_masthead_roles() -> dict:
     return mh_roles
 
 
-def is_valid_role(code: str) -> bool:
-    return code.lower() in Role
+def is_valid_role(role: str) -> bool:
+    return role.lower() in Role
 
 
 def main():
