@@ -12,6 +12,7 @@ roles = {
     REFREE_CODE: "Referee",
 }
 
+MH_ROLES = [AUTHOR_CODE, EDITOR_CODE, REFREE_CODE]
 
 def get_roles() -> dict:
     return roles
@@ -36,6 +37,7 @@ def is_valid_role(code: str) -> bool:
 
 def main():
     print(get_roles())
+    print(get_masthead_roles())
 
 
 if __name__ == "__main__":
