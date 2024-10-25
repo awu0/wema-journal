@@ -32,7 +32,7 @@ JOURNAL_NAME_EP = "/journal-name"
 JOURNAL_NAME_RESP = "Journal Name"
 JOURNAL_NAME = "wema"
 USERS_EP = "/users"
-USERS = users.get_users()
+USERS = users.get_users_as_dict()
 
 
 @api.route(HELLO_EP)
