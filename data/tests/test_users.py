@@ -18,7 +18,7 @@ def test_add_new_user():
     result = usrs.create_user(
         name="Johnson", email="johson@nyu.edu", role="Author", affliation="NYU"
     )
-    assert "Johnson" in result, "The new user 'Johnson' should be added."
+    assert "johson@nyu.edu" in result, "The new user 'Johnson' should be added."
 
 
 # def test_update_users():
