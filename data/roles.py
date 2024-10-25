@@ -14,8 +14,10 @@ roles = {
 
 MH_ROLES = [AUTHOR_CODE, EDITOR_CODE, REFREE_CODE]
 
+
 def get_roles() -> dict:
     return roles
+
 
 def get_masthead_roles() -> dict:
     mh_roles = get_roles()
@@ -26,6 +28,7 @@ def get_masthead_roles() -> dict:
     for del_role in del_mh_roles:
         del mh_roles[del_role]
     return mh_roles
+
 
 def get_role_codes() -> list:
     return list(roles.keys())
