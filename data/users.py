@@ -67,7 +67,7 @@ def create_user(name: str, email: str, role: str, affliation: str):
     new_user = User(name=name, email=email, affiliation=affliation, roles=[role])
     if check_valid_user(new_user):
         users.append(new_user)
-    return users
+    return get_users_as_dict()
 
 
 def delete_user(email: str):
