@@ -29,7 +29,7 @@ def get_masthead_roles() -> dict:
 
 
 def is_valid_role(role: str) -> bool:
-    return role.lower() in Role
+    return role.lower() in {role.value for role in Role}
 
 
 def main():
