@@ -13,6 +13,7 @@ class User:
     """
     Email is used as the unique identifier
     """
+
     def __init__(self, name: str, email: str, roles: list, affiliation: str):
         self.name = name
         self.email = email
@@ -40,17 +41,12 @@ class User:
 
 
 USERS = [
-    User(
-        name="William Ma",
-        email="wilma@nyu.edu",
-        roles=[],
-        affiliation="NYU"
-    ),
+    User(name="William Ma", email="wilma@nyu.edu", roles=[], affiliation="NYU"),
     User(
         name="Another Person",
         email="anotherperson@nyu.edu",
         roles=[],
-        affiliation="NYU"
+        affiliation="NYU",
     ),
 ]
 
