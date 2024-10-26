@@ -1,4 +1,7 @@
+import pytest
+
 import data.users as users
+from data.users import is_valid_email
 
 
 def test_get_users():
@@ -16,9 +19,38 @@ def test_get_users():
 
 def test_add_new_user():
     result = users.create_user(
-        name="Johnson", email="johson@nyu.edu", role="Author", affliation="NYU"
+        name="Johnson", email="johson@nyu.edu", role="Author", affiliation="NYU"
     )
     assert "johson@nyu.edu" in result, "The new user 'johson@nyu.edu' should be added."
+
+
+def test_valid_email_adds_new_user():
+    new_user_data = {
+        "name": "Fake User 0124",
+        "email": "fake_user_0124@nyu.edu",
+        "role": "editor",
+        "affiliation": "NYU"
+    }
+
+    users.create_user(**new_user_data)
+    assert new_user_data["email"] in users.get_users_as_dict(), "The new user 'johson@nyu.edu' should be added."
+
+
+def test_invalid_email_raises_error():
+    new_user_data = {
+        "name": "Fake User without a valid email",
+        "email": "not_an_email",
+        "role": "author",
+        "affiliation": "NYU"
+    }
+
+    try:
+        users.create_user(**new_user_data)
+    except ValueError as e:
+        assert "Invalid email" in str(e), "The ValueError should mention duplicate email"
+
+    # new user isn't in returned users
+    assert new_user_data["email"] not in users.get_users_as_dict(), "The new user 'johson@nyu.edu' should NOT be added."
 
 
 # def test_update_users():

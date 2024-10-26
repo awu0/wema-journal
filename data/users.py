@@ -2,8 +2,8 @@
 This module interfaces to our user data.
 """
 
-# import re
-import data.roles as rls
+import re
+from data.roles import is_valid_role
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -62,11 +62,13 @@ def get_users_as_dict():
     return {user.email: user.to_dict() for user in USERS}
 
 
-def create_user(name: str, email: str, role: str, affliation: str):
+def create_user(name: str, email: str, role: str, affiliation: str):
     users = get_users()
-    new_user = User(name=name, email=email, affiliation=affliation, roles=[role])
+    new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
+
     if check_valid_user(new_user):
         users.append(new_user)
+
     return get_users_as_dict()
 
 
@@ -81,11 +83,23 @@ def delete_user(email: str):
 
 def check_valid_user(user: User):
     users = get_users()
+
     if user in users:
         raise ValueError(f"Duplicate email: {user}")
-    if not rls.is_valid_role(user.roles[0]):
+
+    if not is_valid_role(user.roles[0]):
         raise ValueError(f"Invalid role: {user}")
+
+    if not is_valid_email(user.email):
+        raise ValueError(f"Invalid email: {user}")
+
     return True
+
+
+def is_valid_email(email: str) -> bool:
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+
+    return re.match(email_regex, email) is not None
 
 
 # def update_user(uname, new_level):
