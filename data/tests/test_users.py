@@ -1,7 +1,4 @@
-import pytest
-
 import data.users as users
-from data.users import is_valid_email
 
 
 def test_get_users():
