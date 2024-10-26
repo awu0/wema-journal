@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-import endpoints as ep
+import server.endpoints as ep
 
 TEST_CLIENT = ep.app.test_client()
 

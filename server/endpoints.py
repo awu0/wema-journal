@@ -1,5 +1,5 @@
 """
-This is the file containing all of the endpoints for our flask app.
+This is the file containing all the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
 

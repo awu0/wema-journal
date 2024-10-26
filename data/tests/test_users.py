@@ -1,4 +1,4 @@
-import users as usrs
+import data.users as usrs
 
 
 def test_get_users():
@@ -19,7 +19,6 @@ def test_add_new_user():
         name="Johnson", email="johson@nyu.edu", role="Author", affliation="NYU"
     )
     assert "johson@nyu.edu" in result, "The new user 'johson@nyu.edu' should be added."
-
 
 # def test_update_users():
 #     # Test case 1: Update an existing user

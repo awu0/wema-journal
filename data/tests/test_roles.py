@@ -1,4 +1,4 @@
-import roles
+import data.roles as roles
 
 
 def test_get_roles():
