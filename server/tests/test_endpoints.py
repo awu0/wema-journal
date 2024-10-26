@@ -50,3 +50,34 @@ def test_getting_users():
 
 def test_deleting_users():
     pass
+
+
+def test_adding_user():
+    new_user_data = {
+        "name": "John",
+        "email": "john@example.com",
+        "role": "editor",
+        "affiliation": "NYU"
+    }
+
+    # PUT response to add user
+    resp = TEST_CLIENT.put(
+        f"{ep.USERS_EP}/{new_user_data['name']}/"
+        f"{new_user_data['email']}/"
+        f"{new_user_data['role']}/"
+        f"{new_user_data['affiliation']}"
+    )
+
+    assert resp.status_code == 200
+
+    resp_json = resp.get_json()
+
+    assert "Message" in resp_json
+    assert resp_json["Message"] == "User added successfully!"
+
+    # assert all users are returned
+    assert "Return" in resp_json
+    all_users = resp_json["Return"]
+
+    # make sure new user is in the response
+    assert new_user_data["email"] in all_users
