@@ -1,24 +1,25 @@
-import data.users as usrs
+import data.users as users
 
 
 def test_get_users():
-    users = usrs.get_users()
-    assert isinstance(users, list)
-    assert len(users) > 0  # at least one user!
-    for user in users:
+    all_users = users.get_users()
+    assert isinstance(all_users, list)
+    assert len(all_users) > 0  # at least one user!
+    for user in all_users:
         assert isinstance(user.name, str)
         assert isinstance(user.email, str)
         assert isinstance(user.affiliation, str)
         assert isinstance(user.roles, list)
 
-        assert len(user.name) >= usrs.MIN_USER_NAME_LEN
+        assert len(user.name) >= users.MIN_USER_NAME_LEN
 
 
 def test_add_new_user():
-    result = usrs.create_user(
+    result = users.create_user(
         name="Johnson", email="johson@nyu.edu", role="Author", affliation="NYU"
     )
     assert "johson@nyu.edu" in result, "The new user 'johson@nyu.edu' should be added."
+
 
 # def test_update_users():
 #     # Test case 1: Update an existing user
