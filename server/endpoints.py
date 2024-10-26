@@ -124,13 +124,12 @@ class UserDelete(Resource):
             return wz.NotFound(f"No such person: {_email}")
 
 
-# TODO: update with User class
-@api.route(f"{USERS_EP}/<name>/<int:level>")
+@api.route(f"{USERS_EP}/<name>/<email>/<role>/<affiliation>")
 class UsersCreate(Resource):
     """Add user to db"""
 
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_ACCEPTABLE, "Not acceptable")
-    def put(self, name, level):
-        ret = users.create_user(name, level)
+    def put(self, name, email, role, affiliation):
+        ret = users.create_user(name, email, role, affiliation)
         return {"Message": "User added successfully!", "Return": ret}
