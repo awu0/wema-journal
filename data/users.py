@@ -3,6 +3,8 @@ This module interfaces to our user data.
 """
 
 import re
+from typing import Optional
+
 from data.roles import is_valid_role
 
 LEVEL = "level"
@@ -51,18 +53,18 @@ USERS = [
 ]
 
 
-def get_users():
+def get_users() -> list[User]:
     return USERS
 
 
-def get_users_as_dict():
+def get_users_as_dict() -> dict:
     """
     Get users as dict for JSON parsing
     """
     return {user.email: user.to_dict() for user in USERS}
 
 
-def create_user(name: str, email: str, role: str, affiliation: str):
+def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
     users = get_users()
     new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
 
@@ -72,7 +74,7 @@ def create_user(name: str, email: str, role: str, affiliation: str):
     return get_users_as_dict()
 
 
-def delete_user(email: str):
+def delete_user(email: str) -> Optional[User]:
     users = get_users()
     for user in users:
         if user.email == email:
@@ -81,7 +83,7 @@ def delete_user(email: str):
     return None
 
 
-def check_valid_user(user: User):
+def check_valid_user(user: User) -> bool:
     users = get_users()
 
     if user in users:
