@@ -1,3 +1,5 @@
+from flask_restx.inputs import email
+
 import data.users as users
 
 
@@ -48,6 +50,16 @@ def test_invalid_email_raises_error():
 
     # new user isn't in returned users
     assert new_user_data["email"] not in users.get_users_as_dict(), "The new user 'johson@nyu.edu' should NOT be added."
+
+
+def test_email_no_subdomain_is_invalid():
+    temp_email = "testuser@com"
+    assert not users.is_valid_email(temp_email)
+    
+
+def test_email_no_username_is_invalid():
+    temp_email = "@nyu.edu"
+    assert not users.is_valid_email(temp_email)
 
 
 # def test_update_users():
