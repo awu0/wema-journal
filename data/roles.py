@@ -30,6 +30,16 @@ def get_masthead_roles() -> dict:
     return mh_roles
 
 
+MH_FIELDS = [NAME, AFFILIATION]
+
+
+def create_mh_rec(user: dict) -> dict:
+    mh_rec = {}
+    for field in MH_FIELDS:
+        mh_rec[field] = user.get(field, '')
+    return mh_rec
+
+
 def is_valid_role(role: str) -> bool:
     return role.lower() in {role.value for role in Role}
 
