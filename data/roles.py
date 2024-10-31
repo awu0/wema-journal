@@ -6,11 +6,13 @@ from enum import Enum
 
 class Role(Enum):
     AUTHOR = "author"
-    EDITOR = "editor"
     REFEREE = "referee"
+    EDITOR = "editor"
+    CONSULTING_EDITOR = "consulting editor"
+    MANAGING_EDITOR = "managing editor"
 
 
-MH_ROLES = [Role.AUTHOR, Role.EDITOR, Role.REFEREE]
+MH_ROLES = [Role.EDITOR, Role.CONSULTING_EDITOR, Role.MANAGING_EDITOR]
 
 
 def get_roles() -> dict:
