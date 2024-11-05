@@ -1,6 +1,6 @@
 import pytest
 from data.roles import TEST_CODE
-import data.people as ppl
+import data.users as ppl
 import re
 
 NO_AT = 'jkajsd'
