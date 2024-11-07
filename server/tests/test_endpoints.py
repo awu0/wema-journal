@@ -60,13 +60,14 @@ def test_getting_users():
 
 
 def test_deleting_users():
-    user_email = "john@example.com"
+    user_email = "wilma@nyu.edu"
+    
     resp = TEST_CLIENT.delete(f"{ep.USERS_EP}/{user_email}")
     assert resp.status_code == 200
+    
     resp_json = resp.get_json()
-    assert "Message" in resp_json
-    assert resp_json["Message"] == "User deleted successfully!"
-
+    assert "Deleted" in resp_json
+    assert resp_json["Deleted"]["email"] == user_email
 
 
 def test_adding_user():
