@@ -112,7 +112,19 @@ class Users(Resource):
 
 
 @api.route(f"{USERS_EP}/<_email>")
-class UserDelete(Resource):
+class User(Resource):
+    """
+    This class handles creating, reading, updating, and deleting users
+    """
+    @api.response(HTTPStatus.OK, "Success")
+    @api.response(HTTPStatus.NOT_FOUND, "No such person")
+    def get(self, _email):
+        user = users.get_user_as_dict(_email)
+        if user:
+            return user
+        else:
+            raise wz.NotFound(f'No such user: {_email}')
+    
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def delete(self, _email):
