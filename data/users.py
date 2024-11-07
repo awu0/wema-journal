@@ -52,6 +52,7 @@ USERS = [
     ),
 ]
 
+
 def get_users() -> list[User]:
     return USERS
 
@@ -61,6 +62,10 @@ def get_users_as_dict() -> dict:
     Get users as dict for JSON parsing
     """
     return {user.email: user.to_dict() for user in USERS}
+
+
+def get_user_as_dict(email: str) -> dict:
+    return get_users_as_dict().get(email)
 
 
 def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
