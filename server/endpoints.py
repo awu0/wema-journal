@@ -5,11 +5,10 @@ The endpoint called `endpoints` will return all available endpoints.
 
 from http import HTTPStatus
 
-from flask import Flask  # , request
-from flask_restx import Resource, Api  # Namespace, fields
-from flask_cors import CORS
-
 import werkzeug.exceptions as wz
+from flask import Flask  # , request
+from flask_cors import CORS
+from flask_restx import Resource, Api  # Namespace, fields
 
 from data import users
 
@@ -116,6 +115,7 @@ class User(Resource):
     """
     This class handles creating, reading, updating, and deleting users
     """
+
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def get(self, _email):
@@ -124,7 +124,7 @@ class User(Resource):
             return user
         else:
             raise wz.NotFound(f'No such user: {_email}')
-    
+
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def delete(self, _email):

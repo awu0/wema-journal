@@ -1,15 +1,8 @@
-from http.client import (
-    BAD_REQUEST,
-    FORBIDDEN,
-    NOT_ACCEPTABLE,
-    NOT_FOUND,
-    OK,
-    SERVICE_UNAVAILABLE,
-)
-
+from http import HTTPStatus
 from unittest.mock import patch
 
 import pytest
+from flask_restx.inputs import email
 
 import server.endpoints as ep
 
@@ -33,7 +26,7 @@ def test_title():
        return_value={'id': {'name': 'Joe Schmoe'}})
 def test_read(mock_read):
     resp = TEST_CLIENT.get(ep.USERS_EP)
-    assert resp.status_code == OK
+    assert resp.status_code == HTTPStatus.OK
     resp_json = resp.get_json()
     for _id, user in resp_json.items():
         assert isinstance(_id, str)
@@ -99,3 +92,14 @@ def test_adding_user():
 
     # make sure new user is in the response
     assert new_user_data["email"] in all_users
+
+
+def test_getting_fake_user_fails():
+    fake_email = "fakeuseremail@fakeemaildomain.com"
+    
+    resp = TEST_CLIENT.get(f"{ep.USERS_EP}/{fake_email}/")
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_getting_user():
+    pass
