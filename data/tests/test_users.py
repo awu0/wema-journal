@@ -60,6 +60,12 @@ def test_email_no_username_is_invalid():
     assert not users.is_valid_email(temp_email)
 
 
+def test_get_mh_roles():
+    flds = users.get_masthead_roles()
+    assert isinstance(flds, list)
+    assert len(flds) > 0
+
+
 # def test_update_users():
 #     # Test case 1: Update an existing user
 #     user_name = "Callahan"
