@@ -1,5 +1,3 @@
-from flask_restx.inputs import email
-
 import data.users as users
 
 
