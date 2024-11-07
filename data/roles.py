@@ -30,7 +30,7 @@ def get_masthead_roles() -> dict:
     return mh_roles
 
 
-MH_FIELDS = [NAME, AFFILIATION]
+MH_FIELDS = ['name', 'affiliation']
 
 
 def create_mh_rec(user: dict) -> dict:

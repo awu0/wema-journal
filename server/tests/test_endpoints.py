@@ -29,17 +29,16 @@ def test_title():
     assert isinstance(resp_json[ep.TITLE_RESP], str)
     assert len(resp_json[ep.TITLE_RESP]) > 0
 
-@patch('data.users.read', autospec=True,
-       return_value={'id': {NAME: 'Joe Schmoe'}})
+@patch('data.users.get_users_as_dict', autospec=True,
+       return_value={'id': {'name': 'Joe Schmoe'}})
 def test_read(mock_read):
     resp = TEST_CLIENT.get(ep.USERS_EP)
-    assert False
     assert resp.status_code == OK
     resp_json = resp.get_json()
-    for _id, user in resp_json.items()
+    for _id, user in resp_json.items():
         assert isinstance(_id, str)
         assert len(_id) > 0
-        assert NAME in user
+        assert 'name' in user
     
 
 def test_journal_name():
