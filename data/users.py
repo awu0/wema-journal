@@ -108,6 +108,8 @@ def is_valid_email(email: str) -> bool:
     return re.match(email_regex, email) is not None
 
 
+name = "name"
+affiliation = "affiliation"
 MH_FIELDS = [name, affiliation]
 
 
