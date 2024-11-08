@@ -108,6 +108,13 @@ def is_valid_email(email: str) -> bool:
     return re.match(email_regex, email) is not None
 
 
+MH_FIELDS = [name, affiliation]
+
+
+def get_mh_fields(journal_code=None) -> list:
+    return MH_FIELDS
+
+
 # def update_user(uname, new_level):
 #     """
 #     Update the user's level in the users dictionary.
