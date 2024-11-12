@@ -2,7 +2,6 @@ from http import HTTPStatus
 from unittest.mock import patch
 
 import pytest
-from flask_restx.inputs import email
 
 import server.endpoints as ep
 
@@ -76,14 +75,9 @@ def test_deleting_users():
 
 def test_adding_user(sample_user):
     # PUT response to add user
-    resp = TEST_CLIENT.put(
-        f"{ep.USERS_EP}/{sample_user['name']}/"
-        f"{sample_user['email']}/"
-        f"{sample_user['role']}/"
-        f"{sample_user['affiliation']}"
-    )
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.CREATED
 
     resp_json = resp.get_json()
 

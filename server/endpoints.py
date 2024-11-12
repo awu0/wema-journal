@@ -2,11 +2,10 @@
 This is the file containing all the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
-
 from http import HTTPStatus
 
 import werkzeug.exceptions as wz
-from flask import Flask  # , request
+from flask import Flask, request  # , request
 from flask_cors import CORS
 from flask_restx import Resource, Api  # Namespace, fields
 
@@ -109,6 +108,29 @@ class Users(Resource):
         """
         return users.get_users_as_dict()
 
+    @api.response(HTTPStatus.CREATED, "User created successfully")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def post(self):
+        """
+        Adds a new user with given JSON data
+        """
+        data = request.json
+        required_fields = ["name", "email", "role", "affiliation"]
+
+        if not all(field in data for field in required_fields):
+            return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
+
+        try:
+            ret = users.create_user(
+                name=data["name"],
+                email=data["email"],
+                role=data["role"],
+                affiliation=data["affiliation"],
+            )
+            return {"Message": "User added successfully!", "Return": ret}, HTTPStatus.CREATED
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
 
 @api.route(f"{USERS_EP}/<_email>")
 class User(Resource):
@@ -134,14 +156,3 @@ class User(Resource):
             return {"Deleted": ret.to_dict()}
         else:
             return wz.NotFound(f"No such person: {_email}")
-
-
-@api.route(f"{USERS_EP}/<name>/<email>/<role>/<affiliation>")
-class UsersCreate(Resource):
-    """Add user to db"""
-
-    @api.response(HTTPStatus.OK, "Success")
-    @api.response(HTTPStatus.NOT_ACCEPTABLE, "Not acceptable")
-    def put(self, name, email, role, affiliation):
-        ret = users.create_user(name, email, role, affiliation)
-        return {"Message": "User added successfully!", "Return": ret}
