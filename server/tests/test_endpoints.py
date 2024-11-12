@@ -9,6 +9,16 @@ import server.endpoints as ep
 TEST_CLIENT = ep.app.test_client()
 
 
+@pytest.fixture
+def sample_user():
+    return  {
+        "name": "John",
+        "email": "john@example.com",
+        "role": "editor",
+        "affiliation": "NYU"
+    }
+    
+
 def test_hello():
     resp = TEST_CLIENT.get(ep.HELLO_EP)
     resp_json = resp.get_json()
@@ -21,6 +31,7 @@ def test_title():
     assert ep.TITLE_RESP in resp_json
     assert isinstance(resp_json[ep.TITLE_RESP], str)
     assert len(resp_json[ep.TITLE_RESP]) > 0
+
 
 @patch('data.users.get_users_as_dict', autospec=True,
        return_value={'id': {'name': 'Joe Schmoe'}})
@@ -63,20 +74,13 @@ def test_deleting_users():
     assert resp_json["Deleted"]["email"] == user_email
 
 
-def test_adding_user():
-    new_user_data = {
-        "name": "John",
-        "email": "john@example.com",
-        "role": "editor",
-        "affiliation": "NYU"
-    }
-
+def test_adding_user(sample_user):
     # PUT response to add user
     resp = TEST_CLIENT.put(
-        f"{ep.USERS_EP}/{new_user_data['name']}/"
-        f"{new_user_data['email']}/"
-        f"{new_user_data['role']}/"
-        f"{new_user_data['affiliation']}"
+        f"{ep.USERS_EP}/{sample_user['name']}/"
+        f"{sample_user['email']}/"
+        f"{sample_user['role']}/"
+        f"{sample_user['affiliation']}"
     )
 
     assert resp.status_code == 200
@@ -91,7 +95,7 @@ def test_adding_user():
     all_users = resp_json["Return"]
 
     # make sure new user is in the response
-    assert new_user_data["email"] in all_users
+    assert sample_user["email"] in all_users
 
 
 def test_getting_fake_user_fails():
