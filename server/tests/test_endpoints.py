@@ -16,6 +16,28 @@ def sample_user():
         "role": "editor",
         "affiliation": "NYU"
     }
+
+
+@pytest.fixture
+def incomplete_user():
+    # missing affiliation field
+    return  {
+        "name": "John",
+        "email": "john@example.com",
+        "role": "editor",
+        # "affiliation": "NYU"
+    }
+
+
+@pytest.fixture
+def invalid_user():
+    # invalid email
+    return  {
+        "name": "John",
+        "email": "johnnybademail",
+        "role": "editor",
+        "affiliation": "NYU"
+    }
     
 
 def test_hello():
@@ -81,16 +103,36 @@ def test_adding_user(sample_user):
 
     resp_json = resp.get_json()
 
-    assert "Message" in resp_json
-    assert resp_json["Message"] == "User added successfully!"
+    assert "message" in resp_json
+    assert resp_json["message"] == "User added successfully!"
 
     # assert all users are returned
-    assert "Return" in resp_json
-    all_users = resp_json["Return"]
+    assert "return" in resp_json
+    all_users = resp_json["return"]
 
     # make sure new user is in the response
     assert sample_user["email"] in all_users
+    
 
+def test_adding_user_missing_field_is_bad_request(incomplete_user):
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=incomplete_user)
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+    resp_json = resp.get_json()
+
+    assert "message" in resp_json
+    assert resp_json["message"] == "Missing required fields"
+
+
+def test_adding_user_invalid_field_is_bad_request(invalid_user):
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=invalid_user)
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+    resp_json = resp.get_json()
+
+    assert "message" in resp_json
+    assert "Invalid email" in resp_json["message"]
+    
 
 def test_getting_fake_user_fails():
     fake_email = "fakeuseremail@fakeemaildomain.com"

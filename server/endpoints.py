@@ -127,7 +127,7 @@ class Users(Resource):
                 role=data["role"],
                 affiliation=data["affiliation"],
             )
-            return {"Message": "User added successfully!", "Return": ret}, HTTPStatus.CREATED
+            return {"message": "User added successfully!", "return": ret}, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
