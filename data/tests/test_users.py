@@ -1,3 +1,5 @@
+import pytest
+
 import data.users as users
 
 
@@ -41,10 +43,8 @@ def test_invalid_email_raises_error():
         "affiliation": "NYU"
     }
 
-    try:
+    with pytest.raises(ValueError, match="Invalid email"):
         users.create_user(**new_user_data)
-    except ValueError as e:
-        assert "Invalid email" in str(e), "The ValueError should mention duplicate email"
 
     # new user isn't in returned users
     assert new_user_data["email"] not in users.get_users_as_dict(), "The new user 'johson@nyu.edu' should NOT be added."
