@@ -105,5 +105,6 @@ def test_getting_fake_user_fails():
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
 
+@pytest.mark.skip(reason="Not yet implemented")
 def test_getting_user():
     pass
