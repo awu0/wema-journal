@@ -95,3 +95,10 @@ def count_documents(collection, filt={}, db=WEMA_DB):
     return client[db][collection].count_documents(filt)
 
 
+def delete_many(collection, filt, db=WEMA_DB):
+    """
+    Delete multiple documents in the collection that match the filter.
+    Returns the count of deleted documents.
+    """
+    result = client[db][collection].delete_many(filt)
+    return result.deleted_count
