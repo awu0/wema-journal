@@ -78,9 +78,20 @@ def read(collection, db=WEMA_DB, no_id=True) -> list:
         ret.append(doc)
     return ret
 
+
 def fetch_all_as_dict(key, collection, db=WEMA_DB):
     ret = {}
     for doc in client[db][collection].find():
         del doc[MONGO_ID]
         ret[doc[key]] = doc
     return ret
+
+
+def count_documents(collection, filt={}, db=WEMA_DB):
+    """
+    Count the number of documents in a collection that match the filter.
+    Returns an integer count.
+    """
+    return client[db][collection].count_documents(filt)
+
+
