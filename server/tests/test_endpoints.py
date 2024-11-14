@@ -96,7 +96,6 @@ def test_deleting_users():
 
 
 def test_adding_user(sample_user):
-    # PUT response to add user
     resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
 
     assert resp.status_code == HTTPStatus.CREATED
@@ -106,11 +105,8 @@ def test_adding_user(sample_user):
     assert "message" in resp_json
     assert resp_json["message"] == "User added successfully!"
 
-    # assert all users are returned
     assert "return" in resp_json
     all_users = resp_json["return"]
-
-    # make sure new user is in the response
     assert sample_user["email"] in all_users
     
 
