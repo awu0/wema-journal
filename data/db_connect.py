@@ -78,7 +78,6 @@ def read(collection, db=WEMA_DB, no_id=True) -> list:
         ret.append(doc)
     return ret
 
-
 def fetch_all_as_dict(key, collection, db=WEMA_DB):
     ret = {}
     for doc in client[db][collection].find():
