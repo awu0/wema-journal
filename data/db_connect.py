@@ -75,7 +75,7 @@ def read(collection, db=WEMA_DB, no_id=True) -> list:
     """
     ret = []
     for doc in client[db][collection].find():
-         if no_id:
+        if no_id:
             del doc[MONGO_ID]
         ret.append(doc)
     return ret
