@@ -105,11 +105,3 @@ def invalid_user_data():
     }
 
 
-def test_get_user_by_email():
-    # Simulate get_user_by_email returning a specific user dictionary
-    with patch('data.users.get_user_by_email', return_value={'name': 'Alice', 'email': 'alice@nyu.edu'}) as mock_get_user:
-        result = users.get_user_by_email('alice@nyu.edu')
-        assert result['name'] == 'Alice'
-        assert result['email'] == 'alice@nyu.edu'
-        # Check if the mocked function was called with the correct arguments
-        mock_get_user.assert_called_once_with('alice@nyu.edu')
