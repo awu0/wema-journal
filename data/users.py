@@ -69,9 +69,12 @@ def get_users_as_dict() -> dict:
     """
     Get users as dict for JSON parsing
     """
+    return {user.email: user.to_dict() for user in USERS}
+    """
     user = dbc.read_dict(USER_COLLECT, EMAIL)
     print(f'{user=}')
     return user
+    """
 
 
 def get_user_as_dict(email: str) -> dict:
