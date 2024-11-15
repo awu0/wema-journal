@@ -7,7 +7,7 @@ from typing import Optional
 
 
 from data.roles import is_valid_role
-# import data.db_connect as dbc
+import data.db_connect as dbc
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -57,8 +57,8 @@ USERS = [
     ),
 ]
 
-# client = dbc.connect_db()
-# print(f'{client=}')
+client = dbc.connect_db()
+print(f'{client=}')
 
 
 def get_users() -> list[User]:
