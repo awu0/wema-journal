@@ -159,8 +159,8 @@ class User(Resource):
 
 
 USER_CREATE_FLDS = api.model('AddNewUserEntry', {
-    user.NAME: fields.String,
-    user.EMAIL: fields.String,
-    user.AFFILIATION: fields.String,
-    user.ROLES: fields.String,
+    users.name: fields.String,
+    users.email: fields.String,
+    users.affiliation: fields.String,
+    users.roles: fields.String,
 })
