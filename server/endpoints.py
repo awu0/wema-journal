@@ -9,7 +9,7 @@ from flask import Flask, request  # , request
 from flask_cors import CORS
 from flask_restx import Resource, Api  # Namespace, fields
 
-from data import users
+import data.users as users
 
 app = Flask(__name__)
 CORS(app)
@@ -156,3 +156,11 @@ class User(Resource):
             return {"Deleted": ret.to_dict()}
         else:
             return wz.NotFound(f"No such person: {_email}")
+
+
+USER_CREATE_FLDS = api.model('AddNewUserEntry', {
+    user.NAME: fields.String,
+    user.EMAIL: fields.String,
+    user.AFFILIATION: fields.String,
+    user.ROLES: fields.String,
+})
