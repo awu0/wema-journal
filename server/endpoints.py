@@ -7,7 +7,7 @@ from http import HTTPStatus
 import werkzeug.exceptions as wz
 from flask import Flask, request  # , request
 from flask_cors import CORS
-from flask_restx import Resource, Api  # Namespace, fields
+from flask_restx import Resource, Api, fields  # Namespace, fields
 
 import data.users as users
 
