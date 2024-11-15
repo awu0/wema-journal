@@ -14,6 +14,9 @@ MIN_USER_NAME_LEN = 2
 
 USER_COLLECT = 'user'
 EMAIL = 'email'
+NAME = 'name'
+AFFILIATION = 'affiliation'
+ROLES = 'roles'
 
 
 class User:
