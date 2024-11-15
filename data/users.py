@@ -4,16 +4,15 @@ This module interfaces to our user data.
 
 import re
 from typing import Optional
-
 from data.roles import is_valid_role
-
-import data.db_connect as dbc
+#import data.db_connect as dbc
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
 
 USER_COLLECT = 'user'
 EMAIL = 'email'
+
 
 class User:
     """
@@ -59,6 +58,7 @@ USERS = [
 # client = dbc.connect_db()
 # print(f'{client=}')
 
+
 def get_users() -> list[User]:
     return USERS
 
@@ -68,9 +68,10 @@ def get_users_as_dict() -> dict:
     Get users as dict for JSON parsing
     """
     return {user.email: user.to_dict() for user in USERS}
-    #user = dbc.read_dict(USER_COLLECT, EMAIL)
-    #print(f'{user=}')
-    #return user
+
+    # user = dbc.read_dict(USER_COLLECT, EMAIL)
+    # print(f'{user=}')
+    # return user
 
 
 def get_user_as_dict(email: str) -> dict:
