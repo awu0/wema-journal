@@ -58,11 +58,13 @@ def fetch_one(collection, filt, db=WEMA_DB):
         return doc
 
 
-def del_one(collection, filt, db=WEMA_DB):
+def delete(collection: str, filt: dict, db=WEMA_DB):
     """
     Find with a filter and return on the first doc found.
     """
-    client[db][collection].delete_one(filt)
+    print(f'{filt=}')
+    result = client[db][collection].delete_one(filt)
+    return result.deleted_count
 
 
 def update_doc(collection, filters, update_dict, db=WEMA_DB):
