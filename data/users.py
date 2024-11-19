@@ -96,11 +96,13 @@ def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
 
 def delete_user(email: str) -> Optional[User]:
     users = get_users()
+    print(f'{EMAIL=}, {email=}')
     for user in users:
         if user.email == email:
             users.remove(user)
             return user
-    return None
+    # return None
+    return dbc.delete(USER_COLLECT, {EMAIL: email})
 
 
 def check_valid_user(user: User) -> bool:
