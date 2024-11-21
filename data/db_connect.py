@@ -1,5 +1,7 @@
 import os
+from urllib.parse import quote_plus
 
+from dotenv import load_dotenv
 import pymongo as pm
 
 LOCAL = "0"
@@ -10,6 +12,8 @@ WEMA_DB = 'wemaDB'
 client = None
 
 MONGO_ID = '_id'
+
+load_dotenv()
 
 
 def connect_db():
@@ -23,18 +27,33 @@ def connect_db():
     global client
     if client is None:  # not connected yet!
         print("Setting client because it is None.")
+        
         if os.environ.get("CLOUD_MONGO", LOCAL) == CLOUD:
-            password = os.environ.get("GAME_MONGO_PW")
-            if not password:
-                raise ValueError('You must set your password '
-                                 + 'to use Mongo in the cloud.')
+            username = os.getenv("DB_USERNAME")
+            password = os.getenv("DB_PASSWORD")
+            cluster = os.getenv("DB_CLUSTER")
+            options = os.getenv("DB_OPTIONS")
+
+            if not all([username, password, cluster]):
+                raise ValueError("Missing database credentials in environment variables.")
+
             print("Connecting to Mongo in the cloud.")
-            client = pm.MongoClient(f'mongodb+srv://gcallah:{password}'
-                                    + '@koukoumongo1.yud9b.mongodb.net/'
-                                    + '?retryWrites=true&w=majority')
+
+            # escape username and password
+            escaped_username = quote_plus(username)
+            escaped_password = quote_plus(password)
+            mongo_uri = f"mongodb+srv://{escaped_username}:{escaped_password}@{cluster}/{options}"
+            client = pm.MongoClient(mongo_uri)
         else:
             print("Connecting to Mongo locally.")
             client = pm.MongoClient()
+            
+        try:
+            client.admin.command('ping')  
+            print("MongoDB connection successful.")
+        except Exception as e:
+            print("MongoDB connection failed.")
+
     return client
 
 
