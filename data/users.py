@@ -150,6 +150,17 @@ def read() -> dict:
     return user
 
 
+def read_one(email: str) -> dict:
+    roles = []
+    if role:
+        roles.append(role)
+    user = {NAME: name, AFFILIATION: affiliation,
+                EMAIL: email, ROLES: roles}
+    print(user)
+    dbc.create(PEOPLE_COLLECT, user)
+    return email
+
+
 # def update_user(uname, new_level):
 #     """
 #     Update the user's level in the users dictionary.
