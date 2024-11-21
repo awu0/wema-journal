@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 
 import pymongo as pm
 from dotenv import load_dotenv
+from pymongo.errors import ConnectionFailure
 
 LOCAL = "0"
 CLOUD = "1"
@@ -51,8 +52,9 @@ def connect_db():
         try:
             client.admin.command('ping')
             print("MongoDB connection successful.")
-        except Exception:
+        except ConnectionFailure:
             print("Failed connecting to MongoDB.")
+            client = None
 
     return client
 
