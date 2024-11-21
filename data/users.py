@@ -155,7 +155,7 @@ def read_one(email: str) -> dict:
     # if role:
     #     roles.append(role)
     user = {NAME: name, AFFILIATION: affiliation,
-                EMAIL: email, ROLES: roles}
+        EMAIL: email, ROLES: roles}
     print(user)
     dbc.create(USER_COLLECT, user)
     return email
