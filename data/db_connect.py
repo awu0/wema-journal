@@ -1,8 +1,8 @@
 import os
 from urllib.parse import quote_plus
 
-from dotenv import load_dotenv
 import pymongo as pm
+from dotenv import load_dotenv
 
 LOCAL = "0"
 CLOUD = "1"
@@ -27,7 +27,7 @@ def connect_db():
     global client
     if client is None:  # not connected yet!
         print("Setting client because it is None.")
-        
+
         if os.environ.get("CLOUD_MONGO", LOCAL) == CLOUD:
             username = os.getenv("DB_USERNAME")
             password = os.getenv("DB_PASSWORD")
@@ -47,11 +47,11 @@ def connect_db():
         else:
             print("Connecting to Mongo locally.")
             client = pm.MongoClient()
-            
+
         try:
-            client.admin.command('ping')  
+            client.admin.command('ping')
             print("MongoDB connection successful.")
-        except Exception as e:
+        except Exception:
             print("Failed connecting to MongoDB.")
 
     return client
@@ -137,4 +137,3 @@ def delete_many(collection, filt, db=WEMA_DB):
 
 if __name__ == '__main__':
     connect_db()
-    
