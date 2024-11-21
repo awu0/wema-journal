@@ -1,5 +1,5 @@
 import pytest
-
+from unittest.mock import patch
 import data.users as users
 
 
@@ -66,7 +66,6 @@ def test_get_mh_fields():
     assert len(flds) > 0
 
 
-
 @pytest.mark.skip("Needs to be updated with our current code")
 def test_update_users():
     # Test case 1: Update an existing user
@@ -82,3 +81,35 @@ def test_update_users():
     users = usrs.update_users(non_existing_user, new_level)
 
     assert non_existing_user not in users, "Non-existing user should not be added to the dictionary."
+
+
+@pytest.fixture
+def valid_user_data():
+    """Fixture providing valid user data."""
+    return {
+        "name": "Valid User",
+        "email": "valid_user@nyu.edu",
+        "role": "admin",
+        "affiliation": "NYU"
+    }
+
+
+@pytest.fixture
+def invalid_user_data():
+    """Fixture providing invalid user data."""
+    return {
+        "name": "Invalid User",
+        "email": "not_an_email",
+        "role": "editor",
+        "affiliation": "NYU"
+    }
+
+
+# def test_get_user_by_email():
+#     # Simulate get_user_by_email returning a specific user dictionary
+#     with patch('data.users.get_user_by_email', return_value={'name': 'Alice', 'email': 'alice@nyu.edu'}) as mock_get_user:
+#         result = users.get_user_by_email('alice@nyu.edu')
+#         assert result['name'] == 'Alice'
+#         assert result['email'] == 'alice@nyu.edu'
+#         # Check if the mocked function was called with the correct arguments
+#         mock_get_user.assert_called_once_with('alice@nyu.edu')

@@ -7,9 +7,9 @@ from http import HTTPStatus
 import werkzeug.exceptions as wz
 from flask import Flask, request  # , request
 from flask_cors import CORS
-from flask_restx import Resource, Api  # Namespace, fields
+from flask_restx import Resource, Api, fields  # Namespace, fields
 
-from data import users
+import data.users as users
 
 app = Flask(__name__)
 CORS(app)
@@ -156,3 +156,11 @@ class User(Resource):
             return {"Deleted": ret.to_dict()}
         else:
             return wz.NotFound(f"No such person: {_email}")
+
+
+USER_CREATE_FLDS = api.model('AddNewUserEntry', {
+    users.NAME: fields.String,
+    users.EMAIL: fields.String,
+    users.AFFILIATION: fields.String,
+    users.ROLES: fields.String,
+})

@@ -7,7 +7,7 @@ import pymongo as pm
 LOCAL = "0"
 CLOUD = "1"
 
-GAME_DB = 'gamesDB'
+WEMA_DB = 'wemaDB'
 
 client = None
 
@@ -54,8 +54,10 @@ def connect_db():
         except Exception as e:
             print("MongoDB connection failed.")
 
+    return client
 
-def insert_one(collection, doc, db=GAME_DB):
+
+def create(collection, doc, db=WEMA_DB):
     """
     Insert a single doc into collection.
     """
@@ -63,7 +65,7 @@ def insert_one(collection, doc, db=GAME_DB):
     return client[db][collection].insert_one(doc)
 
 
-def fetch_one(collection, filt, db=GAME_DB):
+def fetch_one(collection, filt, db=WEMA_DB):
     """
     Find with a filter and return on the first doc found.
     Return None if not found.
@@ -75,25 +77,40 @@ def fetch_one(collection, filt, db=GAME_DB):
         return doc
 
 
-def del_one(collection, filt, db=GAME_DB):
+def delete(collection: str, filt: dict, db=WEMA_DB):
     """
     Find with a filter and return on the first doc found.
     """
-    client[db][collection].delete_one(filt)
+    print(f'{filt=}')
+    result = client[db][collection].delete_one(filt)
+    return result.deleted_count
 
 
-def update_doc(collection, filters, update_dict, db=GAME_DB):
+def update_doc(collection, filters, update_dict, db=WEMA_DB):
     return client[db][collection].update_one(filters, {'$set': update_dict})
 
 
-def fetch_all(collection, db=GAME_DB):
+def read(collection, db=WEMA_DB, no_id=True) -> list:
+    """
+    This will return a list from the db.
+    """
     ret = []
     for doc in client[db][collection].find():
+        if no_id:
+            del doc[MONGO_ID]
         ret.append(doc)
     return ret
 
 
-def fetch_all_as_dict(key, collection, db=GAME_DB):
+def read_dict(collection, key, db=WEMA_DB, no_id=True) -> dict:
+    recs = read(collection, db=db, no_id=no_id)
+    recs_as_dict = {}
+    for rec in recs:
+        recs_as_dict[rec[key]] = rec
+    return recs_as_dict
+
+
+def fetch_all_as_dict(key, collection, db=WEMA_DB):
     ret = {}
     for doc in client[db][collection].find():
         del doc[MONGO_ID]
@@ -101,5 +118,18 @@ def fetch_all_as_dict(key, collection, db=GAME_DB):
     return ret
 
 
-if __name__ == '__main__':
-    connect_db()
+def count_documents(collection, filt={}, db=WEMA_DB):
+    """
+    Count the number of documents in a collection that match the filter.
+    Returns an integer count.
+    """
+    return client[db][collection].count_documents(filt)
+
+
+def delete_many(collection, filt, db=WEMA_DB):
+    """
+    Delete multiple documents in the collection that match the filter.
+    Returns the count of deleted documents.
+    """
+    result = client[db][collection].delete_many(filt)
+    return result.deleted_count
