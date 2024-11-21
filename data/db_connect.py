@@ -1,8 +1,9 @@
 import os
 from urllib.parse import quote_plus
 
-from dotenv import load_dotenv
 import pymongo as pm
+from dotenv import load_dotenv
+from pymongo.errors import ConnectionFailure
 
 LOCAL = "0"
 CLOUD = "1"
@@ -27,7 +28,7 @@ def connect_db():
     global client
     if client is None:  # not connected yet!
         print("Setting client because it is None.")
-        
+
         if os.environ.get("CLOUD_MONGO", LOCAL) == CLOUD:
             username = os.getenv("DB_USERNAME")
             password = os.getenv("DB_PASSWORD")
@@ -47,12 +48,13 @@ def connect_db():
         else:
             print("Connecting to Mongo locally.")
             client = pm.MongoClient()
-            
+
         try:
-            client.admin.command('ping')  
+            client.admin.command('ping')
             print("MongoDB connection successful.")
-        except Exception as e:
-            print("MongoDB connection failed.")
+        except ConnectionFailure:
+            print("Failed connecting to MongoDB.")
+            client = None
 
     return client
 
@@ -61,7 +63,7 @@ def create(collection, doc, db=WEMA_DB):
     """
     Insert a single doc into collection.
     """
-    print(f'{db=}')
+    print(f'Inserted {doc} into {collection} for DB: {db}')
     return client[db][collection].insert_one(doc)
 
 
@@ -70,11 +72,13 @@ def fetch_one(collection, filt, db=WEMA_DB):
     Find with a filter and return on the first doc found.
     Return None if not found.
     """
-    for doc in client[db][collection].find(filt):
-        if MONGO_ID in doc:
-            # Convert mongo ID to a string so it works as JSON
-            doc[MONGO_ID] = str(doc[MONGO_ID])
-        return doc
+    doc = client[db][collection].find_one(filt)
+
+    if doc and MONGO_ID in doc:
+        # Convert mongo ID to a string so it works as JSON
+        doc[MONGO_ID] = str(doc[MONGO_ID])
+
+    return doc
 
 
 def delete(collection: str, filt: dict, db=WEMA_DB):
@@ -133,3 +137,7 @@ def delete_many(collection, filt, db=WEMA_DB):
     """
     result = client[db][collection].delete_many(filt)
     return result.deleted_count
+
+
+if __name__ == '__main__':
+    connect_db()
