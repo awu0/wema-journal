@@ -52,7 +52,7 @@ def connect_db():
             client.admin.command('ping')  
             print("MongoDB connection successful.")
         except Exception as e:
-            print("MongoDB connection failed.")
+            print("Failed connecting to MongoDB.")
 
     return client
 
@@ -133,3 +133,8 @@ def delete_many(collection, filt, db=WEMA_DB):
     """
     result = client[db][collection].delete_many(filt)
     return result.deleted_count
+
+
+if __name__ == '__main__':
+    connect_db()
+    
