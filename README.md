@@ -13,6 +13,9 @@ Use a virtual environment to install the packages:
 ```source venv/bin/activate```
 3. Run `make dev_env` to install the developer dependencies
 
+### Setting the enviroment variables
+Put the secret `.env` file in the root directory.
+
 ### Running the development server
 To run the development server, run in terminal:
 ```./local.sh```
