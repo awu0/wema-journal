@@ -157,7 +157,7 @@ def read_one(email: str) -> dict:
     user = {NAME: name, AFFILIATION: affiliation,
                 EMAIL: email, ROLES: roles}
     print(user)
-    dbc.create(PEOPLE_COLLECT, user)
+    dbc.create(USER_COLLECT, user)
     return email
 
 
