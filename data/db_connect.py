@@ -3,6 +3,7 @@ from urllib.parse import quote_plus
 
 import pymongo as pm
 from dotenv import load_dotenv
+from pymongo.errors import ConnectionFailure
 
 LOCAL = "0"
 CLOUD = "1"
@@ -51,8 +52,9 @@ def connect_db():
         try:
             client.admin.command('ping')
             print("MongoDB connection successful.")
-        except Exception:
+        except ConnectionFailure:
             print("Failed connecting to MongoDB.")
+            client = None
 
     return client
 
@@ -61,7 +63,7 @@ def create(collection, doc, db=WEMA_DB):
     """
     Insert a single doc into collection.
     """
-    print(f'{db=}')
+    print(f'Inserted {doc} into {collection} for DB: {db}')
     return client[db][collection].insert_one(doc)
 
 
@@ -70,11 +72,13 @@ def fetch_one(collection, filt, db=WEMA_DB):
     Find with a filter and return on the first doc found.
     Return None if not found.
     """
-    for doc in client[db][collection].find(filt):
-        if MONGO_ID in doc:
-            # Convert mongo ID to a string so it works as JSON
-            doc[MONGO_ID] = str(doc[MONGO_ID])
-        return doc
+    doc = client[db][collection].find_one(filt)
+
+    if doc and MONGO_ID in doc:
+        # Convert mongo ID to a string so it works as JSON
+        doc[MONGO_ID] = str(doc[MONGO_ID])
+
+    return doc
 
 
 def delete(collection: str, filt: dict, db=WEMA_DB):
