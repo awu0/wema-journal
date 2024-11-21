@@ -135,6 +135,21 @@ def get_mh_fields(journal_code=None) -> list:
     return MH_FIELDS
 
 
+def read() -> dict:
+    """
+    Our contract:
+        - No arguments.
+        - Returns a dictionary of users keyed on user email.
+        - Each user email must be the key for another dictionary.
+    """
+    print('read() has been called')
+    user_dict = get_users_as_dict()
+    return user_dict
+    user = dbc.read_dict(USER_COLLECT, EMAIL)
+    print(f'{user=}')
+    return user
+
+
 # def update_user(uname, new_level):
 #     """
 #     Update the user's level in the users dictionary.
