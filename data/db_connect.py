@@ -38,7 +38,7 @@ def connect_db():
             if not all([username, password, cluster]):
                 raise ValueError("Missing database credentials in environment variables.")
 
-            print("Connecting to Mongo in the cloud.")
+            print("Connecting to Mongo in the cloud...")
 
             # escape username and password
             escaped_username = quote_plus(username)
@@ -46,8 +46,11 @@ def connect_db():
             mongo_uri = f"mongodb+srv://{escaped_username}:{escaped_password}@{cluster}/{options}"
             client = pm.MongoClient(mongo_uri)
         else:
-            print("Connecting to Mongo locally.")
-            client = pm.MongoClient()
+            print("Connecting to Mongo locally...")
+
+            # connect to local MongoDB instance on LOCAL_DB_PORT (usually the default is 27017)
+            local_port = os.environ.get("LOCAL_DB_PORT")
+            client = pm.MongoClient(f"mongodb://localhost:{local_port}")
 
         try:
             client.admin.command('ping')
