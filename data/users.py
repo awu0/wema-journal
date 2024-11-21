@@ -152,8 +152,8 @@ def read() -> dict:
 
 def read_one(email: str) -> dict:
     roles = []
-    if role:
-        roles.append(role)
+    # if role:
+    #     roles.append(role)
     user = {NAME: name, AFFILIATION: affiliation,
                 EMAIL: email, ROLES: roles}
     print(user)
