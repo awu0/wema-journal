@@ -66,21 +66,27 @@ def test_get_mh_fields():
     assert len(flds) > 0
 
 
-@pytest.mark.skip("Needs to be updated with our current code")
 def test_update_users():
-    # Test case 1: Update an existing user
-    user_name = "Callahan"
-    new_level = 2
-    users = usrs.update_users(user_name, new_level)
+    email = "johson@nyu.edu"
+    new_name = "John"
+    new_role = "admin"
+    new_affiliation = "NYU Alumni"
+    
+    updated_users = users.update_user(email=email, name=new_name, role=new_role, affiliation=new_affiliation)
 
-    assert user_name in users, "User should be found and updated."
-    assert users[user_name]['level'] == new_level, "User level should be updated to 2."
+    assert email in updated_users, "User email should exist in the updated dictionary."
+    assert updated_users[email]["name"] == new_name, "User name should be updated."
+    assert new_role in updated_users[email]["roles"], "New role should be added to user roles."
+    assert updated_users[email]["affiliation"] == new_affiliation, "User affiliation should be updated."
 
     # Test case 2: Try to update a non-existing user
-    non_existing_user = "NonExistentUser"
-    users = usrs.update_users(non_existing_user, new_level)
+    non_existing_email = "nonexistent@nyu.edu"
+    with pytest.raises(ValueError, match=f"User with email {non_existing_email} not found."):
+        users.update_user(email=non_existing_email, name="Nonexistent User")
 
-    assert non_existing_user not in users, "Non-existing user should not be added to the dictionary."
+    # Test case 3: Try to update with no fields provided
+    with pytest.raises(ValueError, match="No updates provided. Please specify at least one field to update."):
+        users.update_user(email=email)
 
 
 @pytest.fixture

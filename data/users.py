@@ -106,10 +106,10 @@ def delete_user(email: str) -> Optional[User]:
     return dbc.delete(USER_COLLECT, {EMAIL: email})
 
 
-def check_valid_user(user: User) -> bool:
+def check_valid_user(user: User, updating: bool = False) -> bool:
     users = get_users()
 
-    if user in users:
+    if user in users and not updating:
         raise ValueError(f"Duplicate email: {user}")
 
     if not is_valid_role(user.roles[0]):
@@ -178,7 +178,7 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
     if affiliation:
         user_to_update.affiliation = affiliation
 
-    if not check_valid_user(user_to_update):
+    if not check_valid_user(user_to_update, True):
         raise ValueError("Updated user data is invalid.")
     return get_users_as_dict()
 
