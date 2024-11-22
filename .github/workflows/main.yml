@@ -14,6 +14,13 @@ on:
 
 env:
   PYTHONPATH: /home/runner/work/wema-journal/wema-journal/
+  CLOUD_MONGO: 0
+  DB_USERNAME: admin
+  DB_PASSWORD: YD$ZwVLhi@Q*h832xoVxs
+  DB_CLUSTER: cluster0.mk19c.mongodb.net
+  DB_OPTIONS: '?retryWrites=true&w=majority&appName=Cluster0'
+  LOCAL_DB_PORT: 27017
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
