@@ -14,7 +14,7 @@ on:
 
 env:
   PYTHONPATH: /home/runner/work/wema-journal/wema-journal/
-  CLOUD_MONGO: 1
+  CLOUD_MONGO: 0
   DB_USERNAME: admin
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   DB_CLUSTER: cluster0.mk19c.mongodb.net
