@@ -68,7 +68,18 @@ print(f'{client=}')
 
 
 def get_users() -> list[User]:
-    return USERS
+    try:
+        # Make the GET request
+        response = requests.get('localhost:8000')
+
+        # Check the response status
+        if response.status_code == HTTPStatus.OK:
+            return response.json()  # Return the list of users
+        else:
+            raise ValueError(f"Failed to fetch users: {response.status_code} - {response.text}")
+    except requests.exceptions.RequestException as e:
+        # Handle connection or request errors
+        raise ValueError(f"Error during GET request: {str(e)}")
 
 
 def get_users_as_dict() -> dict:
