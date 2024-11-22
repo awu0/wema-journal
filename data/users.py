@@ -201,19 +201,25 @@ def read_one(email: str) -> dict:
     return email
 
 
-# def update_user(uname, new_level):
-#     """
-#     Update the user's level in the users dictionary.
-#     Args:
-#         user_name (str): The name of the user to update.
-#         new_level (int): The new level to assign to the user.
-#     Returns:
-#         dict: The entire updated users dictionary.
-#     """
-#     users = get_users()
-#     if uname in users:
-#         users[uname][LEVEL] = new_level
-#     return users
+def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:
+    users = get_users()
+    user_to_update = next((user for user in users if user.email == email), None)
+    if not user_to_update:
+        raise ValueError(f"User with email {email} not found.")
+    if not any([name, role, affiliation]):
+        raise ValueError("No updates provided. Please specify at least one field to update.")
+
+    if name:
+        user_to_update.name = name
+    if role:
+        if role not in user_to_update.roles:
+            user_to_update.roles.append(role)
+    if affiliation:
+        user_to_update.affiliation = affiliation
+
+    if not check_valid_user(user_to_update):
+        raise ValueError("Updated user data is invalid.")
+    return get_users_as_dict()
 
 
 def main():
