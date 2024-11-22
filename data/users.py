@@ -8,6 +8,9 @@ from typing import Optional
 
 from data.roles import is_valid_role
 import data.db_connect as dbc
+import requests
+from http import HTTPStatus
+
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -84,14 +87,51 @@ def get_user_as_dict(email: str) -> dict:
     return get_users_as_dict().get(email)
 
 
-def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
-    users = get_users()
-    new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
+def create_user(
+    name: str,
+    email: str,
+    role: str,
+    affiliation: str
+) -> dict:
+    """
+    Creates a new user by making a POST request to the users endpoint.
 
-    if check_valid_user(new_user):
-        users.append(new_user)
+    Args:
+        name (str): Name of the user
+        email (str): Email address of the user
+        role (str): Role of the user
+        affiliation (str): Affiliation of the user
 
-    return get_users_as_dict()
+    Returns:
+        dict: Response from the server containing the created user data
+
+    Raises:
+        requests.exceptions.RequestException: If the request fails
+        ValueError: If the server returns an error response
+    """
+    url = "http://localhost:8000/users"
+
+    # Prepare the request payload
+    payload = {
+        "name": name,
+        "email": email,
+        "role": role,
+        "affiliation": affiliation,
+    }
+
+    # Make the POST request
+    response = requests.post(
+        url,
+        json=payload,
+        headers={"Content-Type": "application/json"},
+    )
+
+    # Check if request was successful
+    if response.status_code == HTTPStatus.CREATED:
+        return response.json()
+    else:
+        error_message = response.json().get('message', 'Unknown error occurred')
+        raise ValueError(f"Failed to create user: {error_message}")
 
 
 def delete_user(email: str) -> Optional[User]:
@@ -155,7 +195,7 @@ def read_one(email: str) -> dict:
     # if role:
     #     roles.append(role)
     user = {NAME: name, AFFILIATION: affiliation,
-        EMAIL: email, ROLES: roles}
+            EMAIL: email, ROLES: roles}
     print(user)
     dbc.create(USER_COLLECT, user)
     return email
