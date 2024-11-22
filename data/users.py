@@ -8,8 +8,6 @@ from typing import Optional
 
 from data.roles import is_valid_role
 import data.db_connect as dbc
-import requests
-from http import HTTPStatus
 
 
 LEVEL = "level"
