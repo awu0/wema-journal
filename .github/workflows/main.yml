@@ -14,9 +14,9 @@ on:
 
 env:
   PYTHONPATH: /home/runner/work/wema-journal/wema-journal/
-  CLOUD_MONGO: 0
+  CLOUD_MONGO: 1
   DB_USERNAME: admin
-  DB_PASSWORD: YD$ZwVLhi@Q*h832xoVxs
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   DB_CLUSTER: cluster0.mk19c.mongodb.net
   DB_OPTIONS: '?retryWrites=true&w=majority&appName=Cluster0'
   LOCAL_DB_PORT: 27017
