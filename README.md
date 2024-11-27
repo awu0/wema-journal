@@ -16,10 +16,18 @@ Use a virtual environment to install the packages:
 ### Setting the enviroment variables
 Put the secret `.env` file in the root directory.
 
-#### `.env` settings
-- To use our cloud MongoDB database set `CLOUD_MONGO=1`.
-- To use your own local MongoDB database set `CLOUD_MONGO=0`.
-  - You might have to change `LOCAL_DB_PORT` if your settings are different. The default is `27017`.
+#### `.env` settings for MongoDB on the cloud
+To use our cloud MongoDB database set `CLOUD_MONGO=1`.
+ 
+#### `.env` settings for MongoDB locally
+To use your own local MongoDB database set `CLOUD_MONGO=0`. 
+
+You might have to change `LOCAL_DB_PORT` if your settings are different. The default is `27017`.
+
+On MacOS, to start the service run:
+`brew services start mongodb-community`.
+
+To stop the service run: `brew services stop mongodb-community`
 
 ### Running the development server
 To run the development server, run in terminal:
