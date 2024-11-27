@@ -95,6 +95,14 @@ class JournalName(Resource):
         }
 
 
+USER_CREATE_FLDS = api.model('AddNewUserEntry', {
+    users.NAME: fields.String,
+    users.EMAIL: fields.String,
+    users.AFFILIATION: fields.String,
+    users.ROLE: fields.String,
+})
+
+
 @api.route(USERS_EP)
 class Users(Resource):
     """
@@ -108,6 +116,7 @@ class Users(Resource):
         """
         return users.get_users_as_dict()
 
+    @api.expect(USER_CREATE_FLDS)
     @api.response(HTTPStatus.CREATED, "User created successfully")
     @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
     def post(self):
@@ -156,11 +165,3 @@ class User(Resource):
             return {"Deleted": ret.to_dict()}
         else:
             return wz.NotFound(f"No such person: {_email}")
-
-
-USER_CREATE_FLDS = api.model('AddNewUserEntry', {
-    users.NAME: fields.String,
-    users.EMAIL: fields.String,
-    users.AFFILIATION: fields.String,
-    users.ROLES: fields.String,
-})

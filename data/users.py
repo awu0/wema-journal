@@ -17,7 +17,7 @@ USER_COLLECT = 'user'
 EMAIL = 'email'
 NAME = 'name'
 AFFILIATION = 'affiliation'
-ROLES = 'roles'
+ROLE = 'role'
 
 
 class User:
@@ -156,7 +156,7 @@ def read_one(email: str) -> dict:
     # if role:
     #     roles.append(role)
     user = {NAME: name, AFFILIATION: affiliation,
-            EMAIL: email, ROLES: roles}
+            EMAIL: email, ROLE: roles}
     print(user)
     dbc.create(USER_COLLECT, user)
     return email
