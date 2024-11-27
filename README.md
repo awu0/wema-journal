@@ -16,6 +16,11 @@ Use a virtual environment to install the packages:
 ### Setting the enviroment variables
 Put the secret `.env` file in the root directory.
 
+#### `.env` settings
+- To use our cloud MongoDB database set `CLOUD_MONGO=1`.
+- To use your own local MongoDB database set `CLOUD_MONGO=0`.
+  - You might have to change `LOCAL_DB_PORT` if your settings are different. The default is `27017`.
+
 ### Running the development server
 To run the development server, run in terminal:
 ```./local.sh```
