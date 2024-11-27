@@ -91,6 +91,8 @@ def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
 
     if check_valid_user(new_user):
         users.append(new_user)
+        # save user to database
+        dbc.create(USER_COLLECT, new_user.to_dict())
 
     return get_users_as_dict()
 
