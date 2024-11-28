@@ -1,6 +1,17 @@
 import pytest
 from unittest.mock import patch
 import data.users as users
+from data.users import get_user
+
+
+@pytest.fixture
+def sample_user():
+    return  {
+        "name": "John",
+        "email": "johson@nyu.edu",
+        "role": "editor",
+        "affiliation": "NYU Alumni"
+    }
 
 
 def test_get_users():
@@ -69,15 +80,16 @@ def test_get_mh_fields():
 def test_update_users():
     email = "johson@nyu.edu"
     new_name = "John"
-    new_role = "admin"
+    new_role = "author"
     new_affiliation = "NYU Alumni"
     
-    updated_users = users.update_user(email=email, name=new_name, role=new_role, affiliation=new_affiliation)
+    returned_user = users.update_user(email=email, name=new_name, role=new_role, affiliation=new_affiliation)
+    updated_user = get_user(email).to_dict()
 
-    assert email in updated_users, "User email should exist in the updated dictionary."
-    assert updated_users[email]["name"] == new_name, "User name should be updated."
-    assert new_role in updated_users[email]["roles"], "New role should be added to user roles."
-    assert updated_users[email]["affiliation"] == new_affiliation, "User affiliation should be updated."
+    assert updated_user == returned_user, "Updated user in the database should equal returned user."
+    assert updated_user["name"] == new_name, "User name should be updated."
+    assert new_role in updated_user["roles"], "New role should be added to user roles."
+    assert updated_user["affiliation"] == new_affiliation, "User affiliation should be updated."
 
     # Test case 2: Try to update a non-existing user
     non_existing_email = "nonexistent@nyu.edu"

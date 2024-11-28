@@ -5,10 +5,8 @@ This module interfaces to our user data.
 import re
 from typing import Optional
 
-
-from data.roles import is_valid_role
 import data.db_connect as dbc
-
+from data.roles import is_valid_role, get_roles
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -97,6 +95,14 @@ def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
     return get_users_as_dict()
 
 
+def get_user(email: str) -> Optional[User]:
+    """
+    Retrieve a user by their email address.
+    """
+    users = get_users()
+    return next((user for user in users if user.email == email), None)
+
+
 def delete_user(email: str) -> Optional[User]:
     users = get_users()
     print(f'{EMAIL=}, {email=}')
@@ -165,8 +171,8 @@ def read_one(email: str) -> dict:
 
 
 def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:
-    users = get_users()
-    user_to_update = next((user for user in users if user.email == email), None)
+    user_to_update = get_user(email)
+
     if not user_to_update:
         raise ValueError(f"User with email {email} not found.")
     if not any([name, role, affiliation]):
@@ -174,15 +180,21 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
 
     if name:
         user_to_update.name = name
+
     if role:
+        valid_roles = get_roles()
+        if role not in valid_roles.values():
+            raise ValueError(f"Role '{role}' is invalid.")
         if role not in user_to_update.roles:
             user_to_update.roles.append(role)
+
     if affiliation:
         user_to_update.affiliation = affiliation
 
     if not check_valid_user(user_to_update, True):
         raise ValueError("Updated user data is invalid.")
-    return get_users_as_dict()
+
+    return user_to_update.to_dict()
 
 
 def main():

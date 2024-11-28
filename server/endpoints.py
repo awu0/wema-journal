@@ -32,6 +32,20 @@ JOURNAL_NAME = "wema"
 USERS_EP = "/users"
 USERS = users.get_users_as_dict()
 
+USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
+    users.NAME: fields.String(required=True, description="User's name"),
+    users.EMAIL: fields.String(required=True, description="User's email"),
+    users.AFFILIATION: fields.String(required=True, description="User's affiliation"),
+    users.ROLE: fields.String(required=True, description="User's role"),
+})
+
+USER_UPDATE_FIELDS = api.model('UpdateUserEntry', {
+    users.NAME: fields.String(description="User's name"),
+    users.EMAIL: fields.String(description="User's email"),
+    users.AFFILIATION: fields.String(description="User's affiliation"),
+    users.ROLE: fields.String(description="User's role"),
+})
+
 
 @api.route(HELLO_EP)
 class HelloWorld(Resource):
@@ -95,14 +109,6 @@ class JournalName(Resource):
         }
 
 
-USER_CREATE_FLDS = api.model('AddNewUserEntry', {
-    users.NAME: fields.String,
-    users.EMAIL: fields.String,
-    users.AFFILIATION: fields.String,
-    users.ROLE: fields.String,
-})
-
-
 @api.route(USERS_EP)
 class Users(Resource):
     """
@@ -116,7 +122,7 @@ class Users(Resource):
         """
         return users.get_users_as_dict()
 
-    @api.expect(USER_CREATE_FLDS)
+    @api.expect(USER_CREATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "User created successfully")
     @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
     def post(self):
@@ -165,3 +171,25 @@ class User(Resource):
             return {"Deleted": ret.to_dict()}
         else:
             return wz.NotFound(f"No such person: {_email}")
+
+    @api.expect(USER_UPDATE_FIELDS)
+    @api.response(HTTPStatus.CREATED, "User updated successfully")
+    @api.response(HTTPStatus.NOT_FOUND, "User not found")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def patch(self, _email):
+        """
+        Updates a user. Only fields given in the request are updated.
+        """
+        data = request.json
+
+        try:
+            updated_user = users.update_user(
+                email=_email,
+                name=data.get("name"),
+                role=data.get("role"),
+                affiliation=data.get("affiliation"),
+            )
+
+            return {"message": "User updated successfully", "updated_user": updated_user}, HTTPStatus.OK
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
