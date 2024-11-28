@@ -4,18 +4,24 @@ from unittest.mock import patch
 import pytest
 
 import server.endpoints as ep
+from server.endpoints import Users
 
 TEST_CLIENT = ep.app.test_client()
 
 
 @pytest.fixture
 def sample_user():
-    return  {
+    user = {
         "name": "John",
         "email": "john@example.com",
         "role": "editor",
         "affiliation": "NYU"
     }
+    
+    # make sure user is deleted if it already exists
+    TEST_CLIENT.delete(f"{ep.USERS_EP}/{user['email']}")
+    
+    return user
 
 
 @pytest.fixture
@@ -140,3 +146,59 @@ def test_getting_fake_user_fails():
 @pytest.mark.skip(reason="Not yet implemented")
 def test_getting_user():
     pass
+
+
+def test_update_user_success(sample_user):
+    # Create the user
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
+    assert resp.status_code == HTTPStatus.CREATED
+
+    # Update the user
+    updated_user_data = {
+        "name": "John Doe",  # Changing name
+        "role": "author",    # Changing role
+    }
+
+    user_email = sample_user["email"]
+    resp = TEST_CLIENT.patch(f"{ep.USERS_EP}/{user_email}", json=updated_user_data)
+    assert resp.status_code == HTTPStatus.OK
+
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert resp_json["message"] == "User updated successfully"
+    assert resp_json["updated_user"]["name"] == updated_user_data["name"]
+    assert updated_user_data["role"] in resp_json["updated_user"]["roles"]
+
+
+def test_update_user_invalid_role(sample_user):
+    # Create the user
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
+    assert resp.status_code == HTTPStatus.CREATED
+
+    # Try to update with an invalid role
+    invalid_role_data = {
+        "role": "invalidrole42304"
+    }
+
+    user_email = sample_user["email"]
+    resp = TEST_CLIENT.patch(f"{ep.USERS_EP}/{user_email}", json=invalid_role_data)
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert "Invalid role" in resp_json["message"]
+
+
+def test_update_non_existing_user():
+    fake_email = "fakeuseremail@fakeemaildomain.com"
+
+    update_data = {
+        "name": "Non Existent User",
+    }
+
+    resp = TEST_CLIENT.patch(f"{ep.USERS_EP}/{fake_email}", json=update_data)
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert "not found" in resp_json["message"]

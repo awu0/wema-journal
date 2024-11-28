@@ -79,10 +79,6 @@ def get_users_as_dict() -> dict:
     """
 
 
-def get_user_as_dict(email: str) -> dict:
-    return get_users_as_dict().get(email)
-
-
 def create_user(name: str, email: str, role: str, affiliation: str) -> dict:
     users = get_users()
     new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
@@ -184,7 +180,7 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
     if role:
         valid_roles = get_roles()
         if role not in valid_roles.values():
-            raise ValueError(f"Role '{role}' is invalid.")
+            raise ValueError(f"Invalid role '{role}'.")
         if role not in user_to_update.roles:
             user_to_update.roles.append(role)
 

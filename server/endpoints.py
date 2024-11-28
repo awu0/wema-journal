@@ -10,6 +10,7 @@ from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 
 import data.users as users
+from data.users import get_user
 
 app = Flask(__name__)
 CORS(app)
@@ -156,7 +157,7 @@ class User(Resource):
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def get(self, _email):
-        user = users.get_user_as_dict(_email)
+        user = get_user(_email).to_dict()
         if user:
             return user
         else:
@@ -181,6 +182,10 @@ class User(Resource):
         Updates a user. Only fields given in the request are updated.
         """
         data = request.json
+
+        user = get_user(_email)
+        if not user:
+            raise wz.NotFound(f"User with email {_email} not found.")
 
         try:
             updated_user = users.update_user(
