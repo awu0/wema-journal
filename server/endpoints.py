@@ -130,13 +130,13 @@ class Users(Resource):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
-            ret = users.create_user(
+            users.create_user(
                 name=data["name"],
                 email=data["email"],
                 role=data["role"],
                 affiliation=data["affiliation"],
             )
-            return {"message": "User added successfully!", "return": ret}, HTTPStatus.CREATED
+            return {"message": "User added successfully!", "added_user": data}, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 

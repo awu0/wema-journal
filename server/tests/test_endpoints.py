@@ -105,9 +105,9 @@ def test_adding_user(sample_user):
     assert "message" in resp_json
     assert resp_json["message"] == "User added successfully!"
 
-    assert "return" in resp_json
-    all_users = resp_json["return"]
-    assert sample_user["email"] in all_users
+    assert "added_user" in resp_json
+    returned_new_user = resp_json["added_user"]
+    assert returned_new_user == sample_user
     
 
 def test_adding_user_missing_field_is_bad_request(incomplete_user):
