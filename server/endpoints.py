@@ -157,11 +157,11 @@ class User(Resource):
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def get(self, _email):
-        user = get_user(_email).to_dict()
+        user = get_user(_email)
         if user:
-            return user
+            return user.to_dict()
         else:
-            raise wz.NotFound(f'No such user: {_email}')
+            raise wz.NotFound(f"User with email {_email} not found.")
 
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
@@ -171,7 +171,7 @@ class User(Resource):
         if ret is not None:
             return {"Deleted": ret.to_dict()}
         else:
-            return wz.NotFound(f"No such person: {_email}")
+            return wz.NotFound(f"User with email {_email} not found.")
 
     @api.expect(USER_UPDATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "User updated successfully")

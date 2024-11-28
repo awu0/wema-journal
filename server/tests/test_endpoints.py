@@ -143,9 +143,40 @@ def test_getting_fake_user_fails():
     assert resp.status_code == HTTPStatus.NOT_FOUND
 
 
-@pytest.mark.skip(reason="Not yet implemented")
-def test_getting_user():
-    pass
+def test_getting_user(sample_user):
+    # Create the user
+    resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
+    assert resp.status_code == HTTPStatus.CREATED
+    
+    # get the user
+    user_email = sample_user["email"]
+    resp = TEST_CLIENT.get(f"{ep.USERS_EP}/{user_email}")
+    assert resp.status_code == HTTPStatus.OK
+
+    resp_json = resp.get_json()
+
+    assert "name" in resp_json
+    assert resp_json["name"] == sample_user["name"]
+    
+    assert "email" in resp_json
+    assert resp_json["email"] == sample_user["email"]
+    
+    assert "roles" in resp_json
+    assert sample_user["role"] in resp_json["roles"] 
+    
+    assert "affiliation" in resp_json
+    assert resp_json["affiliation"] == sample_user["affiliation"]
+
+
+def test_get_user_not_found(sample_user):
+    fake_email = "fakeuseremail@fakeemaildomain.com"
+
+    resp = TEST_CLIENT.get(f"{ep.USERS_EP}/{fake_email}")
+    assert resp.status_code == HTTPStatus.NOT_FOUND
+
+    resp_json = resp.get_json()
+    assert "message" in resp_json
+    assert "not found" in resp_json["message"]
 
 
 def test_update_user_success(sample_user):
