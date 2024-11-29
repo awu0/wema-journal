@@ -83,14 +83,23 @@ def get_users() -> list[User]:
 
 def get_users_as_dict() -> dict:
     """
-    Get users as dict for JSON parsing
+    Retrieve all users from the database and return them as a dictionary
+    keyed by user email for JSON parsing.
     """
-    return {user.email: user.to_dict() for user in USERS}
-    """
-    user = dbc.read_dict(USER_COLLECT, EMAIL)
-    print(f'{user=}')
-    return user
-    """
+    try:
+        db_users = dbc.read(USER_COLLECT)  # Fetch all user docs from the db.
+        return {
+            user["email"]: {
+                "name": user.get("name", ""),
+                "email": user["email"],
+                "roles": user.get("roles", []),
+                "affiliation": user.get("affiliation", ""),
+            }
+            for user in db_users
+        }
+    except Exception as e:
+        print(f"Error retrieving users as dict: {e}")
+        return {}
 
 
 def create_user(name: str, email: str, affiliation: str, role: str = None) -> dict:
