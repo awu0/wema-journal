@@ -74,9 +74,9 @@ def test_read(mock_read):
 
 
 @patch('data.users.get_users', autospec=True, 
-       return_value=[User(email='testemail@test.com', name='Joe Schmoe', roles=['author'], affiliation='NYU')])
+       return_value=[User(email='anotherperson@nyu.edu', name='Another Person', roles=[], affiliation='NYU')])
 def test_get_user(mock_get_user):
-    test_email = 'testemail@test.com'
+    test_email = 'anotherperson@nyu.edu'
     resp = TEST_CLIENT.get(f"{ep.USERS_EP}?email={test_email}")
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.get_json()
