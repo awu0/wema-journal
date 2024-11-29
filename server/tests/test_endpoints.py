@@ -81,8 +81,12 @@ def test_get_user(mock_get_user):
     assert resp.status_code == HTTPStatus.OK
     resp_json = resp.get_json()
     assert isinstance(resp_json, dict)
-    assert 'email' in resp_json
-    assert 'name' in resp_json
+    assert test_email in resp_json
+    user_data = resp_json[test_email]
+    assert 'email' in user_data
+    assert 'name' in user_data
+    assert 'roles' in user_data
+    assert 'affiliation' in user_data
 
     
 def test_journal_name():
