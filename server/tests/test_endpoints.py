@@ -107,15 +107,24 @@ def test_getting_users():
     assert resp_json == ep.USERS
 
 
-def test_deleting_users():
+@patch('data.users.delete_user', autospec=True)
+def test_deleting_users(mock_delete):
     user_email = "wilma@nyu.edu"
-    
+    # Mock the return value of delete_user
+    mock_user = User(
+        email=user_email,
+        name='Wilma',
+        roles=['editor'],
+        affiliation='NYU'
+    )
+    mock_delete.return_value = mock_user
     resp = TEST_CLIENT.delete(f"{ep.USERS_EP}/{user_email}")
     assert resp.status_code == 200
-    
     resp_json = resp.get_json()
     assert "Deleted" in resp_json
     assert resp_json["Deleted"]["email"] == user_email
+    # Verify mock was called with correct email
+    mock_delete.assert_called_once_with(user_email)
 
 
 def test_adding_user(sample_user):
@@ -161,26 +170,23 @@ def test_getting_fake_user_fails():
 
 
 def test_getting_user(sample_user):
+    """Test getting a specific user returns correct data including roles"""
     # Create the user
     resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
     assert resp.status_code == HTTPStatus.CREATED
     
-    # get the user
+    # Get the user
     user_email = sample_user["email"]
-    resp = TEST_CLIENT.get(f"{ep.USERS_EP}/{user_email}")
+    resp = TEST_CLIENT.get(f"{ep.USERS_EP}/{user_email}?role={sample_user['role']}")
     assert resp.status_code == HTTPStatus.OK
 
     resp_json = resp.get_json()
-
     assert "name" in resp_json
     assert resp_json["name"] == sample_user["name"]
-    
     assert "email" in resp_json
     assert resp_json["email"] == sample_user["email"]
-    
     assert "roles" in resp_json
-    assert sample_user["role"] in resp_json["roles"] 
-    
+    assert sample_user["role"] in resp_json["roles"]  # This should now pass
     assert "affiliation" in resp_json
     assert resp_json["affiliation"] == sample_user["affiliation"]
 

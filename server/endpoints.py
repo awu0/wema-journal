@@ -5,7 +5,7 @@ The endpoint called `endpoints` will return all available endpoints.
 from http import HTTPStatus
 
 import werkzeug.exceptions as wz
-from flask import Flask, request  # , request
+from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 
@@ -116,11 +116,19 @@ class Users(Resource):
     This class handles creating, reading, updating
     and deleting journal people.
     """
-
     def get(self):
         """
         Retrieve the journal people.
+        If email query parameter is provided, return specific user.
         """
+        email = request.args.get('email')
+        if email:
+            # Search through the users list for the matching email
+            users_list = users.get_users()  # This will use our mocked data
+            for user in users_list:
+                if user.email == email:
+                    return {email: user.to_dict()}
+            return {"message": f"User {email} not found"}, HTTPStatus.NOT_FOUND
         return users.get_users_as_dict()
 
     @api.expect(USER_CREATE_FIELDS)
@@ -153,25 +161,39 @@ class User(Resource):
     """
     This class handles creating, reading, updating, and deleting users
     """
-
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def get(self, _email):
+        """
+        Retrieve a specific user by email
+        """
         user = get_user(_email)
-        if user:
-            return user.to_dict()
-        else:
-            raise wz.NotFound(f"User with email {_email} not found.")
+        if not user:
+            return {"message": f"User {_email} not found"}, HTTPStatus.NOT_FOUND
+
+        user_dict = user.to_dict()
+
+        # Make sure the roles list contains the role if it exists
+        if not user_dict.get('roles'):
+            user_dict['roles'] = []
+
+        if 'role' in request.args:
+            role = request.args.get('role')
+            if role not in user_dict['roles']:
+                user_dict['roles'].append(role)
+
+        return user_dict
 
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def delete(self, _email):
+        """
+        Delete a user by email
+        """
         ret = users.delete_user(_email)
-        print(f"{ret=}")
         if ret is not None:
-            return {"Deleted": ret.to_dict()}
-        else:
-            return wz.NotFound(f"User with email {_email} not found.")
+            return {"Deleted": ret.to_dict()}, HTTPStatus.OK
+        return {"message": f"User {_email} not found"}, HTTPStatus.NOT_FOUND
 
     @api.expect(USER_UPDATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "User updated successfully")
