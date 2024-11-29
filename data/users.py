@@ -23,7 +23,7 @@ class User:
     Email is used as the unique identifier
     """
 
-    def __init__(self, name: str, email: str, roles: list = None, affiliation: str):
+    def __init__(self, name: str, email: str, affiliation: str, roles: list = None):
         self.name = name
         self.email = email
         if (roles):
@@ -82,7 +82,7 @@ def get_users_as_dict() -> dict:
     """
 
 
-def create_user(name: str, email: str, role: str = None, affiliation: str) -> dict:
+def create_user(name: str, email: str, affiliation: str, role: str = None) -> dict:
     users = get_users()
     if (role):
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
