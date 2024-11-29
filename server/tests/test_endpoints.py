@@ -70,8 +70,20 @@ def test_read(mock_read):
         assert isinstance(_id, str)
         assert len(_id) > 0
         assert 'name' in user
-    
 
+
+@patch('data.users.get_users', autospec=True, 
+       return_value=[User(email='testemail@test.com', name='Joe Schmoe')])
+def test_get_user(mock_get_user):
+    test_email = 'testemail@test.com'
+    resp = TEST_CLIENT.get(f"{ep.USER_EP}?email={test_email}")
+    assert resp.status_code == HTTPStatus.OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert 'email' in resp_json
+    assert 'name' in resp_json
+
+    
 def test_journal_name():
     resp = TEST_CLIENT.get(ep.JOURNAL_NAME_EP)
     resp_json = resp.get_json()
