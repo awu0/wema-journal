@@ -5,6 +5,7 @@ import pytest
 
 import server.endpoints as ep
 from server.endpoints import Users
+from data.users import User
 
 TEST_CLIENT = ep.app.test_client()
 
