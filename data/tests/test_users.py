@@ -8,42 +8,49 @@ from data.users import get_user
 def sample_user():
     return  {
         "name": "John",
-        "email": "johson@nyu.edu",
+        "email": "john@nyu.edu",
         "role": "editor",
         "affiliation": "NYU Alumni"
     }
 
 
 def test_get_users():
+    # Create a test user first
+    users.create_user(
+        name="Test User",
+        email="test@nyu.edu",
+        role="editor",
+        affiliation="NYU"
+    )
+    
     all_users = users.get_users()
     assert isinstance(all_users, list)
-    assert len(all_users) > 0  # at least one user!
+    assert len(all_users) > 0  # now this will pass
     for user in all_users:
         assert isinstance(user.name, str)
         assert isinstance(user.email, str)
         assert isinstance(user.affiliation, str)
         assert isinstance(user.roles, list)
-
         assert len(user.name) >= users.MIN_USER_NAME_LEN
 
 
 def test_add_new_user():
     result = users.create_user(
-        name="Johnson", email="johson@nyu.edu", role="Author", affiliation="NYU"
+        name="Bill", email="bill@nyu.edu", role="Author", affiliation="NYU"
     )
-    assert "johson@nyu.edu" in result, "The new user 'johson@nyu.edu' should be added."
+    assert "bill@nyu.edu" in result, "The new user 'bill@nyu.edu' should be added."
 
 
 def test_valid_email_adds_new_user():
     new_user_data = {
-        "name": "Fake User 0124",
-        "email": "fake_user_0124@nyu.edu",
+        "name": "Faker",
+        "email": "faker@nyu.edu",
         "role": "editor",
         "affiliation": "NYU"
     }
 
     users.create_user(**new_user_data)
-    assert new_user_data["email"] in users.get_users_as_dict(), "The new user 'johson@nyu.edu' should be added."
+    assert new_user_data["email"] in users.get_users_as_dict(), "The new user 'faker@nyu.edu' should be added."
 
 
 def test_invalid_email_raises_error():
@@ -78,8 +85,16 @@ def test_get_mh_fields():
 
 
 def test_update_users():
-    email = "johson@nyu.edu"
-    new_name = "John"
+    # First create a user to update
+    email = "faker@nyu.edu"
+    users.create_user(
+        name="Faker",
+        email=email,
+        role="editor",
+        affiliation="NYU"
+    )
+    
+    new_name = "Lee"
     new_role = "author"
     new_affiliation = "NYU Alumni"
     
@@ -121,6 +136,13 @@ def invalid_user_data():
         "role": "editor",
         "affiliation": "NYU"
     }
+
+
+@pytest.fixture(autouse=True)
+def clean_test_database():
+    """Fixture to clean up the test database before each test"""
+    yield
+    users.clear_users()
 
 
 # def test_get_user_by_email():
