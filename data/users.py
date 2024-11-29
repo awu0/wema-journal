@@ -200,8 +200,10 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
     if not any([name, role, affiliation]):
         raise ValueError("No updates provided. Please specify at least one field to update.")
 
+    updates = {}
     if name:
         user_to_update.name = name
+        updates[NAME] = name
 
     if role:
         valid_roles = get_roles()
@@ -209,14 +211,27 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
             raise ValueError(f"Invalid role '{role}'.")
         if role not in user_to_update.roles:
             user_to_update.roles.append(role)
+        updates[ROLE] = user_to_update.roles
 
     if affiliation:
         user_to_update.affiliation = affiliation
+        updates[AFFILIATION] = affiliation
 
     if not check_valid_user(user_to_update, True):
         raise ValueError("Updated user data is invalid.")
 
+    # Update only the fields that changed
+    dbc.update_doc(USER_COLLECT, {EMAIL: email}, updates)
     return user_to_update.to_dict()
+
+
+# For testing
+def clear_users():
+    """
+    Clear all users from the database.
+    Used primarily for testing purposes.
+    """
+    return dbc.delete_many(USER_COLLECT, {})  # delete all documents
 
 
 def main():
