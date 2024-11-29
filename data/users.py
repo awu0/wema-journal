@@ -126,14 +126,11 @@ def get_user(email: str) -> Optional[User]:
 
 
 def delete_user(email: str) -> Optional[User]:
-    users = get_users()
-    print(f'{EMAIL=}, {email=}')
-    for user in users:
-        if user.email == email:
-            users.remove(user)
-            return user
-    # return None
-    return dbc.delete(USER_COLLECT, {EMAIL: email})
+    user = get_user(email)  # Get user before deleting
+    if user:
+        dbc.delete(USER_COLLECT, {EMAIL: email})
+        return user
+    return None
 
 
 def check_valid_user(user: User, updating: bool = False) -> bool:
@@ -222,7 +219,8 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
 
     # Update only the fields that changed
     dbc.update_doc(USER_COLLECT, {EMAIL: email}, updates)
-    return user_to_update.to_dict()
+    updated_user = get_user(email)
+    return updated_user.to_dict()
 
 
 # For testing
