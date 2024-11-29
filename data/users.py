@@ -67,7 +67,18 @@ print(f'{client=}')
 
 
 def get_users() -> list[User]:
-    return USERS
+    """
+    Retrieve all users from the database and return them as User objects.
+    """
+    db_users = dbc.read(USER_COLLECT)  # Fetch all user docs from the DB.
+    return [
+        User(
+            name=user.get(NAME, ""),
+            email=user[EMAIL],
+            affiliation=user.get(AFFILIATION, ""),
+            roles=user.get(ROLE, [])
+        ) for user in db_users
+    ]
 
 
 def get_users_as_dict() -> dict:
