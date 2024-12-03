@@ -19,3 +19,16 @@ def get_fields() -> dict:
 
 def get_field_names() -> list:
     return FIELDS.keys()
+
+
+def get_disp_name(fld_nm: str) -> dict:
+    fld = FIELDS.get(fld_nm, '')
+    return fld[DISPLAY_NAME] 
+
+
+def main():
+    print(f'{get_fields()=}')
+
+
+if __name__ == '__main__':
+    main()
