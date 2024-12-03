@@ -30,26 +30,31 @@ def connect_db():
         print("Setting client because it is None.")
 
         if os.environ.get("CLOUD_MONGO", LOCAL) == CLOUD:
-            username = os.getenv("DB_USERNAME")
-            password = os.getenv("DB_PASSWORD")
-            cluster = os.getenv("DB_CLUSTER")
-            options = os.getenv("DB_OPTIONS")
+            username = os.getenv("DB_USERNAME", "")
+            password = os.getenv("DB_PASSWORD", "")
+            cluster = os.getenv("DB_CLUSTER", "")
+            options = os.getenv("DB_OPTIONS", "")
 
-            if not all([username, password, cluster]):
-                raise ValueError("Missing database credentials in environment variables.")
+            if not username or not password or not cluster:
+                raise ValueError(
+                    "Missing required database credentials: "
+                    "'DB_USERNAME', 'DB_PASSWORD', or 'DB_CLUSTER'."
+                )
 
-            print("Connecting to Mongo in the cloud...")
-
-            # escape username and password
+            # We needed to escape username and password since it didn't work for me without it
             escaped_username = quote_plus(username)
             escaped_password = quote_plus(password)
-            mongo_uri = f"mongodb+srv://{escaped_username}:{escaped_password}@{cluster}/{options}"
+
+            # Build the MongoDB URI
+            mongo_uri = f"mongodb+srv://{escaped_username}:{escaped_password}@{cluster}"
+            if options:
+                mongo_uri += f"/{options}"
+
+            print(f"Connecting to MongoDB with URI: {mongo_uri}")
             client = pm.MongoClient(mongo_uri)
         else:
-            print("Connecting to Mongo locally...")
-
-            # connect to local MongoDB instance on LOCAL_DB_PORT (usually the default is 27017)
-            local_port = os.environ.get("LOCAL_DB_PORT")
+            print("Connecting to MongoDB locally...")
+            local_port = os.environ.get("LOCAL_DB_PORT", "27017")
             client = pm.MongoClient(f"mongodb://localhost:{local_port}")
 
         try:
