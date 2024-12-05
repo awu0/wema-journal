@@ -37,7 +37,7 @@ USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
     users.NAME: fields.String(required=True, description="User's name"),
     users.EMAIL: fields.String(required=True, description="User's email"),
     users.AFFILIATION: fields.String(required=True, description="User's affiliation"),
-    users.ROLE: fields.String(required=True, description="User's role"),
+    users.ROLE: fields.String(description="User's role"),
 })
 
 USER_UPDATE_FIELDS = api.model('UpdateUserEntry', {
@@ -139,7 +139,7 @@ class Users(Resource):
         Adds a new user with given JSON data
         """
         data = request.json
-        required_fields = ["name", "email", "role", "affiliation"]
+        required_fields = ["name", "email", "affiliation"]
 
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
@@ -148,7 +148,7 @@ class Users(Resource):
             users.create_user(
                 name=data["name"],
                 email=data["email"],
-                role=data["role"],
+                role=data["role"] if "role" in data else None,
                 affiliation=data["affiliation"],
             )
             return {"message": "User added successfully!", "added_user": data}, HTTPStatus.CREATED
