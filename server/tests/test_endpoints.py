@@ -4,7 +4,6 @@ from unittest.mock import patch
 import pytest
 
 import server.endpoints as ep
-from server.endpoints import Users
 from data.users import User
 
 TEST_CLIENT = ep.app.test_client()
@@ -22,6 +21,20 @@ def sample_user():
     # make sure user is deleted if it already exists
     TEST_CLIENT.delete(f"{ep.USERS_EP}/{user['email']}")
     
+    return user
+
+
+@pytest.fixture
+def sample_user_no_role():
+    user = {
+        "name": "Jack o' Lan",
+        "email": "jackolan12@example.com",
+        "affiliation": "NYU"
+    }
+
+    # make sure user is deleted if it already exists
+    TEST_CLIENT.delete(f"{ep.USERS_EP}/{user['email']}")
+
     return user
 
 
@@ -127,19 +140,28 @@ def test_deleting_users(mock_delete):
     mock_delete.assert_called_once_with(user_email)
 
 
-def test_adding_user(sample_user):
+def test_adding_user(sample_user, sample_user_no_role):
     resp = TEST_CLIENT.post(ep.USERS_EP, json=sample_user)
+    resp2 = TEST_CLIENT.post(ep.USERS_EP, json=sample_user_no_role)
 
     assert resp.status_code == HTTPStatus.CREATED
+    assert resp2.status_code == HTTPStatus.CREATED
 
     resp_json = resp.get_json()
+    resp2_json = resp2.get_json()
 
     assert "message" in resp_json
     assert resp_json["message"] == "User added successfully!"
+    assert "message" in resp2_json
+    assert resp2_json["message"] == "User added successfully!"
 
     assert "added_user" in resp_json
     returned_new_user = resp_json["added_user"]
     assert returned_new_user == sample_user
+    
+    assert "added_user" in resp2_json
+    returned_new_user2 = resp2_json["added_user"]
+    assert returned_new_user2 == sample_user_no_role
     
 
 def test_adding_user_missing_field_is_bad_request(incomplete_user):
