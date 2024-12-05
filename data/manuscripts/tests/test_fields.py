@@ -7,5 +7,5 @@ def test_get_fields():
 
 def test_get_field_names():
     fld_names = mflds.get_field_names()
-    assert isinstance(fld_names, list)
+    assert isinstance(fld_names, dict_keys)
     assert all(isinstance(name, str) for name in fld_names) 
