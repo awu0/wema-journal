@@ -104,7 +104,7 @@ def get_users_as_dict() -> dict:
 
 def create_user(name: str, email: str, affiliation: str, role: str = None) -> dict:
     users = get_users()
-    if (role):
+    if role:
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
     else:
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[])
@@ -139,7 +139,7 @@ def check_valid_user(user: User, updating: bool = False) -> bool:
     if user in users and not updating:
         raise ValueError(f"Duplicate email: {user}")
 
-    if not is_valid_role(user.roles[0]):
+    if user.roles and not is_valid_role(user.roles[0]):
         raise ValueError(f"Invalid role: {user}")
 
     if not is_valid_email(user.email):
