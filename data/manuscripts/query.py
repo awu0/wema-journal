@@ -30,6 +30,7 @@ DONE = 'DON'
 REJECT = 'REJ'
 # used for testing:
 TEST_ACTION = ACCEPT
+AUTHOR_REV = 'AUR'
 
 # a list of valid actions
 VALID_ACTIONS = [
@@ -65,3 +66,33 @@ def handle_action(curr_state, action) -> str:
         elif action == REJECT:
             new_state = REJECTED
     return new_state
+
+
+FUNC = 'f'
+STATE_TABLE = {
+    SUBMITTED: {
+        ASSIGN_REF: {
+            FUNC: lambda m: IN_REF_REV,
+        },
+        REJECT: {
+            FUNC: lambda m: REJECTED,
+        },
+    },
+    IN_REF_REV: {
+    },
+    COPY_EDIT: {
+        DONE: {
+            FUNC: lambda m: AUTHOR_REV,
+        },
+    },
+    AUTHOR_REV: {
+    },
+    REJECTED: {
+    },
+}
+
+
+def get_valid_actions_by_state(state: str):
+    valid_actions = STATE_TABLE[state].keys()
+    print(f'{valid_actions=}')
+    return valid_actions
