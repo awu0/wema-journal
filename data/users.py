@@ -17,6 +17,9 @@ NAME = 'name'
 AFFILIATION = 'affiliation'
 ROLE = 'role'
 
+client = dbc.connect_db()
+print(f'{client=}')
+
 
 class User:
     """
@@ -61,9 +64,6 @@ USERS = [
         affiliation="NYU",
     ),
 ]
-
-client = dbc.connect_db()
-print(f'{client=}')
 
 
 def get_users() -> list[User]:

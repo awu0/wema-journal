@@ -15,7 +15,7 @@ client = None
 MONGO_ID = '_id'
 
 WEMA_DB = 'wemaDB' if os.getenv("TESTING") != "1" else 'testDB'
-    
+
 
 def connect_db():
     """
