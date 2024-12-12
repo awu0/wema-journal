@@ -16,6 +16,7 @@ EMAIL = 'email'
 NAME = 'name'
 AFFILIATION = 'affiliation'
 ROLE = 'role'
+ROLES = 'roles'
 
 client = dbc.connect_db()
 print(f'{client=}')
@@ -29,7 +30,7 @@ class User:
     def __init__(self, name: str, email: str, affiliation: str, roles: list = None):
         self.name = name
         self.email = email
-        if (roles):
+        if roles:
             self.roles = roles
         else:
             self.roles = []
@@ -48,22 +49,11 @@ class User:
         Convert the User object to a dictionary. For JSON operations
         """
         return {
-            "name": self.name,
-            "email": self.email,
-            "roles": self.roles,
-            "affiliation": self.affiliation,
+            NAME: self.name,
+            EMAIL: self.email,
+            ROLES: self.roles,
+            AFFILIATION: self.affiliation,
         }
-
-
-USERS = [
-    User(name="William Ma", email="wilma@nyu.edu", roles=[], affiliation="NYU"),
-    User(
-        name="Another Person",
-        email="anotherperson@nyu.edu",
-        roles=[],
-        affiliation="NYU",
-    ),
-]
 
 
 def get_users() -> list[User]:
@@ -89,11 +79,11 @@ def get_users_as_dict() -> dict:
     try:
         db_users = dbc.read(USER_COLLECT)  # Fetch all user docs from the db.
         return {
-            user["email"]: {
-                "name": user.get("name", ""),
-                "email": user["email"],
-                "roles": user.get("roles", []),
-                "affiliation": user.get("affiliation", ""),
+            user[EMAIL]: {
+                NAME: user.get(NAME, ""),
+                EMAIL: user.get(EMAIL),
+                ROLES: user.get(ROLES, []),
+                AFFILIATION: user.get(AFFILIATION, ""),
             }
             for user in db_users
         }
