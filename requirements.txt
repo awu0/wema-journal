@@ -1,5 +1,9 @@
 flask==2.3.3
 flask-restx==1.1.0
 flask_cors
-pymongo
-werkzeug==3.0.4
+pymongo~=4.10.1
+werkzeug==3.0.6
+
+pytest~=8.3.3
+python-dotenv~=1.0.1
+Flask-Cors~=5.0.0
