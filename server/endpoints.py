@@ -10,7 +10,7 @@ from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 
 import data.users as users
-from data.users import get_user
+from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
 app = Flask(__name__)
 CORS(app)
@@ -121,7 +121,7 @@ class Users(Resource):
         Retrieve the journal people.
         If email query parameter is provided, return specific user.
         """
-        email = request.args.get('email')
+        email = request.args.get(EMAIL)
         if email:
             # Search through the users list for the matching email
             users_list = users.get_users()  # This will use our mocked data
@@ -139,17 +139,17 @@ class Users(Resource):
         Adds a new user with given JSON data
         """
         data = request.json
-        required_fields = ["name", "email", "affiliation"]
+        required_fields = [NAME, EMAIL, AFFILIATION]
 
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
             users.create_user(
-                name=data["name"],
-                email=data["email"],
-                role=data["role"] if "role" in data else None,
-                affiliation=data["affiliation"],
+                name=data[NAME],
+                email=data[EMAIL],
+                role=data[ROLE] if ROLE in data else None,
+                affiliation=data[AFFILIATION],
             )
             return {"message": "User added successfully!", "added_user": data}, HTTPStatus.CREATED
         except ValueError as e:
@@ -174,13 +174,13 @@ class User(Resource):
         user_dict = user.to_dict()
 
         # Make sure the roles list contains the role if it exists
-        if not user_dict.get('roles'):
-            user_dict['roles'] = []
+        if not user_dict.get(ROLES):
+            user_dict[ROLES] = []
 
-        if 'role' in request.args:
-            role = request.args.get('role')
-            if role not in user_dict['roles']:
-                user_dict['roles'].append(role)
+        if ROLE in request.args:
+            role = request.args.get(ROLE)
+            if role not in user_dict[ROLES]:
+                user_dict[ROLES].append(role)
 
         return user_dict
 
@@ -212,9 +212,9 @@ class User(Resource):
         try:
             updated_user = users.update_user(
                 email=_email,
-                name=data.get("name"),
-                role=data.get("role"),
-                affiliation=data.get("affiliation"),
+                name=data.get(NAME),
+                role=data.get(ROLE),
+                affiliation=data.get(AFFILIATION),
             )
 
             return {"message": "User updated successfully", "updated_user": updated_user}, HTTPStatus.OK
