@@ -5,17 +5,17 @@ import pymongo as pm
 from dotenv import load_dotenv
 from pymongo.errors import ConnectionFailure
 
+load_dotenv()
+
 LOCAL = "0"
 CLOUD = "1"
-
-WEMA_DB = 'wemaDB'
 
 client = None
 
 MONGO_ID = '_id'
 
-load_dotenv()
-
+WEMA_DB = 'wemaDB' if os.getenv("TESTING") != "1" else 'testDB'
+    
 
 def connect_db():
     """

@@ -125,6 +125,40 @@ def get_user(email: str) -> Optional[User]:
     return next((user for user in users if user.email == email), None)
 
 
+def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:
+    user_to_update = get_user(email)
+
+    if not user_to_update:
+        raise ValueError(f"User with email {email} not found.")
+    if not any([name, role, affiliation]):
+        raise ValueError("No updates provided. Please specify at least one field to update.")
+
+    updates = {}
+    if name:
+        user_to_update.name = name
+        updates[NAME] = name
+
+    if role:
+        valid_roles = get_roles()
+        if role not in valid_roles.values():
+            raise ValueError(f"Invalid role '{role}'.")
+        if role not in user_to_update.roles:
+            user_to_update.roles.append(role)
+        updates[ROLE] = user_to_update.roles
+
+    if affiliation:
+        user_to_update.affiliation = affiliation
+        updates[AFFILIATION] = affiliation
+
+    if not check_valid_user(user_to_update, True):
+        raise ValueError("Updated user data is invalid.")
+
+    # Update only the fields that changed
+    dbc.update_doc(USER_COLLECT, {EMAIL: email}, updates)
+    updated_user = get_user(email)
+    return updated_user.to_dict()
+
+
 def delete_user(email: str) -> Optional[User]:
     user = get_user(email)  # Get user before deleting
     if user:
@@ -161,66 +195,6 @@ MH_FIELDS = [name, affiliation]
 
 def get_mh_fields(journal_code=None) -> list:
     return MH_FIELDS
-
-
-def read() -> dict:
-    """
-    Our contract:
-        - No arguments.
-        - Returns a dictionary of users keyed on user email.
-        - Each user email must be the key for another dictionary.
-    """
-    print('read() has been called')
-    user_dict = get_users_as_dict()
-    return user_dict
-    user = dbc.read_dict(USER_COLLECT, EMAIL)
-    print(f'{user=}')
-    return user
-
-
-def read_one(email: str) -> dict:
-    roles = []
-    # if role:
-    #     roles.append(role)
-    user = {NAME: name, AFFILIATION: affiliation,
-            EMAIL: email, ROLE: roles}
-    print(user)
-    dbc.create(USER_COLLECT, user)
-    return email
-
-
-def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:
-    user_to_update = get_user(email)
-
-    if not user_to_update:
-        raise ValueError(f"User with email {email} not found.")
-    if not any([name, role, affiliation]):
-        raise ValueError("No updates provided. Please specify at least one field to update.")
-
-    updates = {}
-    if name:
-        user_to_update.name = name
-        updates[NAME] = name
-
-    if role:
-        valid_roles = get_roles()
-        if role not in valid_roles.values():
-            raise ValueError(f"Invalid role '{role}'.")
-        if role not in user_to_update.roles:
-            user_to_update.roles.append(role)
-        updates[ROLE] = user_to_update.roles
-
-    if affiliation:
-        user_to_update.affiliation = affiliation
-        updates[AFFILIATION] = affiliation
-
-    if not check_valid_user(user_to_update, True):
-        raise ValueError("Updated user data is invalid.")
-
-    # Update only the fields that changed
-    dbc.update_doc(USER_COLLECT, {EMAIL: email}, updates)
-    updated_user = get_user(email)
-    return updated_user.to_dict()
 
 
 # For testing
