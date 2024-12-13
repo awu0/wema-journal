@@ -1,18 +1,30 @@
+import data.manuscripts.fields as flds
+
 # states:
 COPY_EDIT = 'CED'
 IN_REF_REV = 'REV'
-REJECTED = 'REJ'
+AUTHOR_REV = 'AUR'
 SUBMITTED = 'SUB'
+REJECTED = 'REJ'
+WITHDRAWN = 'WIT'
 # used for testing
 TEST_STATE = SUBMITTED
 
 # a list of valid states
 VALID_STATES = [
+    AUTHOR_REV,
     COPY_EDIT,
     IN_REF_REV,
     REJECTED,
     SUBMITTED,
+    WITHDRAWN,
 ]
+
+SAMPLE_MANU = {
+    flds.TITLE: 'Short module import names in Python',
+    flds.AUTHOR: 'Matthew Ma',
+    flds.REFEREES: [],
+}
 
 
 def get_states() -> list:
@@ -26,18 +38,21 @@ def is_valid_state(state: str) -> bool:
 # actions:
 ACCEPT = 'ACC'
 ASSIGN_REF = 'ARF'
+DELETE_REF = 'DRF'
 DONE = 'DON'
 REJECT = 'REJ'
+WITHDRAW = 'WIT'
 # used for testing:
 TEST_ACTION = ACCEPT
-AUTHOR_REV = 'AUR'
 
 # a list of valid actions
 VALID_ACTIONS = [
     ACCEPT,
     ASSIGN_REF,
+    DELETE_REF,
     DONE,
     REJECT,
+    WITHDRAW,
 ]
 
 
