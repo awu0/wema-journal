@@ -56,6 +56,21 @@ VALID_ACTIONS = [
 ]
 
 
+def assign_ref(manu: dict, ref: str, extra=None) -> str:
+    print(extra)
+    manu[flds.REFEREES].append(ref)
+    return IN_REF_REV
+
+
+def delete_ref(manu: dict, ref: str) -> str:
+    if len(manu[flds.REFEREES]) > 0:
+        manu[flds.REFEREES].remove(ref)
+    if len(manu[flds.REFEREES]) > 0:
+        return IN_REF_REV
+    else:
+        return SUBMITTED
+
+
 def get_actions() -> list:
     return VALID_ACTIONS
 
