@@ -1,6 +1,8 @@
 
 TITLE = 'title'
+AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'
+REFEREES = 'referees'
 
 TEST_FLD_NM = TITLE
 TEST_FLD_DISPLAY_NM = 'Title'
