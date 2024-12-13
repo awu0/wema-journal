@@ -84,25 +84,48 @@ def handle_action(curr_state, action) -> str:
 
 
 FUNC = 'f'
+
+
+COMMON_ACTIONS = {
+    WITHDRAW: {
+        FUNC: lambda **kwargs: WITHDRAWN,
+    },
+}
+
+
 STATE_TABLE = {
     SUBMITTED: {
         ASSIGN_REF: {
-            FUNC: lambda m: IN_REF_REV,
+            FUNC: assign_ref,
         },
         REJECT: {
-            FUNC: lambda m: REJECTED,
+            FUNC: lambda **kwargs: REJECTED,
         },
+        **COMMON_ACTIONS,
     },
     IN_REF_REV: {
+        ASSIGN_REF: {
+            FUNC: assign_ref,
+        },
+        DELETE_REF: {
+            FUNC: delete_ref,
+        },
+        **COMMON_ACTIONS,
     },
     COPY_EDIT: {
         DONE: {
-            FUNC: lambda m: AUTHOR_REV,
+            FUNC: lambda **kwargs: AUTHOR_REV,
         },
+        **COMMON_ACTIONS,
     },
     AUTHOR_REV: {
+        **COMMON_ACTIONS,
     },
     REJECTED: {
+        **COMMON_ACTIONS,
+    },
+    WITHDRAWN: {
+        **COMMON_ACTIONS,
     },
 }
 
