@@ -57,8 +57,7 @@ jobs:
       - name: Deploy to PythonAnywhere
         run: |
           chmod +x rebuild.sh
-          scp rebuild.sh ${{ secrets.PA_USER }}@ssh.pythonanywhere.com:/home/${{ secrets.PA_USER }}/rebuild.sh
-          ssh ${{ secrets.PA_USER }}@ssh.pythonanywhere.com "bash /home/${{ secrets.PA_USER }}/rebuild.sh"
+          ./rebuild.sh
         env:
           PA_USER: ${{ secrets.PA_USER }}
           PA_DOMAIN: ${{ secrets.PA_DOMAIN }}
