@@ -6,7 +6,7 @@ touch rebuild
 echo "Rebuilding $PA_DOMAIN"
 
 echo "Pulling code from master"
-git pull origin master
+git pull origin main
 
 echo "Activate the virtual env $VENV for user $PA_USER"
 source /home/$PA_USER/.virtualenvs/$VENV/bin/activate
