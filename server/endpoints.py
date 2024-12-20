@@ -28,7 +28,6 @@ HELLO_EP = "/hello"
 HELLO_RESP = "hello"
 TITLE_EP = "/title"
 TITLE_RESP = "Title"
-TITLE = "The Journal of API Technology"
 EDITOR_RESP = "Editor"
 EDITOR = "ejc369@nyu.edu"
 DATE_RESP = "Date"
@@ -278,7 +277,7 @@ class Texts(Resource):
         data = request.json
         key = data.get(KEY)
         title = data.get(TITLE)
-        content = data.get(TEXT)  
+        content = data.get(TEXT)
 
         if not key or not title or not content:
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
@@ -291,7 +290,7 @@ class Texts(Resource):
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
-class SingleText(Resource): 
+class SingleText(Resource):
     """
     This class handles reading, updating, and deleting a single text.
     """
@@ -300,7 +299,7 @@ class SingleText(Resource):
         """
         Retrieve a specific text by key.
         """
-        text_entry = read(key)  
+        text_entry = read(key)
         if not text_entry:
             return {"message": f"Text with key '{key}' not found"}, HTTPStatus.NOT_FOUND
 
@@ -316,7 +315,7 @@ class SingleText(Resource):
         """
         data = request.json
         title = data.get(TITLE)
-        content = data.get(TEXT)  
+        content = data.get(TEXT)
 
         try:
             updated_text = update(key=key, title=title, text=content)
@@ -347,7 +346,7 @@ class Manuscripts(Resource):
         """
         title = request.args.get(manuscripts.TITLE)
         if title:
-            manuscript_list = manuscripts.get_manuscripts()  # Mocked data for manuscripts
+            manuscript_list = manuscripts.get_manuscripts()
             for manuscript in manuscript_list:
                 if manuscript.title == title:
                     return {title: manuscript.to_dict()}
@@ -377,3 +376,58 @@ class Manuscripts(Resource):
             return {"message": "Manuscript added successfully!", "added_manuscript": data}, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
+
+@api.route(f"{MANUSCRIPTS_EP}/<string:title>")
+class Manuscript(Resource):
+    """
+    This class handles reading, updating, and deleting a single manuscript.
+    """
+    @api.response(HTTPStatus.OK, "Success")
+    @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
+    def get(self, title):
+        """
+        Retrieve a specific manuscript by title.
+        """
+        manuscript = manuscripts.get_manuscript(title)
+        if not manuscript:
+            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
+        return manuscript, HTTPStatus.OK
+
+    @api.expect(MANUSCRIPT_UPDATE_FIELDS)
+    @api.response(HTTPStatus.OK, "Manuscript updated successfully")
+    @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def patch(self, title):
+        """
+        Update a manuscript. Only fields provided in the request are updated.
+        """
+        data = request.json
+
+        # Fetch the manuscript by title
+        manuscript = manuscripts.get_manuscript(title)
+        if not manuscript:
+            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
+
+        # Update the provided fields
+        for field in [manuscripts.TITLE, manuscripts.AUTHOR, manuscripts.CONTENT, manuscripts.PUBLICATION_DATE]:
+            if field in data:
+                manuscript[field] = data[field]
+
+        # Save the updated manuscript
+        try:
+            updated_manuscript = manuscripts.update_manuscript(title, manuscript)
+            return {"message": "Manuscript updated successfully", "manuscript": updated_manuscript}, HTTPStatus.OK
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
+    @api.response(HTTPStatus.OK, "Manuscript deleted successfully")
+    @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
+    def delete(self, title):
+        """
+        Delete a manuscript by title.
+        """
+        success = manuscripts.delete_manuscript(title)
+        if success:
+            return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
+        return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
