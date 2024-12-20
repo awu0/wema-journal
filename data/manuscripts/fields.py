@@ -3,6 +3,9 @@ TITLE = 'title'
 AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'
 REFEREES = 'referees'
+CONTENT = 'content'
+PUBLICATION_DATE = 'publication_date'
+
 
 TEST_FLD_NM = TITLE
 TEST_FLD_DISPLAY_NM = 'Title'
