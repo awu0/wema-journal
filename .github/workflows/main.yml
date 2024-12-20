@@ -62,4 +62,4 @@ jobs:
           PA_USER: ${{ secrets.PA_USER }}
           PA_DOMAIN: ${{ secrets.PA_DOMAIN }}
           VENV: ${{ secrets.PA_VENV }}
-          API_TOKEN: ${{ secrets.PA_API_TOKEN }}
+          API_TOKEN: ${{ secrets.API_TOKEN }}
