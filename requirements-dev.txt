@@ -1,6 +1,6 @@
 -r requirements.txt
 flake8
-pytest
+pytest~=8.3.3
 pytest-cov
-python-dotenv
+python-dotenv~=1.0.1
 requests

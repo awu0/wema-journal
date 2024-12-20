@@ -34,16 +34,25 @@ def read():
     return text
 
 
-def create():
-    pass
+def create(key, title, text):
+    if key in text_dict:
+        raise ValueError(f"Text with key '{key}' already exists.")
+    text_dict[key] = {TITLE: title, TEXT: text}
+    return text_dict[key]
 
 
-def delete():
-    pass
+def delete(key):
+    return text_dict.pop(key, None)
 
 
-def update():
-    pass
+def update(key, title=None, text=None):
+    if key not in text_dict:
+        raise ValueError(f"Text with key '{key}' does not exist.")
+    if title:
+        text_dict[key][TITLE] = title
+    if text:
+        text_dict[key][TEXT] = text
+    return text_dict[key]
 
 
 if __name__ == '__main__':

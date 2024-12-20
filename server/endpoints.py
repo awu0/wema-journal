@@ -12,6 +12,9 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 import data.users as users
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
+import data.text as text
+from data.text import read, create, update, delete, KEY, TITLE, TEXT
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -32,6 +35,7 @@ JOURNAL_NAME_RESP = "Journal Name"
 JOURNAL_NAME = "wema"
 USERS_EP = "/users"
 USERS = users.get_users_as_dict()
+TEXT_EP = "/text"
 
 USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
     users.NAME: fields.String(required=True, description="User's name"),
@@ -47,6 +51,16 @@ USER_UPDATE_FIELDS = api.model('UpdateUserEntry', {
     users.ROLE: fields.String(description="User's role"),
 })
 
+TEXT_CREATE_FIELDS = api.model('AddNewTextEntry', {
+    text.KEY: fields.String(required=True, description="Unique key for the text"),
+    text.TITLE: fields.String(required=True, description="Title of the text"),
+    text.TEXT: fields.String(required=True, description="Content of the text"),
+})
+
+TEXT_UPDATE_FIELDS = api.model('UpdateTextEntry', {
+    text.TITLE: fields.String(description="Title of the text"),
+    text.TEXT: fields.String(description="Content of the text"),
+})
 
 @api.route(HELLO_EP)
 class HelloWorld(Resource):
@@ -220,3 +234,82 @@ class User(Resource):
             return {"message": "User updated successfully", "updated_user": updated_user}, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
+
+@api.route(TEXT_EP)
+class Texts(Resource):
+    """
+    This class handles creating and reading multiple texts.
+    """
+
+    def get(self):
+        """
+        Retrieve all texts.
+        """
+        return read(), HTTPStatus.OK
+
+    @api.expect(TEXT_CREATE_FIELDS)
+    @api.response(HTTPStatus.CREATED, "Text created successfully")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def post(self):
+        """
+        Create a new text entry.
+        """
+        data = request.json
+        key = data.get(KEY)
+        title = data.get(TITLE)
+        content = data.get(TEXT)  
+
+        if not key or not title or not content:
+            return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
+
+        try:
+            created_text = create(key=key, title=title, text=content)
+            return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
+
+@api.route(f"{TEXT_EP}/<string:key>")
+class SingleText(Resource): 
+    """
+    This class handles reading, updating, and deleting a single text.
+    """
+
+    def get(self, key):
+        """
+        Retrieve a specific text by key.
+        """
+        text_entry = read(key)  
+        if not text_entry:
+            return {"message": f"Text with key '{key}' not found"}, HTTPStatus.NOT_FOUND
+
+        return text_entry, HTTPStatus.OK
+
+    @api.expect(TEXT_UPDATE_FIELDS)
+    @api.response(HTTPStatus.OK, "Text updated successfully")
+    @api.response(HTTPStatus.NOT_FOUND, "Text not found")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def patch(self, key):
+        """
+        Update a specific text by key.
+        """
+        data = request.json
+        title = data.get(TITLE)
+        content = data.get(TEXT)  
+
+        try:
+            updated_text = update(key=key, title=title, text=content)
+            return {"message": "Text updated successfully", "text": updated_text}, HTTPStatus.OK
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.NOT_FOUND
+
+    def delete(self, key):
+        """
+        Delete a specific text by key.
+        """
+        deleted_text = delete(key)
+        if not deleted_text:
+            return {"message": f"Text with key '{key}' not found"}, HTTPStatus.NOT_FOUND
+
+        return {"message": "Text deleted successfully", "deleted_text": deleted_text}, HTTPStatus.OK
