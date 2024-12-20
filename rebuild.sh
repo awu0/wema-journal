@@ -2,8 +2,6 @@
 # This runs on PythonAnywhere servers: fetches new code,
 # installs needed packages, and restarts the server.
 
-export API_TOKEN="a1a01ea213f67e26219bfb73905f6853c4dfa4fd"
-
 touch rebuild
 echo "Rebuilding $PA_DOMAIN"
 
