@@ -14,6 +14,9 @@ source /home/$PA_USER/.virtualenvs/$VENV/bin/activate
 echo "Install packages"
 pip install --upgrade -r requirements.txt
 
+echo "Installing PythonAnywhere helper package"
+pip install --user pythonanywhere
+
 echo "Going to reboot the webserver using $API_TOKEN"
 pa_reload_webapp.py $PA_DOMAIN
 
