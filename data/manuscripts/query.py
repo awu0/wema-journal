@@ -149,3 +149,31 @@ def get_valid_actions_by_state(state: str):
     valid_actions = STATE_TABLE[state].keys()
     print(f'{valid_actions=}')
     return valid_actions
+
+
+def get_manuscript(title: str) -> dict | None:
+    """
+    Retrieve a manuscript by title from the SAMPLE_MANU or a database-like structure.
+    """
+    # Simulate a database with a list of manuscripts
+    manuscripts_db = [
+        {flds.TITLE: 'Short module import names in Python', flds.AUTHOR: 'Matthew Ma', flds.REFEREES: []},
+        {flds.TITLE: 'Understanding Flask APIs', flds.AUTHOR: 'John Doe', flds.REFEREES: ['Referee A']},
+    ]
+    
+    for manuscript in manuscripts_db:
+        if manuscript[flds.TITLE] == title:
+            return manuscript
+    return None
+
+
+def get_one_manuscript(title: str) -> dict | None:
+    """
+    Retrieve a manuscript by title.
+    """
+    manuscripts_db = get_manuscript()
+    for manuscript in manuscripts_db:
+        if manuscript[flds.TITLE] == title:
+            return manuscript
+    return None
+

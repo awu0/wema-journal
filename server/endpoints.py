@@ -12,6 +12,9 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 import data.users as users
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
+import data.manuscripts as manuscripts
+
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -32,6 +35,7 @@ JOURNAL_NAME_RESP = "Journal Name"
 JOURNAL_NAME = "wema"
 USERS_EP = "/users"
 USERS = users.get_users_as_dict()
+MANUSCRIPTS_EP = "/manuscripts"
 
 USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
     users.NAME: fields.String(required=True, description="User's name"),
@@ -45,6 +49,22 @@ USER_UPDATE_FIELDS = api.model('UpdateUserEntry', {
     users.EMAIL: fields.String(description="User's email"),
     users.AFFILIATION: fields.String(description="User's affiliation"),
     users.ROLE: fields.String(description="User's role"),
+})
+
+
+MANUSCRIPT_CREATE_FIELDS = api.model('AddNewManuscriptEntry', {
+    manuscripts.TITLE: fields.String(required=True, description="Manuscript's title"),
+    manuscripts.AUTHOR: fields.String(required=True, description="Manuscript's author"),
+    manuscripts.CONTENT: fields.String(required=True, description="Manuscript's content"),
+    manuscripts.PUBLICATION_DATE: fields.String(description="Publication date of the manuscript"),
+})
+
+
+MANUSCRIPT_UPDATE_FIELDS = api.model('UpdateManuscriptEntry', {
+    manuscripts.TITLE: fields.String(description="Manuscript's title"),
+    manuscripts.AUTHOR: fields.String(description="Author's name"),
+    manuscripts.CONTENT: fields.String(description="Manuscript content"),
+    manuscripts.PUBLICATION_DATE: fields.String(description="Publication date"),
 })
 
 
@@ -218,5 +238,49 @@ class User(Resource):
             )
 
             return {"message": "User updated successfully", "updated_user": updated_user}, HTTPStatus.OK
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
+
+@api.route(MANUSCRIPTS_EP)
+class Manuscripts(Resource):
+    """
+    This class handles creating, reading, updating, and deleting manuscripts.
+    """
+    def get(self):
+        """
+        Retrieve the list of manuscripts.
+        If a title query parameter is provided, return specific manuscript.
+        """
+        title = request.args.get(manuscripts.TITLE)
+        if title:
+            manuscript_list = manuscripts.get_manuscripts()  # Mocked data for manuscripts
+            for manuscript in manuscript_list:
+                if manuscript.title == title:
+                    return {title: manuscript.to_dict()}
+            return {"message": f"Manuscript {title} not found"}, HTTPStatus.NOT_FOUND
+        return manuscripts.get_manuscripts_as_dict()
+
+    @api.expect(MANUSCRIPT_CREATE_FIELDS)
+    @api.response(HTTPStatus.CREATED, "Manuscript created successfully")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    def post(self):
+        """
+        Adds a new manuscript with given JSON data
+        """
+        data = request.json
+        required_fields = [manuscripts.TITLE, manuscripts.AUTHOR, manuscripts.CONTENT]
+
+        if not all(field in data for field in required_fields):
+            return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
+
+        try:
+            manuscripts.create_manuscript(
+                title=data[manuscripts.TITLE],
+                author=data[manuscripts.AUTHOR],
+                content=data[manuscripts.CONTENT],
+                publication_date=data.get(manuscripts.PUBLICATION_DATE, None),
+            )
+            return {"message": "Manuscript added successfully!", "added_manuscript": data}, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
