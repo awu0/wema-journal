@@ -15,10 +15,24 @@ logging.basicConfig(
     ]
 )
 
-def reload_pythonanywhere_webapp(domain, token):
+def reload_pythonanywhere_webapp():
     """
     Reload a PythonAnywhere web application using their API.
+    Uses environment variables:
+    - PA_DOMAIN: PythonAnywhere domain
+    - API_TOKEN: PythonAnywhere API token
     """
+    domain = os.getenv('PA_DOMAIN')
+    token = os.getenv('API_TOKEN')
+    
+    if not domain:
+        logging.error("PA_DOMAIN environment variable not set")
+        sys.exit(1)
+    
+    if not token:
+        logging.error("API_TOKEN environment variable not set")
+        sys.exit(1)
+
     api_url = f"https://www.pythonanywhere.com/api/v0/user/{domain.split('.')[0]}/webapps/{domain}/reload/"
     headers = {'Authorization': f'Token {token}'}
 
@@ -34,22 +48,8 @@ def reload_pythonanywhere_webapp(domain, token):
         logging.error(f"Error reloading web application: {e}")
         return False
 
-def main():
-    if len(sys.argv) != 2:
-        logging.error("Usage: pa_reload_webapp.py <domain>")
-        sys.exit(1)
-
-    domain = sys.argv[1]
-    token = os.getenv('API_TOKEN')
-    
-    if not token:
-        logging.error("API_TOKEN environment variable not set")
-        sys.exit(1)
-
-    if reload_pythonanywhere_webapp(domain, token):
+if __name__ == '__main__':
+    if reload_pythonanywhere_webapp():
         sys.exit(0)
     else:
         sys.exit(1)
-
-if __name__ == '__main__':
-    main()
