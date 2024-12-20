@@ -18,6 +18,7 @@ echo "Installing PythonAnywhere helper package"
 pip install --user pythonanywhere
 
 echo "Going to reboot the webserver using $API_TOKEN"
+export PYTHONANYWHERE_TOKEN=$API_TOKEN
 pa_reload_webapp.py $PA_DOMAIN
 
 touch reboot
