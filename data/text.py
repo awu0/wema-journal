@@ -35,7 +35,7 @@ def read_one(key: str) -> dict:
         if db_text:
             if '_id' in db_text:
                 del db_text['_id']
-            return db_text 
+            return db_text
         return {}
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")
