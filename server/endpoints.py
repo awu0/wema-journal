@@ -281,8 +281,14 @@ class Texts(Resource):
 
         if not key or not title or not content:
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
-        created_text = create(key=key, title=title, text=content)
-        return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
+
+        try:
+            created_text = create(key=key, title=title, text=content)
+            return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
+        except ValueError as ve:
+            return {"message": str(ve)}, HTTPStatus.CONFLICT
+        except Exception as e:
+            return {"message": "An error occurred while creating the text"}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
