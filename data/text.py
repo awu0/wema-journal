@@ -3,27 +3,8 @@ import data.db_connect as dbc
 KEY = 'key'
 TITLE = 'title'
 TEXT = 'text'
-EMAIL = 'email'
 
-TEST_KEY = 'HomePage'
-SUBM_KEY = 'SubmissionsPage'
-DEL_KEY = 'DeletePage'
-
-text_dict = {
-    TEST_KEY: {
-        TITLE: 'Home Page',
-        TEXT: 'This is a journal about building API servers.',
-    },
-    SUBM_KEY: {
-        TITLE: 'Submissions Page',
-        TEXT: 'All submissions must be original work in Word format.',
-    },
-    DEL_KEY: {
-        TITLE: 'Delete Page',
-        TEXT: 'This is a text to delete.',
-    },
-}
-
+COLLECTION = 'texts'
 
 client = dbc.connect_db()
 print(f'{client=}')
@@ -31,35 +12,51 @@ print(f'{client=}')
 
 def read():
     """
-    Our contract:
-        - No arguments.
-        - Returns a dictionary of users keyed on user email.
-        - Each user email must be the key for another dictionary.
+    Retrieve all text entries from the database.
     """
-    text = text_dict
-    return text
+    try:
+        db_texts = dbc.read(COLLECTION) 
+        return {text[KEY]: {TITLE: text[TITLE], TEXT: text[TEXT]} for text in db_texts}
+    except Exception as e:
+        print(f"Error reading texts: {e}")
+        return {}
 
 
 def create(key, title, text):
-    if key in text_dict:
+    """
+    Create a new text entry in the database.
+    """
+    existing_texts = read()
+    if key in existing_texts:
         raise ValueError(f"Text with key '{key}' already exists.")
-    text_dict[key] = {TITLE: title, TEXT: text}
-    return text_dict[key]
+    
+    new_entry = {KEY: key, TITLE: title, TEXT: text}
+    dbc.create(COLLECTION, new_entry)
+    return new_entry
 
 
 def delete(key):
-    return text_dict.pop(key, None)
+    """
+    Delete a text entry from the database.
+    """
+    deleted = dbc.delete(COLLECTION, {KEY: key})
+    return deleted
 
 
 def update(key, title=None, text=None):
-    if key not in text_dict:
+    """
+    Update an existing text entry in the database.
+    """
+    existing_texts = read()
+    if key not in existing_texts:
         raise ValueError(f"Text with key '{key}' does not exist.")
+    
+    updates = {}
     if title:
-        text_dict[key][TITLE] = title
+        updates[TITLE] = title
     if text:
-        text_dict[key][TEXT] = text
-    return text_dict[key]
-
-
-if __name__ == '__main__':
-    pass
+        updates[TEXT] = text
+    
+    dbc.update_doc(COLLECTION, {KEY: key}, updates) 
+    updated_entry = dbc.read(COLLECTION, {KEY: key}) 
+    return updated_entry[0] if updated_entry else None
