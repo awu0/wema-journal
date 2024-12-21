@@ -214,7 +214,7 @@ def delete_manuscript(title: str) -> bool:
     """
     Delete a manuscript by title from a simulated database.
     """
-    manuscripts_db = get_manuscripts()
+    manuscripts_db = get_all_manuscripts()
     for manuscript in manuscripts_db:
         if manuscript[flds.TITLE] == title:
             manuscripts_db.remove(manuscript)
