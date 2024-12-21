@@ -176,4 +176,3 @@ def get_one_manuscript(title: str) -> dict:
         if manuscript[flds.TITLE] == title:
             return manuscript
     return None
-

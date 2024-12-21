@@ -346,12 +346,12 @@ class Manuscripts(Resource):
         """
         title = request.args.get(manuscripts.TITLE)
         if title:
-            manuscript_list = manuscripts.get_manuscripts()
+            manuscript_list = manuscripts.get_manuscript(title)
             for manuscript in manuscript_list:
                 if manuscript.title == title:
                     return {title: manuscript.to_dict()}
             return {"message": f"Manuscript {title} not found"}, HTTPStatus.NOT_FOUND
-        return manuscripts.get_manuscripts_as_dict()
+        return manuscripts.get_manuscripts(title)
 
     @api.expect(MANUSCRIPT_CREATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "Manuscript created successfully")
