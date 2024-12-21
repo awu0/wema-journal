@@ -37,14 +37,14 @@ def read_one(key: str) -> dict:
         return {}
 
 
-def create(key, title, text):
+def create(key: str, title: str, text: str):
     """
     Create a new text entry in the database.
     """
     try:
         if read_one(key):
             raise ValueError(f"Text with key '{key}' already exists.")
-        new_entry = {KEY: key, TITLE: title, TEXT: text}
+        new_entry = {KEY: str(key), TITLE: str(title), TEXT: str(text)}
         dbc.create(COLLECTION, new_entry)
         return new_entry
     except Exception as e:
