@@ -281,10 +281,8 @@ class Texts(Resource):
 
         if not key or not title or not content:
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
-
-        try:
-            created_text = create(key=key, title=title, text=content)
-            return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
+        created_text = create(key=key, title=title, text=content)
+        return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
