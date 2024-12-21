@@ -183,7 +183,7 @@ def create_manuscript(title: str, author: str, referees: list = None) -> dict:
         flds.REFEREES: referees,
     }
 
-    manuscripts_db = get_all_manuscripts()
+    manuscripts_db = get_manuscripts()
     manuscripts_db.append(new_manuscript)
     return new_manuscript
 
@@ -206,7 +206,7 @@ def delete_manuscript(title: str) -> bool:
     """
     Delete a manuscript by title from a simulated database.
     """
-    manuscripts_db = get_all_manuscripts()
+    manuscripts_db = get_manuscripts()
     for manuscript in manuscripts_db:
         if manuscript[flds.TITLE] == title:
             manuscripts_db.remove(manuscript)
