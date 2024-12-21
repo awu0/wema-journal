@@ -173,8 +173,19 @@ def get_manuscript(title: str) -> dict:
 def get_all_manuscripts() -> list:
     """
     Retrieve all manuscripts from the database.
+    
+    Returns:
+        list: List of all manuscripts with cleaned _id fields
     """
-    return dbc.read(MANUSCRIPT_COLLECT)
+    try:
+        manuscripts = dbc.read(MANUSCRIPT_COLLECT)
+        for manuscript in manuscripts:
+            if '_id' in manuscript:
+                del manuscript['_id']
+        return manuscripts
+    except Exception as e:
+        print(f"Error getting all manuscripts: {e}")
+        return []
 
 
 def create_manuscript(title: str, author: str, content: str, 
