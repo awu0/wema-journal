@@ -27,11 +27,12 @@ def read():
 
 
 def read_one(key: str) -> dict:
-    # This should take a key and return the page dictionary
-    # for that key. Return an empty dictionary of key not found.
+    """
+    Read a single text entry by key.
+    """
     try:
-        db_text = dbc.read(COLLECTION, {KEY: key})
-        return db_text[0] if db_text else {}
+        db_text = dbc.fetch_one(COLLECTION, {KEY: key})
+        return db_text if db_text else {}
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")
         return {}
