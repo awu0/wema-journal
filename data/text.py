@@ -46,7 +46,6 @@ def create(key: str, title: str, text: str):
         if read_one(key):
             raise ValueError(f"Text with key '{key}' already exists.")
         new_entry = {KEY: str(key), TITLE: str(title), TEXT: str(text)}
-        print(type(key))
         dbc.create(COLLECTION, new_entry)
         return new_entry
     except Exception as e:
