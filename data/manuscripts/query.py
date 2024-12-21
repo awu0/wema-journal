@@ -1,4 +1,5 @@
 import data.manuscripts.fields as flds
+import data.db_connect as dbc
 
 # states:
 COPY_EDIT = 'CED'
@@ -55,16 +56,27 @@ VALID_ACTIONS = [
     WITHDRAW,
 ]
 
+# Collection name for manuscripts
+MANUSCRIPT_COLLECT = 'manuscript'
 
 def assign_ref(manu: dict, ref: str, extra=None) -> str:
-    print(extra)
-    manu[flds.REFEREES].append(ref)
+    """
+    Assign a referee to a manuscript and update in database.
+    """
+    if ref not in manu[flds.REFEREES]:
+        manu[flds.REFEREES].append(ref)
+        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
     return IN_REF_REV
 
 
 def delete_ref(manu: dict, ref: str) -> str:
-    if len(manu[flds.REFEREES]) > 0:
+    """
+    Remove a referee from a manuscript and update in database.
+    """
+    if ref in manu[flds.REFEREES]:
         manu[flds.REFEREES].remove(ref)
+        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
+    
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REV
     else:
@@ -153,53 +165,49 @@ def get_valid_actions_by_state(state: str):
 
 def get_manuscript(title: str) -> dict:
     """
-    Retrieve a manuscript by title from the SAMPLE_MANU or a database-like structure.
+    Retrieve a specific manuscript by title from the database.
     """
-    # Simulate a database with a list of manuscripts
-    manuscripts_db = [
-        {flds.TITLE: 'Short module import names in Python', flds.AUTHOR: 'Matthew Ma', flds.REFEREES: []},
-        {flds.TITLE: 'Understanding Flask APIs', flds.AUTHOR: 'John Doe', flds.REFEREES: ['Referee A']},
-    ]
-    
-    for manuscript in manuscripts_db:
-        if manuscript[flds.TITLE] == title:
-            return manuscript
-    return None
+    return dbc.fetch_one(MANUSCRIPT_COLLECT, {flds.TITLE: title})
 
 
-def get_manuscripts(title: str) -> dict:
-    pass
-
-def create_manuscript(title: str, author: str, referees: list = None) -> dict:
+def get_manuscripts() -> list:
     """
-    Create a new manuscript entry.
+    Retrieve all manuscripts from the database.
+    """
+    return dbc.read(MANUSCRIPT_COLLECT)
+
+
+def create_manuscript(title: str, author: str, referees: list = None, state: str = SUBMITTED) -> dict:
+    """
+    Create a new manuscript entry in the database.
     """
     if referees is None:
         referees = []
-
+        
     new_manuscript = {
         flds.TITLE: title,
         flds.AUTHOR: author,
         flds.REFEREES: referees,
+        'state': state
     }
-
-    manuscripts_db = get_manuscripts()
-    manuscripts_db.append(new_manuscript)
+    existing = get_manuscript(title)
+    if existing:
+        raise ValueError(f'Manuscript with title "{title}" already exists')
+        
+    dbc.create(MANUSCRIPT_COLLECT, new_manuscript)
     return new_manuscript
 
 
 def update_manuscript(title: str, updates: dict) -> dict:
     """
-    Update a manuscript with the given title using the provided updates.
+    Update a manuscript in the database.
     """
     manuscript = get_manuscript(title)
     if not manuscript:
-        raise ValueError(f'Manuscript with title "{title}" not found.')
-
-    for key, value in updates.items():
-        if key in manuscript:
-            manuscript[key] = value
-    return manuscript
+        raise ValueError(f'Manuscript with title "{title}" not found')
+        
+    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, updates)
+    return get_manuscript(title) 
 
 
 def delete_manuscript(title: str) -> bool:
