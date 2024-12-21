@@ -287,8 +287,8 @@ class Texts(Resource):
             return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
         except ValueError as ve:
             return {"message": str(ve)}, HTTPStatus.CONFLICT
-        except Exception as e:
-            return {"message": "An error occurred while creating the text"}, HTTPStatus.INTERNAL_SERVER_ERROR
+        except Exception:
+            return {"message": "An error occurred while creating the text "}, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
