@@ -58,7 +58,7 @@ def delete(key):
     """
     try:
         result = dbc.delete(COLLECTION, {KEY: key})
-        return result.deleted_count > 0
+        return result > 0
     except Exception as e:
         print(f"Error deleting text with key '{key}': {e}")
         return False
