@@ -183,9 +183,6 @@ def create_manuscript(title: str, author: str, content: str,
     """
     Create a new manuscript entry in the database.
     """
-    if referees is None:
-        referees = []
-        
     new_manuscript = {
         flds.TITLE: title,
         flds.AUTHOR: author,
