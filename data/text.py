@@ -20,6 +20,7 @@ def read_texts():
     """
     return dbc.read(COLLECTION)
 
+
 def read_one(key: str) -> dict:
     """
     Read a single text entry by key.
