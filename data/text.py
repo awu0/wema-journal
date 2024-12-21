@@ -18,13 +18,7 @@ def read_texts():
         - Returns a dictionary of users keyed on user email.
         - Each user email must be the key for another dictionary.
     """
-    try:
-        db_texts = dbc.read(COLLECTION)
-        return {text[KEY]: {TITLE: text.get(TITLE, ""), TEXT: text.get(TEXT, "")} for text in db_texts}
-    except Exception as e:
-        print(f"Error reading texts: {e}")
-        return {}
-
+    return dbc.read(COLLECTION)
 
 def read_one(key: str) -> dict:
     """
