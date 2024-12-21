@@ -13,7 +13,7 @@ import data.users as users
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
 import data.text as text
-from data.text import read, read_one, create, update, delete, KEY, TITLE, TEXT
+from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 
 import data.manuscripts as manuscripts
 import data.manuscripts.query as query
@@ -265,7 +265,7 @@ class Texts(Resource):
         """
         Retrieve all texts.
         """
-        return read(self), HTTPStatus.OK
+        return read_texts(), HTTPStatus.OK
 
     @api.expect(TEXT_CREATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "Text created successfully")

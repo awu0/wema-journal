@@ -11,7 +11,7 @@ client = dbc.connect_db()
 print(f'{client=}')
 
 
-def read():
+def read_texts():
     """
     Our contract:
         - No arguments.
