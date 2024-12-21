@@ -49,12 +49,12 @@ def create(key: str, title: str, text: str):
             raise ValueError(f"Text with key '{key}' already exists.")
 
         new_entry = {
-            "KEY": str(key),
-            "TITLE": str(title),
-            "TEXT": str(text)
+            KEY: str(key),
+            TITLE: str(title),
+            TEXT: str(text)
         }
         dbc.create(COLLECTION, new_entry)
-        return str(new_entry)
+        return {"KEY": str(key), "TITLE": str(title), "TEXT": str(text)}
     except Exception as e:
         print(f"Error creating text: {e}")
         raise
