@@ -425,7 +425,7 @@ class Manuscript(Resource):
         """
         Delete a manuscript by title.
         """
-        success = manuscripts.delete_manuscript(title)
+        success = query.delete_manuscript(title)
         if success:
             return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
         return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
