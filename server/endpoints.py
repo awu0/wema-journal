@@ -283,8 +283,8 @@ class Texts(Resource):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
-            create(key=key, title=title, text=content)
-            return {"message": "Text created successfully"}, HTTPStatus.CREATED
+            created_text = create(key=key, title=title, text=content)
+            return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
         except ValueError as ve:
             return {"message": str(ve)}, HTTPStatus.CONFLICT
         except Exception:
