@@ -405,21 +405,17 @@ class Manuscript(Resource):
         Update a manuscript. Only fields provided in the request are updated.
         """
         data = request.json
-
-        # Fetch the manuscript by title
         manuscript = manuscripts.get_manuscript(title)
         if not manuscript:
             return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
 
-        # Update the provided fields
         for field in [manuscripts.TITLE, manuscripts.AUTHOR, manuscripts.CONTENT, manuscripts.PUBLICATION_DATE]:
             if field in data:
                 manuscript[field] = data[field]
 
-        # Save the updated manuscript
         try:
-            new_title = query.update_manuscript(title, manuscript)
-            return {"message": "Manuscript updated successfully", "manscript": new_title}, HTTPStatus.OK
+            query.update_manuscript(title, manuscript)
+            return {"message": "Manuscript updated successfully"}, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
