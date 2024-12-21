@@ -285,8 +285,6 @@ class Texts(Resource):
         try:
             created_text = create(key=key, title=title, text=content)
             return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
-        except ValueError as e:
-            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
