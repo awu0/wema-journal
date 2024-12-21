@@ -418,8 +418,8 @@ class Manuscript(Resource):
 
         # Save the updated manuscript
         try:
-            updated_manuscript = query.update_manuscript(title, manuscript)
-            return {"message": "Manuscript updated successfully", "title": updated_manuscript['title']}, HTTPStatus.OK
+            new_title = query.update_manuscript(title, manuscript)
+            return {"message": "Manuscript updated successfully", "manscript": new_title}, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 

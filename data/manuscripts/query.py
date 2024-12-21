@@ -207,7 +207,7 @@ def update_manuscript(title: str, updates: dict) -> dict:
         raise ValueError(f'Manuscript with title "{title}" not found')
     if '_id' in updates: del updates['_id']
     dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, updates)
-    return get_manuscript(title)
+    return title
 
 
 def delete_manuscript(title: str) -> bool:
