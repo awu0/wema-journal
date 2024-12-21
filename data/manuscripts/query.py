@@ -177,7 +177,9 @@ def get_all_manuscripts() -> list:
     return dbc.read(MANUSCRIPT_COLLECT)
 
 
-def create_manuscript(title: str, author: str, referees: list = None, state: str = SUBMITTED) -> dict:
+def create_manuscript(title: str, author: str, content: str, 
+                     publication_date: str = None, 
+                     state: str = SUBMITTED) -> dict:
     """
     Create a new manuscript entry in the database.
     """
@@ -187,7 +189,8 @@ def create_manuscript(title: str, author: str, referees: list = None, state: str
     new_manuscript = {
         flds.TITLE: title,
         flds.AUTHOR: author,
-        flds.REFEREES: referees,
+        flds.CONTENT: content,
+        flds.PUBLICATION_DATE: publication_date,
         'state': state
     }
     existing = get_manuscript(title)
