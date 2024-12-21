@@ -54,7 +54,7 @@ def create(key: str, title: str, text: str):
             TEXT: str(text)
         }
         dbc.create(COLLECTION, new_entry)
-        return {"KEY": str(key), "TITLE": str(title), "TEXT": str(text)}
+        return {KEY: str(key), TITLE: str(title), TEXT: str(text)}
     except Exception as e:
         print(f"Error creating text: {e}")
         raise
