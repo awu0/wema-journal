@@ -138,5 +138,7 @@ dmypy.json
 .DS_Store
 .idea
 
-# Node 
+# Node
 node_modules/
+
+.vscode
