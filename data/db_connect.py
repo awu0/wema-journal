@@ -81,9 +81,12 @@ def fetch_one(collection, filt, db=WEMA_DB):
     Return None if not found.
     """
     doc = client[db][collection].find_one(filt)
-
+    print(f"Fetched document: {doc}")  # Debug
+    
     if doc and MONGO_ID in doc:
+        print(f"Converting {MONGO_ID}: {doc[MONGO_ID]}, type: {type(doc[MONGO_ID])}")  # Debug
         doc[MONGO_ID] = str(doc[MONGO_ID])
+        print(f"After conversion: {doc}")  # Debug
     return doc
 
 

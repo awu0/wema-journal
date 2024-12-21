@@ -29,17 +29,15 @@ def read():
 def read_one(key: str) -> dict:
     """
     Read a single text entry by key.
+    Returns empty dict if not found.
     """
     try:
         db_text = dbc.fetch_one(COLLECTION, {KEY: key})
-        if db_text:
-            if '_id' in db_text:
-                del db_text['_id']
-            return db_text
-        return {}
+        # Just check if document exists for duplicate check
+        return not not db_text  # Converts to boolean
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")
-        return {}
+        return False
 
 
 def create(key: str, title: str, text: str):
