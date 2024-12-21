@@ -346,13 +346,6 @@ class Manuscripts(Resource):
         Retrieve the list of manuscripts.
         If a title query parameter is provided, return specific manuscript.
         """
-        title = request.args.get(manuscripts.TITLE)
-        if title:
-            manuscript_list = manuscripts.get_manuscript(title)
-            for manuscript in manuscript_list:
-                if manuscript.title == title:
-                    return {title: manuscript.to_dict()}
-            return {"message": f"Manuscript {title} not found"}, HTTPStatus.NOT_FOUND
         return query.get_all_manuscripts()
 
     @api.expect(MANUSCRIPT_CREATE_FIELDS)
