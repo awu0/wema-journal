@@ -110,6 +110,9 @@ def read(collection, db=WEMA_DB, no_id=True) -> list:
     for doc in client[db][collection].find():
         if no_id:
             del doc[MONGO_ID]
+        else:
+            # Convert ObjectId to string if we're keeping the ID
+            doc[MONGO_ID] = str(doc[MONGO_ID])
         ret.append(doc)
     return ret
 
