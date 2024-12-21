@@ -16,7 +16,7 @@ import data.text as text
 from data.text import read, create, update, delete, KEY, TITLE, TEXT
 
 import data.manuscripts as manuscripts
-
+import data.manuscripts.query as query
 
 app = Flask(__name__)
 CORS(app)
@@ -351,7 +351,7 @@ class Manuscripts(Resource):
                 if manuscript.title == title:
                     return {title: manuscript.to_dict()}
             return {"message": f"Manuscript {title} not found"}, HTTPStatus.NOT_FOUND
-        return manuscripts.get_manuscripts(title)
+        return query.get_all_manuscripts()
 
     @api.expect(MANUSCRIPT_CREATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "Manuscript created successfully")

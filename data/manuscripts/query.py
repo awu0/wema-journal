@@ -170,7 +170,7 @@ def get_manuscript(title: str) -> dict:
     return dbc.fetch_one(MANUSCRIPT_COLLECT, {flds.TITLE: title})
 
 
-def get_manuscripts() -> list:
+def get_all_manuscripts() -> list:
     """
     Retrieve all manuscripts from the database.
     """
