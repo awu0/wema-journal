@@ -32,6 +32,10 @@ def read_one(key: str) -> dict:
     """
     try:
         db_text = dbc.fetch_one(COLLECTION, {KEY: key})
+        if db_text:
+            # Ensure we don't return the _id field
+            if dbc.MONGO_ID in db_text:
+                del db_text[dbc.MONGO_ID]
         return db_text if db_text else {}
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")

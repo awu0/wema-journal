@@ -83,9 +83,7 @@ def fetch_one(collection, filt, db=WEMA_DB):
     doc = client[db][collection].find_one(filt)
 
     if doc and MONGO_ID in doc:
-        # Convert mongo ID to a string so it works as JSON
         doc[MONGO_ID] = str(doc[MONGO_ID])
-
     return doc
 
 
@@ -111,7 +109,6 @@ def read(collection, db=WEMA_DB, no_id=True) -> list:
         if no_id:
             del doc[MONGO_ID]
         else:
-            # Convert ObjectId to string if we're keeping the ID
             doc[MONGO_ID] = str(doc[MONGO_ID])
         ret.append(doc)
     return ret
