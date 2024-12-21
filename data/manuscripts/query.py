@@ -151,7 +151,7 @@ def get_valid_actions_by_state(state: str):
     return valid_actions
 
 
-def get_manuscript(title: str) -> dict | None:
+def get_manuscript(title: str) -> dict:
     """
     Retrieve a manuscript by title from the SAMPLE_MANU or a database-like structure.
     """
@@ -167,7 +167,7 @@ def get_manuscript(title: str) -> dict | None:
     return None
 
 
-def get_one_manuscript(title: str) -> dict | None:
+def get_one_manuscript(title: str) -> dict:
     """
     Retrieve a manuscript by title.
     """
