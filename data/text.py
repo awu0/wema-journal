@@ -29,7 +29,8 @@ def read_one(key: str) -> dict:
     try:
         db_text = dbc.fetch_one(COLLECTION, {KEY: key})
         # Just check if document exists for duplicate check
-        return not not db_text  # Converts to boolean
+        db_text.pop('_id')
+        return db_text
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")
         return False
