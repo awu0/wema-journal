@@ -72,7 +72,7 @@ def create(collection, doc, db=WEMA_DB):
     Insert a single doc into collection.
     """
     print(f'Inserted {doc} into {collection} for DB: {db}')
-    return client[db][collection].insert_one(doc)
+    client[db][collection].insert_one(doc)
 
 
 def fetch_one(collection, filt, db=WEMA_DB):
