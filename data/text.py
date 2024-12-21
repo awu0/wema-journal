@@ -33,7 +33,10 @@ def read_one(key: str) -> dict:
     try:
         db_text = dbc.fetch_one(COLLECTION, {KEY: key})
         if db_text:
-            return True if db_text else {}
+            if '_id' in db_text:
+                del db_text['_id']
+            return db_text 
+        return {}
     except Exception as e:
         print(f"Error reading text with key '{key}': {e}")
         return {}
