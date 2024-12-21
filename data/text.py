@@ -1,3 +1,5 @@
+import data.db_connect as dbc
+
 KEY = 'key'
 TITLE = 'title'
 TEXT = 'text'
@@ -21,6 +23,10 @@ text_dict = {
         TEXT: 'This is a text to delete.',
     },
 }
+
+
+client = dbc.connect_db()
+print(f'{client=}')
 
 
 def read():

@@ -167,12 +167,49 @@ def get_manuscript(title: str) -> dict:
     return None
 
 
-def get_one_manuscript(title: str) -> dict:
+def get_manuscripts(title: str) -> dict:
+    pass
+
+def create_manuscript(title: str, author: str, referees: list = None) -> dict:
     """
-    Retrieve a manuscript by title.
+    Create a new manuscript entry.
     """
-    manuscripts_db = get_manuscript()
+    if referees is None:
+        referees = []
+
+    new_manuscript = {
+        flds.TITLE: title,
+        flds.AUTHOR: author,
+        flds.REFEREES: referees,
+    }
+
+    manuscripts_db = get_all_manuscripts()
+    manuscripts_db.append(new_manuscript)
+    return new_manuscript
+
+
+def update_manuscript(title: str, updates: dict) -> dict:
+    """
+    Update a manuscript with the given title using the provided updates.
+    """
+    manuscript = get_manuscript(title)
+    if not manuscript:
+        raise ValueError(f'Manuscript with title "{title}" not found.')
+
+    for key, value in updates.items():
+        if key in manuscript:
+            manuscript[key] = value
+    return manuscript
+
+
+def delete_manuscript(title: str) -> bool:
+    """
+    Delete a manuscript by title from a simulated database.
+    """
+    manuscripts_db = get_all_manuscripts()
     for manuscript in manuscripts_db:
         if manuscript[flds.TITLE] == title:
-            return manuscript
-    return None
+            manuscripts_db.remove(manuscript)
+            return True
+    return False
+
