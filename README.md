@@ -3,6 +3,9 @@
 
 An app developed by **WEMA** (William, Eric, Matthew, Aaron)
 
+## Progress and Goals
+See the following file [here](./ProgressAndGoals.md).
+
 ## Development
 ### Installing for development
 Use a virtual environment to install the packages:
