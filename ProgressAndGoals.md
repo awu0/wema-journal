@@ -1,7 +1,8 @@
 # Accomplishments
 Detail what you have already completed in your project. What requirements were met in completing these bits?
 - Created endpoints (manuscript, text, users) for our API.
-- User management is done (Create, Read, Update, Delete)
+- User management backend is done (Create, Read, Update, Delete)
+- Hosted webserver on PythonAnywhere (https://wl2612.pythonanywhere.com)
 
 # Goals and requirements
 Set out your goals for this semester. Please detail what the requirement is that each goals will meet, and how you expect to meet it.
