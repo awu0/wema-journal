@@ -23,6 +23,6 @@ We will code a webpage to do these, exposing the correct endpoints and making su
 - [ ] Database integration: Manuscripts are stored in a structured database with getting, creating, updating, and deleting.
 
 ## Text
-- [ ] CRUD Operations: Implement CRUD operations for text entries.
+- [ ] CRUD Operations: Implement CRUD operations like get, delete, patch, and post for text entries.
 - [ ] Database Integration: Ensure text entries are stored and managed in the database.
-- [ ] API Endpoints: Expose endpoints for text management, allowing for easy integration with the frontend.
+- [ ] API Endpoints: Display endpoints for text management, allowing for easy integration with the frontend.
