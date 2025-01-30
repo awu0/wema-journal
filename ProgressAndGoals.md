@@ -15,7 +15,9 @@ Set out your goals for this semester. Please detail what the requirement is that
 We will code a webpage to do these, exposing the correct endpoints and making sure of the user roles in the backend.
 
 
-
 ## Manuscripts
+- [ ] State management: Manuscripts go through different stages, starting from submission to review, editing, revisions, and accept or reject. 
+- [ ] Referee assignments: Editors can assign and remove referees for manuscript reviews. Referee assignments will be validated and update the manuscript state.
+- [ ] Database integration: Manuscripts are stored in a structured database with getting, creating, updating, and deleting.
 
 ## Text
