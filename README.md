@@ -42,3 +42,6 @@ To run the development server, run in terminal:
 To build production, type `make prod`.
 
 The server is hosted on [PythonAnywhere](https://wl2612.pythonanywhere.com/).
+
+# wema-journal-frontend
+The frontend can be found here: https://github.com/awu0/wema-journal-frontend
