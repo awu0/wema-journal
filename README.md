@@ -40,3 +40,5 @@ To run the development server, run in terminal:
 ## Production
 ### Build
 To build production, type `make prod`.
+
+The server is hosted on [PythonAnywhere](https://wl2612.pythonanywhere.com/).
