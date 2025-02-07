@@ -13,5 +13,8 @@ __all__ = [
     'is_valid_state',
     'get_actions',
     'is_valid_action',
-    'handle_action'
+    'handle_action',
+    'MANU_ID',
+    'CURR_STATE',
+    'ACTION'
 ]

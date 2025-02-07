@@ -422,3 +422,11 @@ class Manuscript(Resource):
         if success:
             return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
         return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
+
+# Finite State Machine
+MANU_ACTION_FLDS = api.model('ManuscriptAction', {
+    manuscripts.MANU_ID: fields.String,
+    manuscripts.CURR_STATE: fields.String,
+    manuscripts.ACTION: fields.String,
+    manuscripts.REFEREES: fields.String,
+})
