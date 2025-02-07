@@ -6,6 +6,10 @@ REFEREES = 'referees'
 CONTENT = 'content'
 PUBLICATION_DATE = 'publication_date'
 
+#FSM 
+MANU_ID = '000'
+CURR_STATE = 'temp'
+ACTION = 'temp'
 
 TEST_FLD_NM = TITLE
 TEST_FLD_DISPLAY_NM = 'Title'
