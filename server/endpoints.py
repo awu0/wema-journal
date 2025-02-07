@@ -451,7 +451,7 @@ class ReceiveAction(Resource):
             action = request.json.get(manuscripts.ACTION)
             kwargs = {}
             kwargs[manuscripts.REFEREES] = request.json.get(manuscripts.REFEREES)
-            ret = manuscripts.handle_action(manu_id, curr_state, action, **kwargs)
+            manuscripts.handle_action(manu_id, curr_state, action, **kwargs)
+            return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
-            raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
-        return
+            raise wz.NotAcceptable(f'Bad action: {err=}')
