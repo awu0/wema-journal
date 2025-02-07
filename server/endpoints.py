@@ -423,6 +423,7 @@ class Manuscript(Resource):
             return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
         return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
 
+
 # Finite State Machine
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
     manuscripts.MANU_ID: fields.String,
@@ -430,3 +431,27 @@ MANU_ACTION_FLDS = api.model('ManuscriptAction', {
     manuscripts.ACTION: fields.String,
     manuscripts.REFEREES: fields.String,
 })
+
+
+@api.route(f'{MANUSCRIPTS_EP}/receive_action')
+class ReceiveAction(Resource):
+    """
+    Receive an action for a manuscript.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(MANU_ACTION_FLDS)
+    def put(self):
+        """
+        Receive an action for a manuscript.
+        """
+        try:
+            manu_id = request.json.get(manuscripts.MANU_ID)
+            curr_state = request.json.get(manuscripts.CURR_STATE)
+            action = request.json.get(manuscripts.ACTION)
+            kwargs = {}
+            kwargs[manuscripts.REFEREES] = request.json.get(manuscripts.REFEREES)
+            ret = manuscripts.handle_action(manu_id, curr_state, action, **kwargs)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
+        return
