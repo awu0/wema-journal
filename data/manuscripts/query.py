@@ -1,5 +1,5 @@
-import data.manuscripts.fields as flds
 import data.db_connect as dbc
+import data.manuscripts.fields as flds
 
 # states:
 COPY_EDIT = 'CED'
@@ -20,12 +20,6 @@ VALID_STATES = [
     SUBMITTED,
     WITHDRAWN,
 ]
-
-SAMPLE_MANU = {
-    flds.TITLE: 'Short module import names in Python',
-    flds.AUTHOR: 'Matthew Ma',
-    flds.REFEREES: [],
-}
 
 
 def get_states() -> list:
@@ -61,6 +55,7 @@ VALID_ACTIONS = [
 # Collection name for manuscripts
 MANUSCRIPT_COLLECT = 'manuscript'
 
+
 def assign_ref(manu: dict, ref: str, extra=None) -> str:
     """
     Assign a referee to a manuscript and update in database.
@@ -78,7 +73,7 @@ def delete_ref(manu: dict, ref: str) -> str:
     if ref in manu[flds.REFEREES]:
         manu[flds.REFEREES].remove(ref)
         update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
-    
+
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REV
     else:
@@ -179,9 +174,13 @@ def get_all_manuscripts() -> list:
     return dbc.read(MANUSCRIPT_COLLECT)
 
 
-def create_manuscript(title: str, author: str, content: str, 
-                     publication_date: str = None, 
-                     state: str = SUBMITTED) -> dict:
+def create_manuscript(
+    title: str,
+    author: str,
+    content: str,
+    publication_date: str = None,
+    state: str = SUBMITTED,
+) -> dict:
     """
     Create a new manuscript entry in the database.
     """
@@ -190,12 +189,12 @@ def create_manuscript(title: str, author: str, content: str,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
-        flds.CURR_STATE: state
+        flds.CURR_STATE: state,
     }
     existing = get_manuscript(title)
     if existing:
         raise ValueError(f'Manuscript with title "{title}" already exists')
-        
+
     dbc.create(MANUSCRIPT_COLLECT, new_manuscript)
     return new_manuscript
 
@@ -207,7 +206,8 @@ def update_manuscript(title: str, updates: dict) -> dict:
     manuscript = get_manuscript(title)
     if not manuscript:
         raise ValueError(f'Manuscript with title "{title}" not found')
-    if '_id' in updates: del updates['_id']
+    if '_id' in updates:
+        del updates['_id']
     dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, updates)
 
 
