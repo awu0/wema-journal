@@ -4,26 +4,30 @@ from data.manuscripts.fields import CURR_STATE
 
 # states:
 COPY_EDIT = 'CED'
-IN_REF_REV = 'REV'
-AUTHOR_REV = 'AUR'
+IN_REF_REVIEW = 'REV'
+AUTHOR_REVISIONS = 'AUR'
 SUBMITTED = 'SUB'
 REJECTED = 'REJ'
 WITHDRAWN = 'WIT'
-EDITOR_REV = 'EDR'
+IN_EDITOR_REVIEW = 'ERW'
+IN_AUTHOR_REVIEW = 'ARW'
 FORMATTING = 'FMT'
+PUBLISHED = 'PUB'
 # used for testing
 TEST_STATE = SUBMITTED
 
 # a list of valid states
 VALID_STATES = [
-    AUTHOR_REV,
+    AUTHOR_REVISIONS,
     COPY_EDIT,
     IN_REF_REV,
     REJECTED,
     SUBMITTED,
     WITHDRAWN,
-    EDITOR_REV,
+    IN_EDITOR_REVIEW,
+    IN_AUTHOR_REVIEW,
     FORMATTING,
+    PUBLISHED,
 ]
 
 
@@ -143,19 +147,37 @@ STATE_TABLE = {
     },
     COPY_EDIT: {
         DONE: {
-            FUNC: lambda **kwargs: AUTHOR_REV,
+            FUNC: lambda **kwargs: IN_AUTHOR_REVIEW,
         },
         **COMMON_ACTIONS,
     },
-    AUTHOR_REV: {
+    AUTHOR_REVISIONS: {
+        DONE: {
+            FUNC: lambda **kwargs: IN_EDITOR_REVIEW,
+        },
         **COMMON_ACTIONS,
     },
-    EDITOR_REV: {
-
+    IN_EDITOR_REVIEW: {
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        },
+        **COMMON_ACTIONS,
     },
+    IN_AUTHOR_REVIEW: {
+        DONE: {
+            FUNC: lambda **kwargs: FORMATTING,
+        }
+        **COMMON_ACTIONS,
+    }
     FORMATTING: {
-
+        DONE: {
+            FUNC: lambda **kwargs: PUBLISHED,
+        }
+        **COMMON_ACTIONS,
     },
+    PUBLISHED: {
+        **COMMON_ACTIONS,
+    }
     REJECTED: {
         **COMMON_ACTIONS,
     },
