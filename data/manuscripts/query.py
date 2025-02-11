@@ -166,13 +166,13 @@ STATE_TABLE = {
     IN_AUTHOR_REVIEW: {
         DONE: {
             FUNC: lambda **kwargs: FORMATTING,
-        }
+        },
         **COMMON_ACTIONS,
     },
     FORMATTING: {
         DONE: {
             FUNC: lambda **kwargs: PUBLISHED,
-        }
+        },
         **COMMON_ACTIONS,
     },
     PUBLISHED: {
