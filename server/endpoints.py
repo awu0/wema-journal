@@ -15,8 +15,8 @@ from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 import data.text as text
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 
-import data.manuscripts as manuscripts
-import data.manuscripts.query as query
+from data.manuscripts import query as manuscript_query
+from data.manuscripts import fields as manuscript_fields
 
 app = Flask(__name__)
 CORS(app)
@@ -65,19 +65,20 @@ TEXT_UPDATE_FIELDS = api.model('UpdateTextEntry', {
     text.TEXT: fields.String(description="Content of the text"),
 })
 
+
 MANUSCRIPT_CREATE_FIELDS = api.model('AddNewManuscriptEntry', {
-    manuscripts.TITLE: fields.String(required=True, description="Manuscript's title"),
-    manuscripts.AUTHOR: fields.String(required=True, description="Manuscript's author"),
-    manuscripts.CONTENT: fields.String(required=True, description="Manuscript's content"),
-    manuscripts.PUBLICATION_DATE: fields.String(description="Publication date of the manuscript"),
+    manuscript_fields.TITLE: fields.String(required=True, description="Manuscript's title"),
+    manuscript_fields.AUTHOR: fields.String(required=True, description="Manuscript's author"),
+    manuscript_fields.CONTENT: fields.String(required=True, description="Manuscript's content"),
+    manuscript_fields.PUBLICATION_DATE: fields.String(description="Publication date of the manuscript"),
 })
 
 
 MANUSCRIPT_UPDATE_FIELDS = api.model('UpdateManuscriptEntry', {
-    manuscripts.TITLE: fields.String(description="Manuscript's title"),
-    manuscripts.AUTHOR: fields.String(description="Author's name"),
-    manuscripts.CONTENT: fields.String(description="Manuscript content"),
-    manuscripts.PUBLICATION_DATE: fields.String(description="Publication date"),
+    manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
+    manuscript_fields.AUTHOR: fields.String(description="Author's name"),
+    manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
+    manuscript_fields.PUBLICATION_DATE: fields.String(description="Publication date"),
 })
 
 
@@ -346,7 +347,7 @@ class Manuscripts(Resource):
         Retrieve the list of manuscripts.
         If a title query parameter is provided, return specific manuscript.
         """
-        return query.get_all_manuscripts()
+        return manuscript_query.get_all_manuscripts()
 
     @api.expect(MANUSCRIPT_CREATE_FIELDS)
     @api.response(HTTPStatus.CREATED, "Manuscript created successfully")
@@ -356,17 +357,17 @@ class Manuscripts(Resource):
         Adds a new manuscript with given JSON data
         """
         data = request.json
-        required_fields = [manuscripts.TITLE, manuscripts.AUTHOR, manuscripts.CONTENT]
+        required_fields = [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT]
 
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
-            query.create_manuscript(
-                title=data[manuscripts.TITLE],
-                author=data[manuscripts.AUTHOR],
-                content=data[manuscripts.CONTENT],
-                publication_date=data.get(manuscripts.PUBLICATION_DATE, None),
+            manuscript_query.create_manuscript(
+                title=data[manuscript_fields.TITLE],
+                author=data[manuscript_fields.AUTHOR],
+                content=data[manuscript_fields.CONTENT],
+                publication_date=data.get(manuscript_fields.PUBLICATION_DATE, None),
             )
             return {"message": "Manuscript added successfully!", "added_manuscript": data}, HTTPStatus.CREATED
         except ValueError as e:
@@ -384,7 +385,7 @@ class Manuscript(Resource):
         """
         Retrieve a specific manuscript by title.
         """
-        manuscript = manuscripts.get_manuscript(title)
+        manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
             return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
         return manuscript, HTTPStatus.OK
@@ -398,16 +399,16 @@ class Manuscript(Resource):
         Update a manuscript. Only fields provided in the request are updated.
         """
         data = request.json
-        manuscript = manuscripts.get_manuscript(title)
+        manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
             return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
 
-        for field in [manuscripts.TITLE, manuscripts.AUTHOR, manuscripts.CONTENT, manuscripts.PUBLICATION_DATE]:
+        for field in [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT, manuscript_fields.PUBLICATION_DATE]:
             if field in data:
                 manuscript[field] = data[field]
 
         try:
-            query.update_manuscript(title, manuscript)
+            manuscript_query.update_manuscript(title, manuscript)
             return {"message": "Manuscript updated successfully"}, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
@@ -418,7 +419,7 @@ class Manuscript(Resource):
         """
         Delete a manuscript by title.
         """
-        success = query.delete_manuscript(title)
+        success = manuscript_query.delete_manuscript(title)
         if success:
             return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
         return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
@@ -426,10 +427,10 @@ class Manuscript(Resource):
 
 # Finite State Machine
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
-    manuscripts.MANU_ID: fields.String,
-    manuscripts.CURR_STATE: fields.String,
-    manuscripts.ACTION: fields.String,
-    manuscripts.REFEREES: fields.String,
+    manuscript_fields.MANU_ID: fields.String,
+    manuscript_fields.CURR_STATE: fields.String,
+    manuscript_fields.ACTION: fields.String,
+    manuscript_fields.REFEREES: fields.String,
 })
 
 
@@ -446,12 +447,12 @@ class ReceiveAction(Resource):
         Receive an action for a manuscript.
         """
         try:
-            manu_id = request.json.get(manuscripts.MANU_ID)
-            curr_state = request.json.get(manuscripts.CURR_STATE)
-            action = request.json.get(manuscripts.ACTION)
+            manu_id = request.json.get(manuscript_fields.MANU_ID)
+            curr_state = request.json.get(manuscript_fields.CURR_STATE)
+            action = request.json.get(manuscript_fields.ACTION)
             kwargs = {}
-            kwargs[manuscripts.REFEREES] = request.json.get(manuscripts.REFEREES)
-            manuscripts.handle_action(manu_id, curr_state, action, **kwargs)
+            kwargs[manuscript_fields.REFEREES] = request.json.get(manuscript_fields.REFEREES)
+            manuscript_query.handle_action(manu_id, curr_state, action, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: {err=}')
