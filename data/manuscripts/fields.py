@@ -1,4 +1,3 @@
-
 TITLE = 'title'
 AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'

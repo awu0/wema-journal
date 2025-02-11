@@ -37,6 +37,7 @@ def is_valid_state(state: str) -> bool:
 
 
 # actions:
+SUBMITTED = 'SUB'
 ACCEPT = 'ACC'
 ASSIGN_REF = 'ARF'
 DELETE_REF = 'DRF'
@@ -44,10 +45,11 @@ DONE = 'DON'
 REJECT = 'REJ'
 WITHDRAW = 'WIT'
 # used for testing:
-TEST_ACTION = ACCEPT
+TEST_ACTION = SUBMITTED
 
 # a list of valid actions
 VALID_ACTIONS = [
+    SUBMITTED,
     ACCEPT,
     ASSIGN_REF,
     DELETE_REF,
@@ -188,7 +190,7 @@ def create_manuscript(title: str, author: str, content: str,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
-        'state': state
+        flds.CURR_STATE: state
     }
     existing = get_manuscript(title)
     if existing:
@@ -215,4 +217,3 @@ def delete_manuscript(title: str) -> bool:
     """
     result = dbc.delete(MANUSCRIPT_COLLECT, {flds.TITLE: title})
     return result > 0
-
