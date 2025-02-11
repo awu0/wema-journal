@@ -177,7 +177,7 @@ STATE_TABLE = {
     },
     PUBLISHED: {
         **COMMON_ACTIONS,
-    }
+    },
     REJECTED: {
         **COMMON_ACTIONS,
     },
