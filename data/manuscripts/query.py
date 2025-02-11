@@ -1,5 +1,6 @@
 import data.db_connect as dbc
 import data.manuscripts.fields as flds
+from data.manuscripts.fields import CURR_STATE
 
 # states:
 COPY_EDIT = 'CED'
@@ -217,3 +218,14 @@ def delete_manuscript(title: str) -> bool:
     """
     result = dbc.delete(MANUSCRIPT_COLLECT, {flds.TITLE: title})
     return result > 0
+
+def withdraw_manuscript(title: str):
+    """
+    Withdraws a manuscript by title. Requires the user to be the author of the manuscript.
+    """
+    manuscript = get_manuscript(title)
+    if not manuscript:
+        raise ValueError(f'Manuscript with title "{title}" not found')
+    
+    # TODO: user has to be the author
+    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {CURR_STATE: WITHDRAW})
