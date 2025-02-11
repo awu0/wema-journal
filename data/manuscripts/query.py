@@ -9,6 +9,8 @@ AUTHOR_REV = 'AUR'
 SUBMITTED = 'SUB'
 REJECTED = 'REJ'
 WITHDRAWN = 'WIT'
+EDITOR_REV = 'EDR'
+FORMATTING = 'FMT'
 # used for testing
 TEST_STATE = SUBMITTED
 
@@ -20,6 +22,8 @@ VALID_STATES = [
     REJECTED,
     SUBMITTED,
     WITHDRAWN,
+    EDITOR_REV,
+    FORMATTING,
 ]
 
 
@@ -145,6 +149,12 @@ STATE_TABLE = {
     },
     AUTHOR_REV: {
         **COMMON_ACTIONS,
+    },
+    EDITOR_REV: {
+
+    },
+    FORMATTING: {
+
     },
     REJECTED: {
         **COMMON_ACTIONS,
