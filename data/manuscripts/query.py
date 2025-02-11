@@ -168,7 +168,7 @@ STATE_TABLE = {
             FUNC: lambda **kwargs: FORMATTING,
         }
         **COMMON_ACTIONS,
-    }
+    },
     FORMATTING: {
         DONE: {
             FUNC: lambda **kwargs: PUBLISHED,
