@@ -20,7 +20,7 @@ TEST_STATE = SUBMITTED
 VALID_STATES = [
     AUTHOR_REVISIONS,
     COPY_EDIT,
-    IN_REF_REV,
+    IN_REF_REVIEW,
     REJECTED,
     SUBMITTED,
     WITHDRAWN,
@@ -72,7 +72,7 @@ def assign_ref(manu: dict, ref: str, extra=None) -> str:
     if ref not in manu[flds.REFEREES]:
         manu[flds.REFEREES].append(ref)
         update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
-    return IN_REF_REV
+    return IN_REF_REVIEW
 
 
 def delete_ref(manu: dict, ref: str) -> str:
@@ -84,7 +84,7 @@ def delete_ref(manu: dict, ref: str) -> str:
         update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
 
     if len(manu[flds.REFEREES]) > 0:
-        return IN_REF_REV
+        return IN_REF_REVIEW
     else:
         return SUBMITTED
 
@@ -105,10 +105,10 @@ def handle_action(curr_state, action) -> str:
     new_state = curr_state
     if curr_state == SUBMITTED:
         if action == ASSIGN_REF:
-            new_state = IN_REF_REV
+            new_state = IN_REF_REVIEW
         elif action == REJECT:
             new_state = REJECTED
-    elif curr_state == IN_REF_REV:
+    elif curr_state == IN_REF_REVIEW:
         if action == ACCEPT:
             new_state = COPY_EDIT
         elif action == REJECT:
@@ -136,7 +136,7 @@ STATE_TABLE = {
         },
         **COMMON_ACTIONS,
     },
-    IN_REF_REV: {
+    IN_REF_REVIEW: {
         ASSIGN_REF: {
             FUNC: assign_ref,
         },
