@@ -9,14 +9,12 @@ from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 
-import data.users as users
-from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
-
 import data.text as text
-from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
-
-from data.manuscripts import query as manuscript_query
+import data.users as users
 from data.manuscripts import fields as manuscript_fields
+from data.manuscripts import query as manuscript_query
+from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
+from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
 app = Flask(__name__)
 CORS(app)
@@ -65,14 +63,12 @@ TEXT_UPDATE_FIELDS = api.model('UpdateTextEntry', {
     text.TEXT: fields.String(description="Content of the text"),
 })
 
-
 MANUSCRIPT_CREATE_FIELDS = api.model('AddNewManuscriptEntry', {
     manuscript_fields.TITLE: fields.String(required=True, description="Manuscript's title"),
     manuscript_fields.AUTHOR: fields.String(required=True, description="Manuscript's author"),
     manuscript_fields.CONTENT: fields.String(required=True, description="Manuscript's content"),
     manuscript_fields.PUBLICATION_DATE: fields.String(description="Publication date of the manuscript"),
 })
-
 
 MANUSCRIPT_UPDATE_FIELDS = api.model('UpdateManuscriptEntry', {
     manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
@@ -150,6 +146,7 @@ class Users(Resource):
     This class handles creating, reading, updating
     and deleting journal people.
     """
+
     def get(self):
         """
         Retrieve the journal people.
@@ -195,6 +192,7 @@ class User(Resource):
     """
     This class handles creating, reading, updating, and deleting users
     """
+
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "No such person")
     def get(self, _email):
@@ -342,6 +340,7 @@ class Manuscripts(Resource):
     """
     This class handles creating, reading, updating, and deleting manuscripts.
     """
+
     def get(self):
         """
         Retrieve the list of manuscripts.
@@ -379,6 +378,7 @@ class Manuscript(Resource):
     """
     This class handles reading, updating, and deleting a single manuscript.
     """
+
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
     def get(self, title):
@@ -403,7 +403,8 @@ class Manuscript(Resource):
         if not manuscript:
             return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
 
-        for field in [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT, manuscript_fields.PUBLICATION_DATE]:
+        for field in [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT,
+                      manuscript_fields.PUBLICATION_DATE]:
             if field in data:
                 manuscript[field] = data[field]
 
@@ -439,6 +440,7 @@ class ReceiveAction(Resource):
     """
     Receive an action for a manuscript.
     """
+
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(MANU_ACTION_FLDS)
