@@ -15,6 +15,8 @@ FORMATTING = 'FMT'
 PUBLISHED = 'PUB'
 # used for testing
 TEST_STATE = SUBMITTED
+TEST_ID = 'fake_id'
+IN_REF_REV = 'REV'
 
 # a list of valid states
 VALID_STATES = [
@@ -261,3 +263,19 @@ def withdraw_manuscript(title: str):
     
     # TODO: user has to be the author
     dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {CURR_STATE: WITHDRAW})
+
+
+def main():
+    print(handle_action(TEST_ID, SUBMITTED, ASSIGN_REF, ref='Jack'))
+    print(handle_action(TEST_ID, IN_REF_REV, ASSIGN_REF,
+                        ref='Jill', extra='Extra!'))
+    print(handle_action(TEST_ID, IN_REF_REV, DELETE_REF,
+                        ref='Jill'))
+    print(handle_action(TEST_ID, IN_REF_REV, DELETE_REF,
+                        ref='Jack'))
+    print(handle_action(TEST_ID, SUBMITTED, WITHDRAW))
+    print(handle_action(TEST_ID, SUBMITTED, REJECT))
+
+
+if __name__ == '__main__':
+    main()
