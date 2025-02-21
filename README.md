@@ -1,7 +1,9 @@
 # wema-journal
 > Forked from [gcallah/demo-repo4](https://github.com/gcallah/demo-repo4)
 
-An app developed by **WEMA** (William, Eric, Matthew, Aaron)
+An app developed by **WEMA** (William, Eric, Matthew, Aaron).
+
+The frontend server for WEMA can be found here: [awu0/wema-journal-frontend](https://github.com/awu0/wema-journal-frontend)
 
 ## Progress and Goals
 See the following file [here](./ProgressAndGoals.md).
