@@ -66,7 +66,7 @@ def get_users() -> list[User]:
             name=user.get(NAME, ""),
             email=user[EMAIL],
             affiliation=user.get(AFFILIATION, ""),
-            roles=user.get(ROLE, [])
+            roles=user.get(ROLES, [])
         ) for user in db_users
     ]
 
