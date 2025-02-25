@@ -134,7 +134,7 @@ def update_user(email: str, name: str = None, role: str = None, affiliation: str
             raise ValueError(f"Invalid role '{role}'.")
         if role not in user_to_update.roles:
             user_to_update.roles.append(role)
-        updates[ROLE] = user_to_update.roles
+        updates[ROLES] = user_to_update.roles
 
     if affiliation:
         user_to_update.affiliation = affiliation
