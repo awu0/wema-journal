@@ -6,9 +6,8 @@ CONTENT = 'content'
 PUBLICATION_DATE = 'publication_date'
 
 #FSM 
-MANU_ID = '000'
-CURR_STATE = 'temp'
-ACTION = 'temp'
+STATE = 'state'
+ACTION = 'action'
 
 TEST_FLD_NM = TITLE
 TEST_FLD_DISPLAY_NM = 'Title'

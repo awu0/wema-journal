@@ -1,6 +1,6 @@
 import data.db_connect as dbc
 import data.manuscripts.fields as flds
-from data.manuscripts.fields import CURR_STATE
+from data.manuscripts.fields import STATE
 
 # states:
 COPY_EDIT = 'CED'
@@ -224,7 +224,7 @@ def create_manuscript(
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
-        flds.CURR_STATE: state,
+        flds.STATE: state,
     }
     existing = get_manuscript(title)
     if existing:
@@ -262,7 +262,7 @@ def withdraw_manuscript(title: str):
         raise ValueError(f'Manuscript with title "{title}" not found')
     
     # TODO: user has to be the author
-    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {CURR_STATE: WITHDRAW})
+    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {STATE: WITHDRAW})
 
 
 def main():

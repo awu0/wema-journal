@@ -432,8 +432,8 @@ class Manuscript(Resource):
 
 # Finite State Machine
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
-    manuscript_fields.MANU_ID: fields.String,
-    manuscript_fields.CURR_STATE: fields.String,
+    manuscript_fields.TITLE: fields.String,
+    manuscript_fields.STATE: fields.String,
     manuscript_fields.ACTION: fields.String,
     manuscript_fields.REFEREES: fields.String,
 })
@@ -453,11 +453,10 @@ class ReceiveAction(Resource):
         Receive an action for a manuscript.
         """
         try:
-            manu_id = request.json.get(manuscript_fields.MANU_ID)
-            curr_state = request.json.get(manuscript_fields.CURR_STATE)
+            manu_id = request.json.get(manuscript_fields.TITLE)
+            curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
-            kwargs = {}
-            kwargs[manuscript_fields.REFEREES] = request.json.get(manuscript_fields.REFEREES)
+            kwargs = {manuscript_fields.REFEREES: request.json.get(manuscript_fields.REFEREES)}
             manuscript_query.handle_action(manu_id, curr_state, action, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
