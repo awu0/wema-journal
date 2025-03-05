@@ -53,7 +53,7 @@ def test_handle_action_bad_action():
 
 def test_handle_action_valid_return():
     SAMPLE_MANU = {
-        flds.TITLE: 'string',
+        flds.TITLE: 'the title of test',
         flds.AUTHOR: 'John Doe',
         flds.REFEREES: []
     }
