@@ -15,8 +15,12 @@ class Role(Enum):
 MH_ROLES = [Role.EDITOR, Role.CONSULTING_EDITOR, Role.MANAGING_EDITOR]
 
 
-def get_roles() -> dict:
+def read() -> dict:
     return {role.name: role.value for role in Role}
+
+
+def get_roles() -> dict:
+    return read()
 
 
 def get_masthead_roles() -> dict:

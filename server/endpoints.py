@@ -16,6 +16,9 @@ from data.manuscripts import query as manuscript_query
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
+import data.roles as rls
+
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -37,6 +40,7 @@ USERS_EP = "/users"
 USERS = users.get_users_as_dict()
 TEXT_EP = "/text"
 MANUSCRIPTS_EP = "/manuscripts"
+ROLES_EP = '/roles'
 
 USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
     users.NAME: fields.String(required=True, description="User's name"),
@@ -458,3 +462,15 @@ class ReceiveAction(Resource):
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: {err=}')
+
+
+@api.route(ROLES_EP)
+class Roles(Resource):
+    """
+    This class handles reading person roles.
+    """
+    def get(self):
+        """
+        Retrieve the journal person roles.
+        """
+        return rls.read()
