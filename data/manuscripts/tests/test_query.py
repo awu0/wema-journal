@@ -3,6 +3,7 @@ import random
 import pytest
 
 import data.manuscripts.query as mqry
+import data.manuscripts.fields as flds
 
 
 def gen_random_not_valid_str() -> str:
@@ -51,8 +52,13 @@ def test_handle_action_bad_action():
 
 
 def test_handle_action_valid_return():
+    SAMPLE_MANU = {
+        flds.TITLE: 'string',
+        flds.AUTHOR: 'John Doe',
+        flds.REFEREES: [],
+    }
+    
     for state in mqry.get_states():
-        for action in mqry.get_actions():
-            new_state = mqry.handle_action(state, action)
+        for action in mqry.get_valid_actions_by_state(state):
+            new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
             assert mqry.is_valid_state(new_state)
-
