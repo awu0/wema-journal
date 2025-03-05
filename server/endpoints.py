@@ -9,15 +9,13 @@ from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 
+import data.roles as rls
 import data.text as text
 import data.users as users
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
-
-import data.roles as rls
-
 
 app = Flask(__name__)
 CORS(app)
@@ -457,9 +455,9 @@ class ReceiveAction(Resource):
             curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
             kwargs = {manuscript_fields.REFEREES: request.json.get(manuscript_fields.REFEREES)}
-            
+
             manu = manuscript_query.get_manuscript(title)
-            
+
             manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
