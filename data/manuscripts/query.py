@@ -67,7 +67,7 @@ VALID_ACTIONS = [
 MANUSCRIPT_COLLECT = 'manuscript'
 
 
-def assign_ref(manu: str, referees: str, extra=None) -> str:
+def assign_ref(manu: dict, referees: str, extra=None) -> str:
     """
     Assign a referee to a manuscript and update in database.
     
@@ -75,7 +75,6 @@ def assign_ref(manu: str, referees: str, extra=None) -> str:
     :param referees: the name of the referee
     :param extra: extra fields to assign
     """
-    manu = get_manuscript(manu)
     if referees not in manu.get(flds.REFEREES, []):
         if flds.REFEREES in manu:
             manu[flds.REFEREES].append(referees)

@@ -457,7 +457,10 @@ class ReceiveAction(Resource):
             curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
             kwargs = {manuscript_fields.REFEREES: request.json.get(manuscript_fields.REFEREES)}
-            manuscript_query.handle_action(curr_state, action, manu=title, **kwargs)
+            
+            manu = manuscript_query.get_manuscript(title)
+            
+            manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: {err=}')
