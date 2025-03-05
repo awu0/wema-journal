@@ -1,7 +1,7 @@
 TITLE = 'title'
 AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'
-REFEREES = 'referees'
+REFEREES = 'ref'
 CONTENT = 'content'
 PUBLICATION_DATE = 'publication_date'
 
