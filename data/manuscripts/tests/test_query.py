@@ -59,8 +59,8 @@ def test_handle_action_valid_return():
     }
     
     mqry.create_manuscript(
-        title='the title of test',
-        author='john doe',
+        title=SAMPLE_MANU[flds.TITLE],
+        author=SAMPLE_MANU[flds.AUTHOR],
         content='content goes here',
         publication_date='today',
     )
