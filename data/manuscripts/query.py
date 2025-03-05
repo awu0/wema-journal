@@ -67,12 +67,20 @@ VALID_ACTIONS = [
 MANUSCRIPT_COLLECT = 'manuscript'
 
 
-def assign_ref(manu: dict, ref: str, extra=None) -> str:
+def assign_ref(manu: str, referees: str, extra=None) -> str:
     """
     Assign a referee to a manuscript and update in database.
+    
+    :param manu: manuscript name
+    :param referees: the name of the referee
+    :param extra: extra fields to assign
     """
-    if ref not in manu[flds.REFEREES]:
-        manu[flds.REFEREES].append(ref)
+    manu = get_manuscript(manu)
+    if referees not in manu.get(flds.REFEREES, []):
+        if flds.REFEREES in manu:
+            manu[flds.REFEREES].append(referees)
+        else:
+            manu[flds.REFEREES] = [referees]
         update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
     return IN_REF_REVIEW
 
@@ -253,26 +261,3 @@ def handle_action(curr_state, action, **kwargs) -> str:
     if action not in STATE_TABLE[curr_state]:
         raise ValueError(f'{action} not available in {curr_state}')
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
-
-
-def main():
-    SAMPLE_MANU = {
-        flds.TITLE: 'How to correctly code',
-        flds.AUTHOR: 'John Doe',
-        flds.REFEREES: [],
-    }
-
-    print(handle_action(SUBMITTED, ASSIGN_REF, manu=SAMPLE_MANU, ref='John'))
-    print(
-        handle_action(
-            IN_REF_REV, ASSIGN_REF, manu=SAMPLE_MANU, ref='Jill', extra='Extra things'
-        )
-    )
-    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU, ref='Jane'))
-    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU, ref='Johnny'))
-    print(handle_action(SUBMITTED, WITHDRAW, manu=SAMPLE_MANU))
-    print(handle_action(SUBMITTED, REJECT, manu=SAMPLE_MANU))
-
-
-if __name__ == '__main__':
-    main()
