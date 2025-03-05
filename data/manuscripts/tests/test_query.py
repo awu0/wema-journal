@@ -55,8 +55,15 @@ def test_handle_action_valid_return():
     SAMPLE_MANU = {
         flds.TITLE: 'string',
         flds.AUTHOR: 'John Doe',
-        flds.REFEREES: [],
+        flds.REFEREES: []
     }
+    
+    mqry.create_manuscript(
+        title='the title of test',
+        author='john doe',
+        content='content goes here',
+        publication_date='today',
+    )
     
     for state in mqry.get_states():
         for action in mqry.get_valid_actions_by_state(state):
