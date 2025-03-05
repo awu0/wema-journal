@@ -99,14 +99,36 @@ def test_create_with_empty_text(mock_create, mock_read_one, mock_db, test_data):
 @patch('data.db_connect.create')
 def test_create_db_error(mock_create, mock_read_one, mock_db, test_data):
     """Test creating a text entry when DB throws an error."""
-    # Set up the mocks
     mock_read_one.return_value = False
     mock_create.side_effect = Exception("Database insertion error")
-    
-    # Call the function and check it throws the exception
     with pytest.raises(Exception) as excinfo:
         texts.create(test_data["key"], test_data["title"], test_data["text"])
     
     assert "Database insertion error" in str(excinfo.value)
     mock_read_one.assert_called_once_with(test_data["key"])
     mock_create.assert_called_once_with(texts.COLLECTION, test_data["entry"])
+
+# Added Tests for Delete
+@patch('data.db_connect.delete')
+def test_delete_successful(mock_delete, mock_db, test_data):
+    """Test deleting a text entry successfully."""
+    mock_delete.return_value = 1
+    result = texts.delete(test_data["key"])
+    assert result is True
+    mock_delete.assert_called_once_with(texts.COLLECTION, {texts.KEY: test_data["key"]})
+
+@patch('data.db_connect.delete')
+def test_delete_not_found(mock_delete, mock_db, test_data):
+    """Test deleting a text entry that doesn't exist."""
+    mock_delete.return_value = 0
+    result = texts.delete(test_data["key"])
+    assert result is False
+    mock_delete.assert_called_once_with(texts.COLLECTION, {texts.KEY: test_data["key"]})
+
+@patch('data.db_connect.delete')
+def test_delete_empty_key(mock_delete, mock_db):
+    """Test deleting a text entry with empty key."""
+    mock_delete.return_value = 0
+    result = texts.delete("")
+    assert result is False
+    mock_delete.assert_called_once_with(texts.COLLECTION, {texts.KEY: ""})
