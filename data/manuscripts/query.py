@@ -99,25 +99,6 @@ def is_valid_action(action: str) -> bool:
     return action in VALID_ACTIONS
 
 
-def handle_action(curr_state, action) -> str:
-    if not is_valid_state(curr_state):
-        raise ValueError(f'Invalid state: {curr_state}')
-    if not is_valid_action(action):
-        raise ValueError(f'Invalid action: {action}')
-    new_state = curr_state
-    if curr_state == SUBMITTED:
-        if action == ASSIGN_REF:
-            new_state = IN_REF_REVIEW
-        elif action == REJECT:
-            new_state = REJECTED
-    elif curr_state == IN_REF_REVIEW:
-        if action == ACCEPT:
-            new_state = COPY_EDIT
-        elif action == REJECT:
-            new_state = REJECTED
-    return new_state
-
-
 FUNC = 'f'
 
 
@@ -253,6 +234,7 @@ def delete_manuscript(title: str) -> bool:
     result = dbc.delete(MANUSCRIPT_COLLECT, {flds.TITLE: title})
     return result > 0
 
+
 def withdraw_manuscript(title: str):
     """
     Withdraws a manuscript by title. Requires the user to be the author of the manuscript.
@@ -260,21 +242,36 @@ def withdraw_manuscript(title: str):
     manuscript = get_manuscript(title)
     if not manuscript:
         raise ValueError(f'Manuscript with title "{title}" not found')
-    
+
     # TODO: user has to be the author
     dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {STATE: WITHDRAW})
 
 
+def handle_action(curr_state, action, **kwargs) -> str:
+    if curr_state not in STATE_TABLE:
+        raise ValueError(f'Bad state: {curr_state}')
+    if action not in STATE_TABLE[curr_state]:
+        raise ValueError(f'{action} not available in {curr_state}')
+    return STATE_TABLE[curr_state][action][FUNC](**kwargs)
+
+
 def main():
-    print(handle_action(TEST_ID, SUBMITTED, ASSIGN_REF, ref='Jack'))
-    print(handle_action(TEST_ID, IN_REF_REV, ASSIGN_REF,
-                        ref='Jill', extra='Extra!'))
-    print(handle_action(TEST_ID, IN_REF_REV, DELETE_REF,
-                        ref='Jill'))
-    print(handle_action(TEST_ID, IN_REF_REV, DELETE_REF,
-                        ref='Jack'))
-    print(handle_action(TEST_ID, SUBMITTED, WITHDRAW))
-    print(handle_action(TEST_ID, SUBMITTED, REJECT))
+    SAMPLE_MANU = {
+        flds.TITLE: 'How to correctly code',
+        flds.AUTHOR: 'John Doe',
+        flds.REFEREES: [],
+    }
+
+    print(handle_action(SUBMITTED, ASSIGN_REF, manu=SAMPLE_MANU, ref='John'))
+    print(
+        handle_action(
+            IN_REF_REV, ASSIGN_REF, manu=SAMPLE_MANU, ref='Jill', extra='Extra things'
+        )
+    )
+    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU, ref='Jane'))
+    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU, ref='Johnny'))
+    print(handle_action(SUBMITTED, WITHDRAW, manu=SAMPLE_MANU))
+    print(handle_action(SUBMITTED, REJECT, manu=SAMPLE_MANU))
 
 
 if __name__ == '__main__':
