@@ -57,7 +57,8 @@ def test_handle_action_valid_return():
         flds.AUTHOR: 'John Doe',
         flds.REFEREES: []
     }
-    
+
+    # Create the manuscript for testing
     mqry.create_manuscript(
         title=SAMPLE_MANU[flds.TITLE],
         author=SAMPLE_MANU[flds.AUTHOR],
@@ -65,7 +66,10 @@ def test_handle_action_valid_return():
         publication_date='today',
     )
     
-    for state in mqry.get_states():
-        for action in mqry.get_valid_actions_by_state(state):
-            new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
-            assert mqry.is_valid_state(new_state)
+    try:
+        for state in mqry.get_states():
+            for action in mqry.get_valid_actions_by_state(state):
+                new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
+                assert mqry.is_valid_state(new_state)
+    finally:
+        mqry.delete_manuscript(SAMPLE_MANU[flds.TITLE])
