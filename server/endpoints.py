@@ -454,10 +454,12 @@ class ReceiveAction(Resource):
             title = request.json.get(manuscript_fields.TITLE)
             curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
-            kwargs = {manuscript_fields.REFEREES: request.json.get(manuscript_fields.REFEREES)}
-
+            kwargs = {k: v for k, v in request.json.items() if k not in [
+                        manuscript_fields.TITLE,
+                        manuscript_fields.STATE,
+                        manuscript_fields.ACTION
+                    ]}
             manu = manuscript_query.get_manuscript(title)
-
             manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
