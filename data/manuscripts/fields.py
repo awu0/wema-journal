@@ -4,6 +4,7 @@ DISPLAY_NAME = 'display_name'
 REFEREES = 'ref'
 CONTENT = 'content'
 PUBLICATION_DATE = 'publication_date'
+ID = 'id'
 
 #FSM 
 STATE = 'state'
@@ -16,6 +17,9 @@ TEST_FLD_DISPLAY_NM = 'Title'
 FIELDS = {
     TITLE: {
         DISPLAY_NAME: TEST_FLD_DISPLAY_NM,
+    },
+    ID: {
+        DISPLAY_ID: 'Manuscript ID',
     },
 }
 
