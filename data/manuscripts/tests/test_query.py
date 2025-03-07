@@ -15,6 +15,7 @@ def gen_random_not_valid_str() -> str:
     big_int = random.randint(0, BIG_NUM)
     big_int += BIG_NUM
     bad_str = str(big_int)
+    return bad_str
 
 
 def test_is_valid_state():
@@ -52,16 +53,9 @@ def test_handle_action_bad_action():
 
 
 def test_handle_action_valid_return():
-    SAMPLE_MANU = {
-        flds.TITLE: 'the title of test',
-        flds.AUTHOR: 'John Doe',
-        flds.REFEREES: []
-    }
-
-    # Create the manuscript for testing
-    mqry.create_manuscript(
-        title=SAMPLE_MANU[flds.TITLE],
-        author=SAMPLE_MANU[flds.AUTHOR],
+    SAMPLE_MANU = mqry.create_manuscript(
+        title='the title of test',
+        author='John Doe',
         content='content goes here',
         publication_date='today',
     )
@@ -72,4 +66,4 @@ def test_handle_action_valid_return():
                 new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
                 assert mqry.is_valid_state(new_state)
     finally:
-        mqry.delete_manuscript(SAMPLE_MANU[flds.TITLE])
+        mqry.delete_manuscript(SAMPLE_MANU[flds.ID])
