@@ -14,6 +14,7 @@ import data.text as text
 import data.users as users
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
+from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 
@@ -459,7 +460,10 @@ class ReceiveAction(Resource):
                         manuscript_fields.ACTION
                     ]}
             manu = manuscript_query.get_manuscript(title)
-            manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
+            new_state = manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
+
+            update_manuscript(title, {manuscript_fields.STATE: new_state}) 
+            
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: {err=}')
