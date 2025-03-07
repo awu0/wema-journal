@@ -433,7 +433,6 @@ MANU_ACTION_FLDS = api.model('ManuscriptAction', {
     manuscript_fields.TITLE: fields.String,
     manuscript_fields.STATE: fields.String,
     manuscript_fields.ACTION: fields.String,
-    manuscript_fields.REFEREES: fields.String,
 })
 
 
