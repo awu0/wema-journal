@@ -66,4 +66,4 @@ def test_handle_action_valid_return():
                 new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
                 assert mqry.is_valid_state(new_state)
     finally:
-        mqry.delete_manuscript(SAMPLE_MANU[flds.ID])
+        mqry.delete_manuscript(SAMPLE_MANU[flds.TITLE])
