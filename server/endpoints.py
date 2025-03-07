@@ -346,7 +346,7 @@ class Manuscripts(Resource):
     def get(self):
         """
         Retrieve the list of manuscripts.
-        If a id query parameter is provided, return specific manuscript.
+        If a title query parameter is provided, return specific manuscript.
         """
         return manuscript_query.get_all_manuscripts()
 
@@ -375,7 +375,7 @@ class Manuscripts(Resource):
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
 
-@api.route(f"{MANUSCRIPTS_EP}/<string:manu_id>")
+@api.route(f"{MANUSCRIPTS_EP}/<string:title>")
 class Manuscript(Resource):
     """
     This class handles reading, updating, and deleting a single manuscript.
@@ -383,49 +383,49 @@ class Manuscript(Resource):
 
     @api.response(HTTPStatus.OK, "Success")
     @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
-    def get(self, manu_id):
+    def get(self, title):
         """
-        Retrieve a specific manuscript by id.
+        Retrieve a specific manuscript by title.
         """
-        manuscript = manuscript_query.get_manuscript(manu_id)
+        manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
-            return {"message": f"Manuscript with id '{manu_id}' not found"}, HTTPStatus.NOT_FOUND
+            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
         return manuscript, HTTPStatus.OK
 
     @api.expect(MANUSCRIPT_UPDATE_FIELDS)
     @api.response(HTTPStatus.OK, "Manuscript updated successfully")
     @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
     @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
-    def patch(self, manu_id):
+    def patch(self, title):
         """
         Update a manuscript. Only fields provided in the request are updated.
         """
         data = request.json
-        manuscript = manuscript_query.get_manuscript(manu_id)
+        manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
-            return {"message": f"Manuscript with id '{manu_id}' not found"}, HTTPStatus.NOT_FOUND
+            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
 
-        for field in [manuscript_fields.ID, manuscript_fields.AUTHOR, manuscript_fields.CONTENT,
+        for field in [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT,
                       manuscript_fields.PUBLICATION_DATE]:
             if field in data:
                 manuscript[field] = data[field]
 
         try:
-            manuscript_query.update_manuscript(manu_id, manuscript)
+            manuscript_query.update_manuscript(title, manuscript)
             return {"message": "Manuscript updated successfully"}, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
     @api.response(HTTPStatus.OK, "Manuscript deleted successfully")
     @api.response(HTTPStatus.NOT_FOUND, "Manuscript not found")
-    def delete(self, manu_id):
+    def delete(self, title):
         """
-        Delete a manuscript by id.
+        Delete a manuscript by title.
         """
-        success = manuscript_query.delete_manuscript(manu_id)
+        success = manuscript_query.delete_manuscript(title)
         if success:
-            return {"message": f"Manuscript '{manu_id}' deleted successfully"}, HTTPStatus.OK
-        return {"message": f"Manuscript '{manu_id}' not found"}, HTTPStatus.NOT_FOUND
+            return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
+        return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
 
 
 # Finite State Machine
@@ -434,7 +434,6 @@ MANU_ACTION_FLDS = api.model('ManuscriptAction', {
     manuscript_fields.STATE: fields.String,
     manuscript_fields.ACTION: fields.String,
     manuscript_fields.REFEREES: fields.String,
-    manuscript_fields.ID: fields.String,
 })
 
 
@@ -452,15 +451,15 @@ class ReceiveAction(Resource):
         Receive an action for a manuscript.
         """
         try:
-            manu_id = request.json.get(manuscript_fields.ID)
+            title = request.json.get(manuscript_fields.TITLE)
             curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
             kwargs = {k: v for k, v in request.json.items() if k not in [
-                        manuscript_fields.ID,
+                        manuscript_fields.TITLE,
                         manuscript_fields.STATE,
                         manuscript_fields.ACTION
                     ]}
-            manu = manuscript_query.get_manuscript(manu_id)
+            manu = manuscript_query.get_manuscript(title)
             manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:

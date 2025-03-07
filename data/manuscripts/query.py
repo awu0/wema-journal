@@ -80,7 +80,7 @@ def assign_ref(manu: dict, ref: str, extra=None) -> str:
             manu[flds.REFEREES].append(ref)
         else:
             manu[flds.REFEREES] = [ref]
-        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
     return IN_REF_REVIEW
 
 
@@ -90,7 +90,7 @@ def delete_ref(manu: dict, ref: str) -> str:
     """
     if ref in manu[flds.REFEREES]:
         manu[flds.REFEREES].remove(ref)
-        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
 
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REVIEW
@@ -183,11 +183,11 @@ def get_valid_actions_by_state(state: str):
     return valid_actions
 
 
-def get_manuscript(manu_id: str) -> dict:
+def get_manuscript(title: str) -> dict:
     """
-    Retrieve a specific manuscript by manu_id from the database.
+    Retrieve a specific manuscript by title from the database.
     """
-    return dbc.fetch_one(MANUSCRIPT_COLLECT, {flds.ID: manu_id})
+    return dbc.fetch_one(MANUSCRIPT_COLLECT, {flds.TITLE: title})
 
 
 def get_all_manuscripts() -> list:
@@ -196,15 +196,6 @@ def get_all_manuscripts() -> list:
     """
     return dbc.read(MANUSCRIPT_COLLECT)
 
-def get_next_manuscript_id() -> int:
-    """
-    Get the next manuscript ID by finding the highest existing ID and adding 1.
-    """
-    manuscripts = get_all_manuscripts()
-    if not manuscripts:
-        return 1
-    max_id = max(int(manu[flds.ID]) for manu in manuscripts if manu[flds.ID].isdigit())
-    return max_id + 1
 
 def create_manuscript(
     title: str,
@@ -216,49 +207,51 @@ def create_manuscript(
     """
     Create a new manuscript entry in the database.
     """
-    manu_id = str(get_next_manuscript_id())
     new_manuscript = {
-        flds.ID: manu_id,
         flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
         flds.STATE: state,
     }
+    existing = get_manuscript(title)
+    if existing:
+        raise ValueError(f'Manuscript with title "{title}" already exists')
+
     dbc.create(MANUSCRIPT_COLLECT, new_manuscript)
     return new_manuscript
 
 
-def update_manuscript(manu_id: str, updates: dict) -> dict:
+def update_manuscript(title: str, updates: dict) -> dict:
     """
     Update a manuscript in the database.
     """
-    manuscript = get_manuscript(manu_id)
+    manuscript = get_manuscript(title)
     if not manuscript:
-        raise ValueError(f'Manuscript with id "{manu_id}" not found')
+        raise ValueError(f'Manuscript with title "{title}" not found')
     if '_id' in updates:
         del updates['_id']
-    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.ID: manu_id}, updates)
+    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, updates)
 
 
-def delete_manuscript(manu_id: str) -> bool:
+def delete_manuscript(title: str) -> bool:
     """
-    Delete a manuscript by id from a simulated database.
+    Delete a manuscript by title from a simulated database.
     """
-    result = dbc.delete(MANUSCRIPT_COLLECT, {flds.ID: manu_id})
+    result = dbc.delete(MANUSCRIPT_COLLECT, {flds.TITLE: title})
     return result > 0
 
 
-def withdraw_manuscript(manu_id: str):
+def withdraw_manuscript(title: str):
     """
-    Withdraws a manuscript by id. Requires the user to be the author of the manuscript.
+    Withdraws a manuscript by title. Requires the user to be the author of the manuscript.
     """
-    manuscript = get_manuscript(manu_id)
+    manuscript = get_manuscript(title)
     if not manuscript:
-        raise ValueError(f'Manuscript with ID "{manu_id}" not found')
+        raise ValueError(f'Manuscript with title "{title}" not found')
 
     # TODO: user has to be the author
-    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.ID: manu_id}, {STATE: WITHDRAW})
+    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {STATE: WITHDRAW})
 
 
 def handle_action(curr_state, action, **kwargs) -> str:
