@@ -2,6 +2,7 @@
 This is the file containing all the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
+
 from http import HTTPStatus
 
 import werkzeug.exceptions as wz
@@ -41,44 +42,74 @@ TEXT_EP = "/text"
 MANUSCRIPTS_EP = "/manuscripts"
 ROLES_EP = '/roles'
 
-USER_CREATE_FIELDS = api.model('AddNewUserEntry', {
-    users.NAME: fields.String(required=True, description="User's name"),
-    users.EMAIL: fields.String(required=True, description="User's email"),
-    users.AFFILIATION: fields.String(required=True, description="User's affiliation"),
-    users.ROLE: fields.String(description="User's role"),
-})
+USER_CREATE_FIELDS = api.model(
+    'AddNewUserEntry',
+    {
+        users.NAME: fields.String(required=True, description="User's name"),
+        users.EMAIL: fields.String(required=True, description="User's email"),
+        users.AFFILIATION: fields.String(
+            required=True, description="User's affiliation"
+        ),
+        users.ROLE: fields.String(description="User's role"),
+    },
+)
 
-USER_UPDATE_FIELDS = api.model('UpdateUserEntry', {
-    users.NAME: fields.String(description="User's name"),
-    users.EMAIL: fields.String(description="User's email"),
-    users.AFFILIATION: fields.String(description="User's affiliation"),
-    users.ROLE: fields.String(description="User's role"),
-})
+USER_UPDATE_FIELDS = api.model(
+    'UpdateUserEntry',
+    {
+        users.NAME: fields.String(description="User's name"),
+        users.EMAIL: fields.String(description="User's email"),
+        users.AFFILIATION: fields.String(description="User's affiliation"),
+        users.ROLE: fields.String(description="User's role"),
+    },
+)
 
-TEXT_CREATE_FIELDS = api.model('AddNewTextEntry', {
-    text.KEY: fields.String(required=True, description="Unique key for the text"),
-    text.TITLE: fields.String(required=True, description="Title of the text"),
-    text.TEXT: fields.String(required=True, description="Content of the text"),
-})
+TEXT_CREATE_FIELDS = api.model(
+    'AddNewTextEntry',
+    {
+        text.KEY: fields.String(required=True, description="Unique key for the text"),
+        text.TITLE: fields.String(required=True, description="Title of the text"),
+        text.TEXT: fields.String(required=True, description="Content of the text"),
+    },
+)
 
-TEXT_UPDATE_FIELDS = api.model('UpdateTextEntry', {
-    text.TITLE: fields.String(description="Title of the text"),
-    text.TEXT: fields.String(description="Content of the text"),
-})
+TEXT_UPDATE_FIELDS = api.model(
+    'UpdateTextEntry',
+    {
+        text.TITLE: fields.String(description="Title of the text"),
+        text.TEXT: fields.String(description="Content of the text"),
+    },
+)
 
-MANUSCRIPT_CREATE_FIELDS = api.model('AddNewManuscriptEntry', {
-    manuscript_fields.TITLE: fields.String(required=True, description="Manuscript's title"),
-    manuscript_fields.AUTHOR: fields.String(required=True, description="Manuscript's author"),
-    manuscript_fields.CONTENT: fields.String(required=True, description="Manuscript's content"),
-    manuscript_fields.PUBLICATION_DATE: fields.String(description="Publication date of the manuscript"),
-})
+MANUSCRIPT_CREATE_FIELDS = api.model(
+    'AddNewManuscriptEntry',
+    {
+        manuscript_fields.TITLE: fields.String(
+            required=True, description="Manuscript's title"
+        ),
+        manuscript_fields.AUTHOR: fields.String(
+            required=True, description="Manuscript's author"
+        ),
+        manuscript_fields.CONTENT: fields.String(
+            required=True, description="Manuscript's content"
+        ),
+        manuscript_fields.PUBLICATION_DATE: fields.String(
+            description="Publication date of the manuscript"
+        ),
+    },
+)
 
-MANUSCRIPT_UPDATE_FIELDS = api.model('UpdateManuscriptEntry', {
-    manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
-    manuscript_fields.AUTHOR: fields.String(description="Author's name"),
-    manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
-    manuscript_fields.PUBLICATION_DATE: fields.String(description="Publication date"),
-})
+MANUSCRIPT_UPDATE_FIELDS = api.model(
+    'UpdateManuscriptEntry',
+    {
+        manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
+        manuscript_fields.AUTHOR: fields.String(description="Author's name"),
+        manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
+        manuscript_fields.PUBLICATION_DATE: fields.String(
+            description="Publication date"
+        ),
+    },
+)
 
 
 @api.route(HELLO_EP)
@@ -185,7 +216,10 @@ class Users(Resource):
                 role=data[ROLE] if ROLE in data else None,
                 affiliation=data[AFFILIATION],
             )
-            return {"message": "User added successfully!", "added_user": data}, HTTPStatus.CREATED
+            return {
+                "message": "User added successfully!",
+                "added_user": data,
+            }, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
@@ -252,7 +286,10 @@ class User(Resource):
                 affiliation=data.get(AFFILIATION),
             )
 
-            return {"message": "User updated successfully", "updated_user": updated_user}, HTTPStatus.OK
+            return {
+                "message": "User updated successfully",
+                "updated_user": updated_user,
+            }, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
@@ -286,11 +323,16 @@ class Texts(Resource):
 
         try:
             created_text = create(key=key, title=title, text=content)
-            return {"message": "Text created successfully", "text": created_text}, HTTPStatus.CREATED
+            return {
+                "message": "Text created successfully",
+                "text": created_text,
+            }, HTTPStatus.CREATED
         except ValueError as ve:
             return {"message": str(ve)}, HTTPStatus.CONFLICT
         except Exception:
-            return {"message": "An error occurred while creating the text "}, HTTPStatus.INTERNAL_SERVER_ERROR
+            return {
+                "message": "An error occurred while creating the text "
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
 
 
 @api.route(f"{TEXT_EP}/<string:key>")
@@ -323,7 +365,10 @@ class SingleText(Resource):
 
         try:
             updated_text = update(key=key, title=title, text=content)
-            return {"message": "Text updated successfully", "text": updated_text}, HTTPStatus.OK
+            return {
+                "message": "Text updated successfully",
+                "text": updated_text,
+            }, HTTPStatus.OK
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.NOT_FOUND
 
@@ -335,7 +380,10 @@ class SingleText(Resource):
         if not deleted_text:
             return {"message": f"Text with key '{key}' not found"}, HTTPStatus.NOT_FOUND
 
-        return {"message": "Text deleted successfully", "deleted_text": deleted_text}, HTTPStatus.OK
+        return {
+            "message": "Text deleted successfully",
+            "deleted_text": deleted_text,
+        }, HTTPStatus.OK
 
 
 @api.route(MANUSCRIPTS_EP)
@@ -359,7 +407,11 @@ class Manuscripts(Resource):
         Adds a new manuscript with given JSON data
         """
         data = request.json
-        required_fields = [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT]
+        required_fields = [
+            manuscript_fields.TITLE,
+            manuscript_fields.AUTHOR,
+            manuscript_fields.CONTENT,
+        ]
 
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
@@ -371,7 +423,10 @@ class Manuscripts(Resource):
                 content=data[manuscript_fields.CONTENT],
                 publication_date=data.get(manuscript_fields.PUBLICATION_DATE, None),
             )
-            return {"message": "Manuscript added successfully!", "added_manuscript": data}, HTTPStatus.CREATED
+            return {
+                "message": "Manuscript added successfully!",
+                "added_manuscript": data,
+            }, HTTPStatus.CREATED
         except ValueError as e:
             return {"message": str(e)}, HTTPStatus.BAD_REQUEST
 
@@ -390,7 +445,9 @@ class Manuscript(Resource):
         """
         manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
-            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
+            return {
+                "message": f"Manuscript with title '{title}' not found"
+            }, HTTPStatus.NOT_FOUND
         return manuscript, HTTPStatus.OK
 
     @api.expect(MANUSCRIPT_UPDATE_FIELDS)
@@ -404,10 +461,16 @@ class Manuscript(Resource):
         data = request.json
         manuscript = manuscript_query.get_manuscript(title)
         if not manuscript:
-            return {"message": f"Manuscript with title '{title}' not found"}, HTTPStatus.NOT_FOUND
+            return {
+                "message": f"Manuscript with title '{title}' not found"
+            }, HTTPStatus.NOT_FOUND
 
-        for field in [manuscript_fields.TITLE, manuscript_fields.AUTHOR, manuscript_fields.CONTENT,
-                      manuscript_fields.PUBLICATION_DATE]:
+        for field in [
+            manuscript_fields.TITLE,
+            manuscript_fields.AUTHOR,
+            manuscript_fields.CONTENT,
+            manuscript_fields.PUBLICATION_DATE,
+        ]:
             if field in data:
                 manuscript[field] = data[field]
 
@@ -425,16 +488,21 @@ class Manuscript(Resource):
         """
         success = manuscript_query.delete_manuscript(title)
         if success:
-            return {"message": f"Manuscript '{title}' deleted successfully"}, HTTPStatus.OK
+            return {
+                "message": f"Manuscript '{title}' deleted successfully"
+            }, HTTPStatus.OK
         return {"message": f"Manuscript '{title}' not found"}, HTTPStatus.NOT_FOUND
 
 
 # Finite State Machine
-MANU_ACTION_FLDS = api.model('ManuscriptAction', {
-    manuscript_fields.TITLE: fields.String,
-    manuscript_fields.STATE: fields.String,
-    manuscript_fields.ACTION: fields.String,
-})
+MANU_ACTION_FLDS = api.model(
+    'ManuscriptAction',
+    {
+        manuscript_fields.TITLE: fields.String,
+        manuscript_fields.STATE: fields.String,
+        manuscript_fields.ACTION: fields.String,
+    },
+)
 
 
 @api.route(f'{MANUSCRIPTS_EP}/receive_action')
@@ -454,16 +522,23 @@ class ReceiveAction(Resource):
             title = request.json.get(manuscript_fields.TITLE)
             curr_state = request.json.get(manuscript_fields.STATE)
             action = request.json.get(manuscript_fields.ACTION)
-            kwargs = {k: v for k, v in request.json.items() if k not in [
-                        manuscript_fields.TITLE,
-                        manuscript_fields.STATE,
-                        manuscript_fields.ACTION
-                    ]}
+            kwargs = {
+                k: v
+                for k, v in request.json.items()
+                if k
+                not in [
+                    manuscript_fields.TITLE,
+                    manuscript_fields.STATE,
+                    manuscript_fields.ACTION,
+                ]
+            }
             manu = manuscript_query.get_manuscript(title)
-            new_state = manuscript_query.handle_action(curr_state, action, manu=manu, **kwargs)
+            new_state = manuscript_query.handle_action(
+                curr_state, action, manu=manu, **kwargs
+            )
 
-            update_manuscript(title, {manuscript_fields.STATE: new_state}) 
-            
+            update_manuscript(title, {manuscript_fields.STATE: new_state})
+
             return {'message': 'Action processed successfully'}, HTTPStatus.OK
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: {err=}')
@@ -474,6 +549,7 @@ class Roles(Resource):
     """
     This class handles reading person roles.
     """
+
     def get(self):
         """
         Retrieve the journal person roles.
