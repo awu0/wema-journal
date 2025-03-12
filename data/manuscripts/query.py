@@ -204,6 +204,7 @@ def get_all_manuscripts() -> list:
 
 
 def create_manuscript(
+    title: str,
     author: str,
     content: str,
     publication_date: str = None,
@@ -213,6 +214,7 @@ def create_manuscript(
     Create a new manuscript entry in the database.
     """
     new_manuscript = {
+        fld.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
@@ -257,7 +259,7 @@ def withdraw_manuscript(manu_id: str):
         raise ValueError(f'Manuscript with _id "{manu_id}" not found')
 
     dbc.update_doc(MANUSCRIPT_COLLECT, {"_id": ObjectId(manu_id)}, {STATE: WITHDRAWN})
-    
+
 
 def handle_action(curr_state, action, **kwargs) -> str:
     if curr_state not in STATE_TABLE:
