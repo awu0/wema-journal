@@ -214,7 +214,7 @@ def create_manuscript(
     Create a new manuscript entry in the database.
     """
     new_manuscript = {
-        fld.TITLE: title,
+        flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
