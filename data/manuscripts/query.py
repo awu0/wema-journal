@@ -1,6 +1,7 @@
 import data.db_connect as dbc
 import data.manuscripts.fields as flds
 from data.manuscripts.fields import STATE
+from bson import ObjectId
 
 # states:
 COPY_EDIT = 'CED'
