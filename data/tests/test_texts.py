@@ -132,3 +132,21 @@ def test_delete_empty_key(mock_delete, mock_db):
     result = texts.delete("")
     assert result is False
     mock_delete.assert_called_once_with(texts.COLLECTION, {texts.KEY: ""})
+
+# Added Tests for Update
+@patch('data.text.read_one')
+@patch('data.db_connect.update_doc')
+def test_update_title_only(mock_update_doc, mock_read_one, mock_db, test_data):
+    """Test updating just the title of a text entry."""
+    mock_read_one.side_effect = [
+        test_data["entry"], 
+        {**test_data["entry"], texts.TITLE: "Updated Title"}
+    ]    
+    result = texts.update(test_data["key"], title="Updated Title")
+    assert result == {**test_data["entry"], texts.TITLE: "Updated Title"}
+    assert mock_read_one.call_count == 2
+    mock_update_doc.assert_called_once_with(
+        texts.COLLECTION, 
+        {texts.KEY: test_data["key"]}, 
+        {texts.TITLE: "Updated Title"}
+    )
