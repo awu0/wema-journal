@@ -71,7 +71,7 @@ def assign_ref(manu: dict, ref: str, extra=None) -> str:
     """
     Assign a referee to a manuscript and update in database.
     
-    :param manu: manuscript name
+    :param manu: manuscript id
     :param ref: the name of the referee
     :param extra: extra fields to assign
     """
@@ -80,7 +80,7 @@ def assign_ref(manu: dict, ref: str, extra=None) -> str:
             manu[flds.REFEREES].append(ref)
         else:
             manu[flds.REFEREES] = [ref]
-        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
     return IN_REF_REVIEW
 
 
@@ -90,7 +90,7 @@ def delete_ref(manu: dict, ref: str) -> str:
     """
     if ref in manu[flds.REFEREES]:
         manu[flds.REFEREES].remove(ref)
-        update_manuscript(manu[flds.TITLE], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
 
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REVIEW
@@ -183,11 +183,17 @@ def get_valid_actions_by_state(state: str):
     return valid_actions
 
 
-def get_manuscript(title: str) -> dict:
+def get_manuscript(manu_id: str) -> dict:
     """
-    Retrieve a specific manuscript by title from the database.
+    Retrieve a specific manuscript by MongoDB _id.
     """
-    return dbc.fetch_one(MANUSCRIPT_COLLECT, {flds.TITLE: title})
+    try:
+        object_id = ObjectId(manu_id)  # Convert string to ObjectId
+    except Exception:
+        raise ValueError(f'Invalid MongoDB ObjectId: {manu_id}')
+
+    manuscript = dbc.fetch_one(MANUSCRIPT_COLLECT, {"_id": object_id})
+    return manuscript
 
 
 def get_all_manuscripts() -> list:
@@ -198,7 +204,6 @@ def get_all_manuscripts() -> list:
 
 
 def create_manuscript(
-    title: str,
     author: str,
     content: str,
     publication_date: str = None,
@@ -208,51 +213,51 @@ def create_manuscript(
     Create a new manuscript entry in the database.
     """
     new_manuscript = {
-        flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
         flds.PUBLICATION_DATE: publication_date,
         flds.STATE: state,
     }
-    existing = get_manuscript(title)
-    if existing:
-        raise ValueError(f'Manuscript with title "{title}" already exists')
+    result = dbc.create(MANUSCRIPT_COLLECT, new_manuscript)
 
-    dbc.create(MANUSCRIPT_COLLECT, new_manuscript)
+    new_manuscript["_id"] = result.inserted_id
     return new_manuscript
 
 
-def update_manuscript(title: str, updates: dict) -> dict:
+def update_manuscript(manu_id: str, updates: dict) -> dict:
     """
-    Update a manuscript in the database.
+    Update a manuscript in the database using MongoDB _id.
     """
-    manuscript = get_manuscript(title)
+    manuscript = get_manuscript(manu_id)
     if not manuscript:
-        raise ValueError(f'Manuscript with title "{title}" not found')
-    if '_id' in updates:
-        del updates['_id']
-    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, updates)
+        raise ValueError(f'Manuscript with _id "{manu_id}" not found')
+
+    dbc.update_doc(MANUSCRIPT_COLLECT, {"_id": ObjectId(manu_id)}, updates)
 
 
-def delete_manuscript(title: str) -> bool:
+def delete_manuscript(manu_id: str) -> bool:
     """
-    Delete a manuscript by title from a simulated database.
+    Delete a manuscript by MongoDB _id.
     """
-    result = dbc.delete(MANUSCRIPT_COLLECT, {flds.TITLE: title})
+    try:
+        object_id = ObjectId(manu_id)
+    except Exception:
+        raise ValueError(f'Invalid MongoDB ObjectId: {manu_id}')
+
+    result = dbc.delete(MANUSCRIPT_COLLECT, {"_id": object_id})
     return result > 0
 
 
-def withdraw_manuscript(title: str):
+def withdraw_manuscript(manu_id: str):
     """
-    Withdraws a manuscript by title. Requires the user to be the author of the manuscript.
+    Withdraw a manuscript using MongoDB _id.
     """
-    manuscript = get_manuscript(title)
+    manuscript = get_manuscript(manu_id)
     if not manuscript:
-        raise ValueError(f'Manuscript with title "{title}" not found')
+        raise ValueError(f'Manuscript with _id "{manu_id}" not found')
 
-    # TODO: user has to be the author
-    dbc.update_doc(MANUSCRIPT_COLLECT, {flds.TITLE: title}, {STATE: WITHDRAW})
-
+    dbc.update_doc(MANUSCRIPT_COLLECT, {"_id": ObjectId(manu_id)}, {STATE: WITHDRAWN})
+    
 
 def handle_action(curr_state, action, **kwargs) -> str:
     if curr_state not in STATE_TABLE:
