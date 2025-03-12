@@ -214,7 +214,7 @@ def create_manuscript(
     Create a new manuscript entry in the database.
     """
     new_manuscript = {
-        "_id": ObjectId()
+        "_id": ObjectId(),
         flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
