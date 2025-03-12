@@ -150,3 +150,45 @@ def test_update_title_only(mock_update_doc, mock_read_one, mock_db, test_data):
         {texts.KEY: test_data["key"]}, 
         {texts.TITLE: "Updated Title"}
     )
+
+@patch('data.text.read_one')
+@patch('data.db_connect.update_doc')
+def test_update_text_only(mock_update_doc, mock_read_one, mock_db, test_data):
+    """Test updating just the text content of a text entry."""
+    mock_read_one.side_effect = [
+        test_data["entry"], 
+        {**test_data["entry"], texts.TEXT: "Updated text content."}
+    ]
+    
+    result = texts.update(test_data["key"], text="Updated text content.")
+    assert result == {**test_data["entry"], texts.TEXT: "Updated text content."}
+    assert mock_read_one.call_count == 2
+    mock_update_doc.assert_called_once_with(
+        texts.COLLECTION, 
+        {texts.KEY: test_data["key"]}, 
+        {texts.TEXT: "Updated text content."}
+    )
+
+@patch('data.text.read_one')
+@patch('data.db_connect.update_doc')
+def test_update_both_fields(mock_update_doc, mock_read_one, mock_db, test_data):
+    """Test updating both title and text content of a text entry."""
+    updated_entry = {
+        texts.KEY: test_data["key"],
+        texts.TITLE: "Updated Title",
+        texts.TEXT: "Updated text content."
+    }
+    mock_read_one.side_effect = [test_data["entry"], updated_entry]
+    result = texts.update(
+        test_data["key"], 
+        title="Updated Title", 
+        text="Updated text content."
+    )
+    
+    assert result == updated_entry
+    assert mock_read_one.call_count == 2
+    mock_update_doc.assert_called_once_with(
+        texts.COLLECTION, 
+        {texts.KEY: test_data["key"]}, 
+        {texts.TITLE: "Updated Title", texts.TEXT: "Updated text content."}
+    )
