@@ -80,7 +80,7 @@ def assign_ref(manu: dict, ref: str, extra=None) -> str:
             manu[flds.REFEREES].append(ref)
         else:
             manu[flds.REFEREES] = [ref]
-        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu["_id"], {flds.REFEREES: manu[flds.REFEREES]})
     return IN_REF_REVIEW
 
 
@@ -90,7 +90,7 @@ def delete_ref(manu: dict, ref: str) -> str:
     """
     if ref in manu[flds.REFEREES]:
         manu[flds.REFEREES].remove(ref)
-        update_manuscript(manu[flds.ID], {flds.REFEREES: manu[flds.REFEREES]})
+        update_manuscript(manu["_id"], {flds.REFEREES: manu[flds.REFEREES]})
 
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REVIEW
@@ -214,6 +214,7 @@ def create_manuscript(
     Create a new manuscript entry in the database.
     """
     new_manuscript = {
+        "_id": ObjectId()
         flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
