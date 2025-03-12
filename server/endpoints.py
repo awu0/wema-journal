@@ -417,7 +417,7 @@ class Manuscripts(Resource):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
-            manuscript_query.create_manuscript(
+            new_manuscript = manuscript_query.create_manuscript(
                 title=data[manuscript_fields.TITLE],
                 author=data[manuscript_fields.AUTHOR],
                 content=data[manuscript_fields.CONTENT],
