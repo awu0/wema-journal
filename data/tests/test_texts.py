@@ -61,6 +61,14 @@ def test_read_one_existing(mock_fetch_one, mock_db, test_data):
     assert result == test_data["entry"]
     mock_fetch_one.assert_called_once_with(texts.COLLECTION, {texts.KEY: test_data["key"]})
 
+@patch('data.db_connect.fetch_one')
+def test_read_one_not_existing(mock_fetch_one, mock_db):
+    """Test reading a single text entry that doesn't exist."""
+    mock_fetch_one.return_value = None
+    result = texts.read_one("nonexistent_key")
+    assert result is False
+    mock_fetch_one.assert_called_once_with(texts.COLLECTION, {texts.KEY: "nonexistent_key"})
+
 # Testing Create
 @patch('data.text.read_one')
 @patch('data.db_connect.create')
