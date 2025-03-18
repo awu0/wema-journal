@@ -1,5 +1,5 @@
 from functools import wraps
-
+from logging import Logger
 # import data.db_connect as dbc
 
 """
@@ -100,3 +100,35 @@ def read_feature(feature_name: str) -> dict:
         return security_recs[feature_name]
     else:
         return None
+
+
+@needs_recs
+def check_permission(feature_name: str, operation: str, user_email: str, ip_address=None) -> bool:
+    """
+    Check if a user has permission to perform an operation on a feature.
+    Args:
+        feature_name: The name of the feature
+        operation: The operation (CREATE, READ, UPDATE, DELETE)
+        user_email: The email of the user
+        ip_address: The IP address of the user (optional)
+    Returns:
+        bool: True if the user has permission, False otherwise
+    """
+    if feature_name not in security_recs:
+        Logger.warning(f"Feature '{feature_name}' not found in security records")
+        return False
+    if operation not in security_recs[feature_name]:
+        Logger.warning(f"Operation '{operation}' not defined for feature '{feature_name}'")
+        return False
+    feature_sec = security_recs[feature_name][operation]
+    if feature_sec[CHECKS].get(LOGIN, True) and not user_email:
+        Logger.warning("Login required but no user email provided")
+        return False
+    if feature_sec[CHECKS].get(ip_address, False) and not ip_address:
+        Logger.warning("IP address check required but no IP address provided")
+        return False
+    user_list = feature_sec[USER_LIST]
+    if user_list and user_email not in user_list:
+        Logger.warning(f"User '{user_email}' not in allow list for '{operation}' on '{feature_name}'")
+        return False
+    return True
