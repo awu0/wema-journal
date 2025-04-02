@@ -1,5 +1,6 @@
 from functools import wraps
 from logging import Logger
+import time
 # import data.db_connect as dbc
 
 """
@@ -132,3 +133,42 @@ def check_permission(feature_name: str, operation: str, user_email: str, ip_addr
         Logger.warning(f"User '{user_email}' not in allow list for '{operation}' on '{feature_name}'")
         return False
     return True
+
+
+def _log_audit(user_email: str, feature_name: str, operation: str) -> None:
+    """
+    Log an audit entry for a security-sensitive operation.
+    Args:
+        user_email: The email of the user
+        feature_name: The name of the feature
+        operation: The operation performed
+    """
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    Logger.info(f"AUDIT: {timestamp} - User '{user_email}' performed '{operation}' on '{feature_name}'")
+    # In production, this would write to a secure audit log in the databased
+
+
+@needs_recs
+def add_user_permission(feature_name: str, operation: str, user_email: str) -> bool:
+    """
+    Add permission for a user to perform an operation on a feature.
+    Args:
+        feature_name: The name of the feature
+        operation: The operation (CREATE, READ, UPDATE, DELETE)
+        user_email: The email of the user
+
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    if feature_name not in security_recs:
+        security_recs[feature_name] = {}
+    if operation not in security_recs[feature_name]:
+        security_recs[feature_name][operation] = {
+            USER_LIST: [],
+            CHECKS: {
+                LOGIN: True,
+            },
+        }
+    if user_email not in security_recs[feature_name][operation][USER_LIST]:
+        security_recs[feature_name][operation][USER_LIST].append(user_email)
+    return  # write to database (Needs to be Implemented)
