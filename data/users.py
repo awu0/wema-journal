@@ -5,6 +5,7 @@ This module interfaces to our user data.
 import re
 from typing import Optional
 
+import data.roles as rls
 import data.db_connect as dbc
 from data.roles import is_valid_role, get_roles
 
@@ -183,8 +184,41 @@ affiliation = "affiliation"
 MH_FIELDS = [name, affiliation]
 
 
+def read() -> dict:
+    people = dbc.read_dict(USER_COLLECT, EMAIL)
+    print(f'{people=}')
+    return people
+
+
 def get_mh_fields(journal_code=None) -> list:
     return MH_FIELDS
+
+
+def create_mh_rec(person: dict) -> dict:
+    mh_rec = {}
+    for field in get_mh_fields():
+        mh_rec[field] = person.get(field, '')
+    return mh_rec
+
+
+def get_masthead() -> dict:
+    masthead = {}
+    mh_roles = rls.get_masthead_roles()
+    for mh_role, text in mh_roles.items():
+        people_role = []
+        people = read()
+        for _id, person in people.items():
+            if has_role(person, mh_role):
+                rec = create_mh_rec(person)
+                people_role.append(rec)
+        masthead[text] = people_role
+    return masthead
+
+
+def has_role(person: dict, role: str) -> bool:
+    if role in person.get(ROLES):
+        return True
+    return False
 
 
 # For testing

@@ -174,6 +174,18 @@ class JournalName(Resource):
         }
 
 
+MASTHEAD = 'Masthead'
+
+
+@api.route(f'{USERS_EP}/masthead')
+class Masthead(Resource):
+    def get(self):
+        """
+        Get a our masthead.
+        """
+        return {MASTHEAD: users.get_masthead()}
+
+
 @api.route(USERS_EP)
 class Users(Resource):
     """
