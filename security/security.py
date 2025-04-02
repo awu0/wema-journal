@@ -172,3 +172,26 @@ def add_user_permission(feature_name: str, operation: str, user_email: str) -> b
     if user_email not in security_recs[feature_name][operation][USER_LIST]:
         security_recs[feature_name][operation][USER_LIST].append(user_email)
     return  # write to database (Needs to be Implemented)
+
+
+@needs_recs
+def remove_user_permission(feature_name: str, operation: str, user_email: str) -> bool:
+    """
+    Remove permission for a user to perform an operation on a feature.
+    Args:
+        feature_name: The name of the feature
+        operation: The operation (CREATE, READ, UPDATE, DELETE)
+        user_email: The email of the user
+
+    Returns:
+        bool: True if successful, False otherwise
+    """
+    # Check if feature and operation exist
+    if (feature_name not in security_recs or
+            operation not in security_recs[feature_name] or
+            USER_LIST not in security_recs[feature_name][operation]):
+        return True  # Nothing to remove
+    # Remove user if present
+    if user_email in security_recs[feature_name][operation][USER_LIST]:
+        security_recs[feature_name][operation][USER_LIST].remove(user_email)
+    return  # write to database (Needs to be Implemented)
