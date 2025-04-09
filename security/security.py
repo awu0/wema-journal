@@ -249,6 +249,7 @@ def is_permitted(feature_name: str, action: str, user_id: str, **kwargs) -> bool
     return True
 
 
+@needs_recs
 def get_user_permissions(user_email: str) -> dict:
     """
     Get all permissions for a specific user.

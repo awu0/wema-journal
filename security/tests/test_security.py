@@ -43,3 +43,27 @@ def test_is_permitted_bad_check():
 def test_is_permitted_all_good():
     assert sec.is_permitted(sec.PEOPLE, sec.CREATE, sec.GOOD_USER_ID,
                             login_key='any key for now')
+    
+def test_get_user_permissions():
+    """
+    Test that get_user_permissions correctly returns all permissions for a specific user.
+    """
+    # Reset security records to ensure a clean test state
+    sec.security_recs = None
+    
+    # Get permissions for GOOD_USER_ID
+    good_user_perms = sec.get_user_permissions(sec.GOOD_USER_ID)
+    assert isinstance(good_user_perms, dict), "Should return a dictionary"
+    assert len(good_user_perms) > 0, "GOOD_USER_ID should have permissions"
+    assert sec.PEOPLE in good_user_perms, "GOOD_USER_ID should have access to PEOPLE feature"
+    assert sec.CREATE in good_user_perms[sec.PEOPLE], "GOOD_USER_ID should have CREATE permission for PEOPLE"
+    assert sec.BAD_FEATURE in good_user_perms, "GOOD_USER_ID should have access to BAD_FEATURE"
+    assert sec.CREATE in good_user_perms[sec.BAD_FEATURE], "GOOD_USER_ID should have CREATE permission for BAD_FEATURE"
+    
+    # Check non-existent user has no permissions
+    nonexistent_perms = sec.get_user_permissions("nonexistent@example.com")
+    assert isinstance(nonexistent_perms, dict), "Should return a dictionary"
+    assert len(nonexistent_perms) == 0, "Non-existent user should have no permissions"
+    
+    # Check non-existent feature is not in permissions
+    assert "NonExistentFeature" not in good_user_perms, "Non-existent feature should not be in permissions"
