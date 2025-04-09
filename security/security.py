@@ -247,3 +247,23 @@ def is_permitted(feature_name: str, action: str, user_id: str, **kwargs) -> bool
         if not CHECK_FUNCS[check](user_id, **kwargs):
             return False
     return True
+
+
+def get_user_permissions(user_email: str) -> dict:
+    """
+    Get all permissions for a specific user.
+    Args:
+        user_email: The email of the user
+
+    Returns:
+        dict: A dictionary of features and operations the user has access to
+    """
+    result = {}
+    for feature_name, feature_data in security_recs.items():
+        feature_perms = {}
+        for operation, op_data in feature_data.items():
+            if USER_LIST in op_data and user_email in op_data[USER_LIST]:
+                feature_perms[operation] = True
+        if feature_perms:
+            result[feature_name] = feature_perms
+    return result
