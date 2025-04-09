@@ -267,3 +267,17 @@ def get_user_permissions(user_email: str) -> dict:
         if feature_perms:
             result[feature_name] = feature_perms
     return result
+
+
+def get_feature_permissions(feature_name: str) -> dict:
+    """
+    Get all permissions for a specific feature.
+    Args:
+        feature_name: The name of the feature
+
+    Returns:
+        dict: A dictionary of operations and users with access
+    """
+    if feature_name not in security_recs:
+        return {}
+    return security_recs[feature_name]
