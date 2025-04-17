@@ -18,6 +18,7 @@ from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -571,3 +572,25 @@ class Roles(Resource):
         Retrieve the journal person roles.
         """
         return rls.read()
+
+
+@api.route('/logtail')
+class LogTail(Resource):
+    """
+    This endpoint returns the tail of the specified log error. Developer endpoint assignment.
+    """
+    def get(self):
+        ELOG_LOC = '/var/log/syslog'
+        try:
+            result = subprocess.run(
+                ['tail', ELOG_LOC],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True
+            )
+            log_output = result.stdout.decode('utf-8').strip()
+            return {"log": log_output}
+        except subprocess.CalledProcessError as err:
+            return {"error": err.stderr.decode('utf-8').strip()}, 500
+        except FileNotFoundError:
+            return {"error": "Log file not found."}, 404
