@@ -94,9 +94,6 @@ MANUSCRIPT_CREATE_FIELDS = api.model(
         manuscript_fields.CONTENT: fields.String(
             required=True, description="Manuscript's content"
         ),
-        manuscript_fields.PUBLICATION_DATE: fields.String(
-            description="Publication date of the manuscript"
-        ),
     },
 )
 
@@ -106,9 +103,6 @@ MANUSCRIPT_UPDATE_FIELDS = api.model(
         manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
         manuscript_fields.AUTHOR: fields.String(description="Author's name"),
         manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
-        manuscript_fields.PUBLICATION_DATE: fields.String(
-            description="Publication date"
-        ),
     },
 )
 
