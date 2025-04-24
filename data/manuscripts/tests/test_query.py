@@ -57,7 +57,7 @@ def test_handle_action_valid_return():
         title='the title of test',
         author='John Doe',
         content='content goes here',
-        publication_date='today',
+        submission_date='today',
     )
     try:
         manu_id = str(SAMPLE_MANU["_id"])

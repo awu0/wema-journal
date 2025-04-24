@@ -3,7 +3,7 @@ AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'
 REFEREES = 'ref'
 CONTENT = 'content'
-PUBLICATION_DATE = 'publication_date'
+SUBMISSION_DATE = 'submission_date'
 
 #FSM 
 STATE = 'state'

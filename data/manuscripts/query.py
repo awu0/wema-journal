@@ -208,7 +208,7 @@ def create_manuscript(
     title: str,
     author: str,
     content: str,
-    publication_date: str = None,
+    submission_date: str = None,
     state: str = SUBMITTED,
 ) -> dict:
     """
@@ -219,7 +219,7 @@ def create_manuscript(
         flds.TITLE: title,
         flds.AUTHOR: author,
         flds.CONTENT: content,
-        flds.PUBLICATION_DATE: publication_date,
+        flds.SUBMISSION_DATE: submission_date,
         flds.STATE: state,
     }
     result = dbc.create(MANUSCRIPT_COLLECT, new_manuscript)

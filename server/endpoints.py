@@ -13,6 +13,7 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 import data.roles as rls
 import data.text as text
 import data.users as users
+from datetime import datetime, timezone
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
@@ -93,6 +94,9 @@ MANUSCRIPT_CREATE_FIELDS = api.model(
         ),
         manuscript_fields.CONTENT: fields.String(
             required=True, description="Manuscript's content"
+        ),
+        manuscript_fields.SUBMISSION_DATE: fields.String(
+            description="Submission date of the manuscript"
         ),
     },
 )
@@ -424,11 +428,12 @@ class Manuscripts(Resource):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
+            current_time = datetime.now(timezone.est).strftime('%Y-%m-%d %H:%M:%S')
             new_manuscript = manuscript_query.create_manuscript(
                 title=data[manuscript_fields.TITLE],
                 author=data[manuscript_fields.AUTHOR],
                 content=data[manuscript_fields.CONTENT],
-                publication_date=data.get(manuscript_fields.PUBLICATION_DATE, None),
+                submission_date=current_time,
             )
             return {
                 "message": "Manuscript added successfully!",
@@ -477,7 +482,6 @@ class Manuscript(Resource):
             manuscript_fields.TITLE,
             manuscript_fields.AUTHOR,
             manuscript_fields.CONTENT,
-            manuscript_fields.PUBLICATION_DATE,
         ]:
             if field in data:
                 manuscript[field] = data[field]
