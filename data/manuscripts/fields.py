@@ -2,6 +2,7 @@ TITLE = 'title'
 AUTHOR = 'author'
 DISPLAY_NAME = 'display_name'
 REFEREES = 'ref'
+ABSTRACT = 'abstract'
 CONTENT = 'content'
 SUBMISSION_DATE = 'submission_date'
 

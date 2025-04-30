@@ -92,6 +92,9 @@ MANUSCRIPT_CREATE_FIELDS = api.model(
         manuscript_fields.AUTHOR: fields.String(
             required=True, description="Manuscript's author"
         ),
+        manuscript_fields.ABSTRACT: fields.String(
+            required=True, description="Manuscript's abstract"
+        ),
         manuscript_fields.CONTENT: fields.String(
             required=True, description="Manuscript's content"
         ),
@@ -106,6 +109,7 @@ MANUSCRIPT_UPDATE_FIELDS = api.model(
     {
         manuscript_fields.TITLE: fields.String(description="Manuscript's title"),
         manuscript_fields.AUTHOR: fields.String(description="Author's name"),
+        manuscript_fields.ABSTRACT: fields.String(description="Manuscript abstract"),
         manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
     },
 )
@@ -421,6 +425,7 @@ class Manuscripts(Resource):
         required_fields = [
             manuscript_fields.TITLE,
             manuscript_fields.AUTHOR,
+            manuscript_fields.ABSTRACT,
             manuscript_fields.CONTENT,
         ]
 
@@ -428,10 +433,11 @@ class Manuscripts(Resource):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
         try:
-            current_time = datetime.now(timezone.est).strftime('%Y-%m-%d %H:%M:%S')
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             new_manuscript = manuscript_query.create_manuscript(
                 title=data[manuscript_fields.TITLE],
                 author=data[manuscript_fields.AUTHOR],
+                abstract=data[manuscript_fields.ABSTRACT],
                 content=data[manuscript_fields.CONTENT],
                 submission_date=current_time,
             )
@@ -481,6 +487,7 @@ class Manuscript(Resource):
         for field in [
             manuscript_fields.TITLE,
             manuscript_fields.AUTHOR,
+            manuscript_fields.ABSTRACT,
             manuscript_fields.CONTENT,
         ]:
             if field in data:

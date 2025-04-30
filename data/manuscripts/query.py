@@ -207,6 +207,7 @@ def get_all_manuscripts() -> list:
 def create_manuscript(
     title: str,
     author: str,
+    abstract: str,
     content: str,
     submission_date: str = None,
     state: str = SUBMITTED,
@@ -218,6 +219,7 @@ def create_manuscript(
         "_id": ObjectId(),
         flds.TITLE: title,
         flds.AUTHOR: author,
+        flds.ABSTRACT: abstract,
         flds.CONTENT: content,
         flds.SUBMISSION_DATE: submission_date,
         flds.STATE: state,

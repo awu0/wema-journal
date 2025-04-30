@@ -56,6 +56,7 @@ def test_handle_action_valid_return():
     SAMPLE_MANU = mqry.create_manuscript(
         title='the title of test',
         author='John Doe',
+        abstract='abstract goes here',
         content='content goes here',
         submission_date='today',
     )
