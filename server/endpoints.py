@@ -13,7 +13,7 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 import data.roles as rls
 import data.text as text
 import data.users as users
-from datetime import datetime, timezone
+from datetime import datetime
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
