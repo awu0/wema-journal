@@ -201,7 +201,7 @@ def get_all_manuscripts() -> list:
     """
     Retrieve all manuscripts from the database.
     """
-    return dbc.read(MANUSCRIPT_COLLECT)
+    return dbc.read(MANUSCRIPT_COLLECT, no_id=False)
 
 
 def create_manuscript(
