@@ -13,13 +13,16 @@ from flask_restx import Resource, Api, fields  # Namespace, fields
 import data.roles as rls
 import data.text as text
 import data.users as users
-from datetime import datetime
+from datetime import datetime, timedelta
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 import subprocess
+from werkzeug.security import check_password_hash
+import jwt
+import uuid
 
 app = Flask(__name__)
 CORS(app)
@@ -599,3 +602,59 @@ class LogTail(Resource):
             return {"error": err.stderr.decode('utf-8').strip()}, 500
         except FileNotFoundError:
             return {"error": "Log file not found."}, 404
+
+
+# Define a model for login credentials
+LOGIN_FIELDS = api.model('Login', {
+        users.EMAIL: fields.String(required=True, description="User's email"),
+        'password': fields.String(required=True, description="User's password"),
+    },
+)
+# Generate a secure random secret key
+SECRET_KEY = str(uuid.uuid4())
+JWT_EXPIRATION_DELTA = timedelta(days=1)  # Token expires in 1 day
+
+
+@api.route('/login')
+class Login(Resource):
+    """
+    This class handles user authentication.
+    """
+    @api.expect(LOGIN_FIELDS)
+    @api.response(HTTPStatus.OK, "Login successful")
+    @api.response(HTTPStatus.UNAUTHORIZED, "Invalid credentials")
+    def post(self):
+        """
+        Authenticate a user and return a JWT token.
+        """
+        data = request.json
+
+        # Check if required fields are present
+        if not all(k in data for k in (users.EMAIL, 'password')):
+            return {"message": "Missing required fields!"}, HTTPStatus.BAD_REQUEST
+
+        # Find user by email
+        user = users.get_user(data[users.EMAIL])
+        if not user:
+            return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
+
+        # Get the stored password hash from the auth collection
+        from data.db_connect import read_one
+        auth_record = read_one('auth', {'email': data[users.EMAIL]})
+        if not auth_record or not check_password_hash(
+                auth_record['password'], data['password']):
+            return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
+
+        # Generate JWT token
+        payload = {
+            'exp': datetime.datetime.utcnow() + JWT_EXPIRATION_DELTA,
+            'iat': datetime.datetime.utcnow(),
+            'sub': data[users.EMAIL]
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+        return {
+            "message": "Login successful!",
+            "token": token,
+            "user": user.to_dict()
+        }, HTTPStatus.OK
