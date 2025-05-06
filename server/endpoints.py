@@ -20,7 +20,7 @@ from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
 import subprocess
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 import jwt
 import uuid
 
@@ -658,3 +658,91 @@ class Login(Resource):
             "token": token,
             "user": user.to_dict()
         }, HTTPStatus.OK
+
+
+REGISTER_FIELDS = api.model(
+    'Register',
+    {
+        users.NAME: fields.String(required=True, description="User's name"),
+        users.EMAIL: fields.String(required=True, description="User's email"),
+        users.AFFILIATION: fields.String(
+            required=True, description="User's affiliation"
+        ),
+        'password': fields.String(required=True, description="User's password"),
+        users.ROLE: fields.String(description="User's role"),
+    },
+)
+
+
+@api.route('/register')
+class Register(Resource):
+    """
+    This class handles user registration.
+    """
+
+    @api.expect(REGISTER_FIELDS)
+    @api.response(HTTPStatus.CREATED, "User registered successfully")
+    @api.response(HTTPStatus.BAD_REQUEST, "Invalid data provided")
+    @api.response(HTTPStatus.CONFLICT, "Email already exists")
+    def post(self):
+        """
+        Register a new user and return a JWT token.
+        """
+        data = request.json
+
+        # Check if required fields are present
+        required_fields = [users.NAME, users.EMAIL, users.AFFILIATION, 'password']
+        if not all(field in data for field in required_fields):
+            return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
+
+        # Check if email is valid
+        if not users.is_valid_email(data[users.EMAIL]):
+            return {"message": "Invalid email format"}, HTTPStatus.BAD_REQUEST
+
+        # Check if user already exists
+        existing_user = users.get_user(data[users.EMAIL])
+        if existing_user:
+            return {"message": "Email already exists"}, HTTPStatus.CONFLICT
+
+        try:
+            # Hash the password
+            hashed_password = generate_password_hash(data['password'])
+
+            # Create the user
+            users.create_user(
+                name=data[users.NAME],
+                email=data[users.EMAIL],
+                affiliation=data[users.AFFILIATION],
+                role=data.get(users.ROLE)
+            )
+
+            # Store the password in the auth collection
+            from data.db_connect import create
+            create('auth', {
+                'email': data[users.EMAIL],
+                'password': hashed_password
+            })
+
+            # Generate JWT token
+            payload = {
+                'exp': datetime.utcnow() + JWT_EXPIRATION_DELTA,
+                'iat': datetime.utcnow(),
+                'sub': data[users.EMAIL]
+            }
+            token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+
+            # Get the created user
+            new_user = users.get_user(data[users.EMAIL])
+
+            return {
+                "message": "User registered successfully",
+                "token": token,
+                "user": new_user.to_dict()
+            }, HTTPStatus.CREATED
+
+        except ValueError as e:
+            return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+        except Exception as e:
+            return {
+                "message": f"An error occurred: {str(e)}"
+            }, HTTPStatus.INTERNAL_SERVER_ERROR
