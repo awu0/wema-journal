@@ -562,7 +562,9 @@ class ReceiveAction(Resource):
             }
             manu = manuscript_query.get_manuscript(manu_id)
             if not manu:
-                return {"message": f"Manuscript with id '{manu_id}' not found"}, HTTPStatus.NOT_FOUND
+                return {
+                    "message": f"Manuscript with id '{manu_id}' not found"
+                }, HTTPStatus.NOT_FOUND
 
             new_state = manuscript_query.handle_action(
                 curr_state, action, manu=manu, **kwargs
@@ -593,6 +595,7 @@ class LogTail(Resource):
     """
     This endpoint returns the tail of the specified log error. Developer endpoint assignment.
     """
+
     def get(self):
         ELOG_LOC = '/var/log/wl2612.pythonanywhere.com.error.log'
         try:
@@ -600,7 +603,7 @@ class LogTail(Resource):
                 ['tail', ELOG_LOC],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                check=True
+                check=True,
             )
             log_output = result.stdout.decode('utf-8').strip()
             return {"log": log_output}
@@ -611,7 +614,9 @@ class LogTail(Resource):
 
 
 # Define a model for login credentials
-LOGIN_FIELDS = api.model('Login', {
+LOGIN_FIELDS = api.model(
+    'Login',
+    {
         users.EMAIL: fields.String(required=True, description="User's email"),
         users.PASSWORD: fields.String(required=True, description="User's password"),
     },
@@ -626,6 +631,7 @@ class Login(Resource):
     """
     This class handles user authentication.
     """
+
     @api.expect(LOGIN_FIELDS)
     @api.response(HTTPStatus.OK, "Login successful")
     @api.response(HTTPStatus.UNAUTHORIZED, "Invalid credentials")
@@ -646,15 +652,14 @@ class Login(Resource):
 
         # Get the stored password hash from the auth collection
         auth_record = user[users.PASSWORD]
-        if not auth_record or not check_password_hash(
-                auth_record, data['password']):
+        if not auth_record or not check_password_hash(auth_record, data['password']):
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
         # Generate JWT token
         payload = {
             'exp': datetime.now() + JWT_EXPIRATION_DELTA,
             'iat': datetime.now(),
-            'sub': data[users.EMAIL]
+            'sub': data[users.EMAIL],
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -663,7 +668,7 @@ class Login(Resource):
         return {
             "message": "Login successful!",
             "token": token,
-            "user": user
+            "user": user,
         }, HTTPStatus.OK
 
 
@@ -725,7 +730,7 @@ class Register(Resource):
             payload = {
                 'exp': datetime.now() + JWT_EXPIRATION_DELTA,
                 'iat': datetime.now(),
-                'sub': data[users.EMAIL]
+                'sub': data[users.EMAIL],
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
@@ -735,7 +740,7 @@ class Register(Resource):
             return {
                 "message": "User registered successfully",
                 "token": token,
-                "user": new_user.to_dict()
+                "user": new_user.to_dict(),
             }, HTTPStatus.CREATED
 
         except ValueError as e:

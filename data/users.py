@@ -70,8 +70,9 @@ def get_users() -> list[User]:
             name=user.get(NAME, ""),
             email=user[EMAIL],
             affiliation=user.get(AFFILIATION, ""),
-            roles=user.get(ROLES, [])
-        ) for user in db_users
+            roles=user.get(ROLES, []),
+        )
+        for user in db_users
     ]
 
 
@@ -103,11 +104,13 @@ def get_users_as_dict() -> dict:
         return {}
 
 
-def create_user(name: str, email: str, password: str, affiliation: str, role: str = None) -> dict:
+def create_user(
+    name: str, email: str, password: str, affiliation: str, role: str = None
+) -> dict:
     users = get_users()
-    
+
     hashed_password = generate_password_hash(password)
-    
+
     if role:
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
     else:
@@ -115,11 +118,11 @@ def create_user(name: str, email: str, password: str, affiliation: str, role: st
 
     if check_valid_user(new_user):
         users.append(new_user)
-        
+
         # save user to database
         new_user = new_user.to_dict()
         new_user[PASSWORD] = hashed_password
-        
+
         dbc.create(USER_COLLECT, new_user)
 
     return get_users_as_dict()
@@ -141,13 +144,17 @@ def get_user_raw(email: str):
     return next((user for user in users if user.get("email") == email), None)
 
 
-def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:
+def update_user(
+    email: str, name: str = None, role: str = None, affiliation: str = None
+) -> dict:
     user_to_update = get_user(email)
 
     if not user_to_update:
         raise ValueError(f"User with email {email} not found.")
     if not any([name, role, affiliation]):
-        raise ValueError("No updates provided. Please specify at least one field to update.")
+        raise ValueError(
+            "No updates provided. Please specify at least one field to update."
+        )
 
     updates = {}
     if name:
