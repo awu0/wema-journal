@@ -585,7 +585,7 @@ class LogTail(Resource):
     This endpoint returns the tail of the specified log error. Developer endpoint assignment.
     """
     def get(self):
-        ELOG_LOC = '/var/log/'
+        ELOG_LOC = '/var/log/wl2612.pythonanywhere.error.log'
         try:
             result = subprocess.run(
                 ['tail', ELOG_LOC],
