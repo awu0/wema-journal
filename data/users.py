@@ -4,10 +4,11 @@ This module interfaces to our user data.
 
 import re
 from typing import Optional
+
 import bcrypt
 
-import data.roles as rls
 import data.db_connect as dbc
+import data.roles as rls
 from data.roles import is_valid_role, get_roles
 from examples.form_filler import PASSWORD
 

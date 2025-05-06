@@ -3,26 +3,26 @@ This is the file containing all the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
 
+import subprocess
+import uuid
+from datetime import datetime, timedelta
 from http import HTTPStatus
 
+import jwt
 import werkzeug.exceptions as wz
 from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
+from werkzeug.security import check_password_hash, generate_password_hash
 
 import data.roles as rls
 import data.text as text
 import data.users as users
-from datetime import datetime, timedelta
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
-import subprocess
-from werkzeug.security import check_password_hash, generate_password_hash
-import jwt
-import uuid
 
 app = Flask(__name__)
 CORS(app)
@@ -239,7 +239,7 @@ class Users(Resource):
 
             data = dict(data)
             data.pop(PASSWORD, None)
-            
+
             return {
                 "message": "User added successfully!",
                 "added_user": data,
