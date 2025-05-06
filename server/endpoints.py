@@ -579,7 +579,7 @@ class Roles(Resource):
         return rls.read()
 
 
-@api.route('/log')
+@api.route('/logtail')
 class ErrorLog(Resource):
     """
     This endpoint returns the tail of the specified log error. Developer endpoint assignment.
@@ -588,7 +588,7 @@ class ErrorLog(Resource):
         ELOG_LOC = '/var/log/wl2612.pythonanywhere.com.error.log'
         try:
             result = subprocess.run(
-                ['cat', ELOG_LOC],
+                ['tail', ELOG_LOC],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 check=True
