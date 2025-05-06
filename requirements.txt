@@ -3,4 +3,4 @@ flask-restx==1.1.0
 Flask-Cors~=5.0.0
 pymongo~=4.10.1
 werkzeug==3.0.6
-PyJWT==latest
+PyJWT==2.10.1
