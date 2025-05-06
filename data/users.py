@@ -104,9 +104,9 @@ def create_user(name: str, email: str, password: str, affiliation: str, role: st
     hashed_password = generate_password_hash(password)
     
     if role:
-        new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
+        new_user = User(name=name, email=email, password=hashed_password, affiliation=affiliation, roles=[role])
     else:
-        new_user = User(name=name, email=email, affiliation=affiliation, roles=[])
+        new_user = User(name=name, email=email, password=hashed_password, affiliation=affiliation, roles=[])
 
     if check_valid_user(new_user):
         users.append(new_user)

@@ -14,7 +14,7 @@ from black import datetime
 from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 import data.roles as rls
 import data.text as text
@@ -674,7 +674,7 @@ REGISTER_FIELDS = api.model(
         users.AFFILIATION: fields.String(
             required=True, description="User's affiliation"
         ),
-        'password': fields.String(required=True, description="User's password"),
+        users.PASSWORD: fields.String(required=True, description="User's password"),
         users.ROLE: fields.String(description="User's role"),
     },
 )
@@ -697,7 +697,7 @@ class Register(Resource):
         data = request.json
 
         # Check if required fields are present
-        required_fields = [users.NAME, users.EMAIL, users.AFFILIATION, 'password']
+        required_fields = [users.NAME, users.EMAIL, users.AFFILIATION, users.PASSWORD]
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
 
@@ -711,28 +711,19 @@ class Register(Resource):
             return {"message": "Email already exists"}, HTTPStatus.CONFLICT
 
         try:
-            # Hash the password
-            hashed_password = generate_password_hash(data['password'])
-
             # Create the user
             users.create_user(
-                name=data[users.NAME],
-                email=data[users.EMAIL],
-                affiliation=data[users.AFFILIATION],
-                role=data.get(users.ROLE)
+                name=data[NAME],
+                email=data[EMAIL],
+                password=data[PASSWORD],
+                role=data[ROLE] if ROLE in data else None,
+                affiliation=data[AFFILIATION],
             )
-
-            # Store the password in the auth collection
-            from data.db_connect import create
-            create('auth', {
-                'email': data[users.EMAIL],
-                'password': hashed_password
-            })
 
             # Generate JWT token
             payload = {
-                'exp': datetime.utcnow() + JWT_EXPIRATION_DELTA,
-                'iat': datetime.utcnow(),
+                'exp': datetime.now() + JWT_EXPIRATION_DELTA,
+                'iat': datetime.now(),
                 'sub': data[users.EMAIL]
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
