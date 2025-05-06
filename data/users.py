@@ -5,12 +5,11 @@ This module interfaces to our user data.
 import re
 from typing import Optional
 
-import bcrypt
+from werkzeug.security import generate_password_hash
 
 import data.db_connect as dbc
 import data.roles as rls
 from data.roles import is_valid_role, get_roles
-from examples.form_filler import PASSWORD
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -32,9 +31,10 @@ class User:
     Email is used as the unique identifier
     """
 
-    def __init__(self, name: str, email: str, affiliation: str, roles: list = None):
+    def __init__(self, name: str, email: str, password: str, affiliation: str, roles: list = None):
         self.name = name
         self.email = email
+        self.password = password
         if roles:
             self.roles = roles
         else:
@@ -70,6 +70,7 @@ def get_users() -> list[User]:
         User(
             name=user.get(NAME, ""),
             email=user[EMAIL],
+            password=user.get(PASSWORD),
             affiliation=user.get(AFFILIATION, ""),
             roles=user.get(ROLES, [])
         ) for user in db_users
@@ -100,7 +101,7 @@ def get_users_as_dict() -> dict:
 def create_user(name: str, email: str, password: str, affiliation: str, role: str = None) -> dict:
     users = get_users()
     
-    hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    hashed_password = generate_password_hash(password)
     
     if role:
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])

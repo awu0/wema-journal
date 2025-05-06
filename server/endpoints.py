@@ -5,11 +5,12 @@ The endpoint called `endpoints` will return all available endpoints.
 
 import subprocess
 import uuid
-from datetime import datetime, timedelta
+from datetime import timedelta
 from http import HTTPStatus
 
 import jwt
 import werkzeug.exceptions as wz
+from black import datetime
 from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
@@ -613,7 +614,7 @@ class LogTail(Resource):
 # Define a model for login credentials
 LOGIN_FIELDS = api.model('Login', {
         users.EMAIL: fields.String(required=True, description="User's email"),
-        'password': fields.String(required=True, description="User's password"),
+        users.PASSWORD: fields.String(required=True, description="User's password"),
     },
 )
 # Generate a secure random secret key
@@ -645,16 +646,15 @@ class Login(Resource):
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
         # Get the stored password hash from the auth collection
-        from data.db_connect import read_one
-        auth_record = read_one('auth', {'email': data[users.EMAIL]})
+        auth_record = user.password
         if not auth_record or not check_password_hash(
-                auth_record['password'], data['password']):
+                auth_record, data['password']):
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
         # Generate JWT token
         payload = {
-            'exp': datetime.datetime.utcnow() + JWT_EXPIRATION_DELTA,
-            'iat': datetime.datetime.utcnow(),
+            'exp': datetime.now() + JWT_EXPIRATION_DELTA,
+            'iat': datetime.now(),
             'sub': data[users.EMAIL]
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
