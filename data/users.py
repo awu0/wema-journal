@@ -31,10 +31,9 @@ class User:
     Email is used as the unique identifier
     """
 
-    def __init__(self, name: str, email: str, password: str, affiliation: str, roles: list = None):
+    def __init__(self, name: str, email: str, affiliation: str, roles: list = None):
         self.name = name
         self.email = email
-        self.password = password
         if roles:
             self.roles = roles
         else:
@@ -70,11 +69,17 @@ def get_users() -> list[User]:
         User(
             name=user.get(NAME, ""),
             email=user[EMAIL],
-            password=user.get(PASSWORD),
             affiliation=user.get(AFFILIATION, ""),
             roles=user.get(ROLES, [])
         ) for user in db_users
     ]
+
+
+def get_users_raw():
+    """
+    Returns the raw database values instead of converting to User objects
+    """
+    return dbc.read(USER_COLLECT)
 
 
 def get_users_as_dict() -> dict:
@@ -104,9 +109,9 @@ def create_user(name: str, email: str, password: str, affiliation: str, role: st
     hashed_password = generate_password_hash(password)
     
     if role:
-        new_user = User(name=name, email=email, password=hashed_password, affiliation=affiliation, roles=[role])
+        new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
     else:
-        new_user = User(name=name, email=email, password=hashed_password, affiliation=affiliation, roles=[])
+        new_user = User(name=name, email=email, affiliation=affiliation, roles=[])
 
     if check_valid_user(new_user):
         users.append(new_user)
@@ -126,6 +131,14 @@ def get_user(email: str) -> Optional[User]:
     """
     users = get_users()
     return next((user for user in users if user.email == email), None)
+
+
+def get_user_raw(email: str):
+    """
+    Receives the entire user data from the database instead of converting to User
+    """
+    users = get_users_raw()
+    return next((user for user in users if user.get("email") == email), None)
 
 
 def update_user(email: str, name: str = None, role: str = None, affiliation: str = None) -> dict:

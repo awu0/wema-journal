@@ -640,12 +640,12 @@ class Login(Resource):
             return {"message": "Missing required fields!"}, HTTPStatus.BAD_REQUEST
 
         # Find user by email
-        user = users.get_user(data[users.EMAIL])
+        user = users.get_user_raw(data[users.EMAIL])
         if not user:
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
         # Get the stored password hash from the auth collection
-        auth_record = user.password
+        auth_record = user[users.PASSWORD]
         if not auth_record or not check_password_hash(
                 auth_record, data['password']):
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
@@ -658,10 +658,12 @@ class Login(Resource):
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
+        user.pop(PASSWORD, None)
+
         return {
             "message": "Login successful!",
             "token": token,
-            "user": user.to_dict()
+            "user": user
         }, HTTPStatus.OK
 
 

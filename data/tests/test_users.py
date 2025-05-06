@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch
+
 import data.users as users
 from data.users import get_user
 
@@ -19,6 +19,7 @@ def test_get_users():
     users.create_user(
         name="Test User",
         email="test@nyu.edu",
+        password="password12",
         role="editor",
         affiliation="NYU"
     )
@@ -36,7 +37,7 @@ def test_get_users():
 
 def test_add_new_user():
     result = users.create_user(
-        name="Bill", email="bill@nyu.edu", role="Author", affiliation="NYU"
+        name="Bill", email="bill@nyu.edu", password="password12", role="Author", affiliation="NYU"
     )
     assert "bill@nyu.edu" in result, "The new user 'bill@nyu.edu' should be added."
 
@@ -45,6 +46,7 @@ def test_valid_email_adds_new_user():
     new_user_data = {
         "name": "Faker",
         "email": "faker@nyu.edu",
+        "password": "password12",
         "role": "editor",
         "affiliation": "NYU"
     }
@@ -57,6 +59,7 @@ def test_invalid_email_raises_error():
     new_user_data = {
         "name": "Fake User without a valid email",
         "email": "not_an_email",
+        "password": "password12",
         "role": "author",
         "affiliation": "NYU"
     }
@@ -90,6 +93,7 @@ def test_update_users():
     users.create_user(
         name="Faker",
         email=email,
+        password="password12",
         role="editor",
         affiliation="NYU"
     )

@@ -14,6 +14,7 @@ def sample_user():
     user = {
         "name": "John",
         "email": "john@example.com",
+        "password": "password12",
         "role": "editor",
         "affiliation": "NYU"
     }
@@ -29,6 +30,7 @@ def sample_user_no_role():
     user = {
         "name": "Jack o' Lan",
         "email": "jackolan12@example.com",
+        "password": "password12",
         "affiliation": "NYU"
     }
 
@@ -55,6 +57,7 @@ def invalid_user():
     return  {
         "name": "John",
         "email": "johnnybademail",
+        "password": "password12",
         "role": "editor",
         "affiliation": "NYU"
     }
@@ -157,10 +160,18 @@ def test_adding_user(sample_user, sample_user_no_role):
 
     assert "added_user" in resp_json
     returned_new_user = resp_json["added_user"]
+    
+    assert "password" not in returned_new_user
+    
+    sample_user.pop("password", None)
     assert returned_new_user == sample_user
     
     assert "added_user" in resp2_json
     returned_new_user2 = resp2_json["added_user"]
+
+    assert "password" not in returned_new_user2
+    
+    sample_user_no_role.pop("password", None)
     assert returned_new_user2 == sample_user_no_role
     
 
