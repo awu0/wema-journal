@@ -580,7 +580,7 @@ class Roles(Resource):
 
 
 @api.route('/logtail')
-class ErrorLog(Resource):
+class LogTail(Resource):
     """
     This endpoint returns the tail of the specified log error. Developer endpoint assignment.
     """
