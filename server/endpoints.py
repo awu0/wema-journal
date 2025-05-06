@@ -18,7 +18,7 @@ from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
 from data.manuscripts.query import update_manuscript
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
-from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES
+from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
 import subprocess
 from werkzeug.security import check_password_hash, generate_password_hash
 import jwt
@@ -52,6 +52,7 @@ USER_CREATE_FIELDS = api.model(
     {
         users.NAME: fields.String(required=True, description="User's name"),
         users.EMAIL: fields.String(required=True, description="User's email"),
+        users.PASSWORD: fields.String(description="User's password"),
         users.AFFILIATION: fields.String(
             required=True, description="User's affiliation"
         ),
@@ -222,7 +223,7 @@ class Users(Resource):
         Adds a new user with given JSON data
         """
         data = request.json
-        required_fields = [NAME, EMAIL, AFFILIATION]
+        required_fields = [NAME, EMAIL, AFFILIATION, PASSWORD]
 
         if not all(field in data for field in required_fields):
             return {"message": "Missing required fields"}, HTTPStatus.BAD_REQUEST
@@ -231,9 +232,14 @@ class Users(Resource):
             users.create_user(
                 name=data[NAME],
                 email=data[EMAIL],
+                password=data[PASSWORD],
                 role=data[ROLE] if ROLE in data else None,
                 affiliation=data[AFFILIATION],
             )
+
+            data = dict(data)
+            data.pop(PASSWORD, None)
+            
             return {
                 "message": "User added successfully!",
                 "added_user": data,

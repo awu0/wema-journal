@@ -4,10 +4,12 @@ This module interfaces to our user data.
 
 import re
 from typing import Optional
+import bcrypt
 
 import data.roles as rls
 import data.db_connect as dbc
 from data.roles import is_valid_role, get_roles
+from examples.form_filler import PASSWORD
 
 LEVEL = "level"
 MIN_USER_NAME_LEN = 2
@@ -18,6 +20,7 @@ NAME = 'name'
 AFFILIATION = 'affiliation'
 ROLE = 'role'
 ROLES = 'roles'
+PASSWORD = 'password'
 
 client = dbc.connect_db()
 print(f'{client=}')
@@ -93,8 +96,11 @@ def get_users_as_dict() -> dict:
         return {}
 
 
-def create_user(name: str, email: str, affiliation: str, role: str = None) -> dict:
+def create_user(name: str, email: str, password: str, affiliation: str, role: str = None) -> dict:
     users = get_users()
+    
+    hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    
     if role:
         new_user = User(name=name, email=email, affiliation=affiliation, roles=[role])
     else:
@@ -102,8 +108,12 @@ def create_user(name: str, email: str, affiliation: str, role: str = None) -> di
 
     if check_valid_user(new_user):
         users.append(new_user)
+        
         # save user to database
-        dbc.create(USER_COLLECT, new_user.to_dict())
+        new_user = new_user.to_dict()
+        new_user[PASSWORD] = hashed_password
+        
+        dbc.create(USER_COLLECT, new_user)
 
     return get_users_as_dict()
 
