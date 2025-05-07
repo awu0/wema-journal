@@ -665,10 +665,20 @@ class Login(Resource):
 
         user.pop(PASSWORD, None)
 
+        if ROLE in user and ROLES not in user:
+            user[ROLES] = [user[ROLE]]
+        elif ROLES not in user:
+            user[ROLES] = []
+
         return {
             "message": "Login successful!",
             "token": token,
-            "user": user,
+            "user": {
+                "email": user.get(EMAIL),
+                "name": user.get(NAME),
+                "affiliation": user.get(AFFILIATION),
+                "roles": user.get(ROLES, []),
+            },
         }, HTTPStatus.OK
 
 
