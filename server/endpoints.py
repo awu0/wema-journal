@@ -4,7 +4,6 @@ The endpoint called `endpoints` will return all available endpoints.
 """
 
 import subprocess
-import uuid
 from datetime import datetime, timedelta
 from http import HTTPStatus
 
