@@ -141,7 +141,7 @@ STATE_TABLE = {
         },
         ACCEPT_WITH_REV: {
             FUNC: lambda **kwargs: AUTHOR_REVISIONS,
-        }
+        },
         **COMMON_ACTIONS,
     },
     COPY_EDIT: {
