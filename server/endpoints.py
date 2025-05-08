@@ -115,6 +115,7 @@ MANUSCRIPT_UPDATE_FIELDS = api.model(
         manuscript_fields.AUTHOR: fields.String(description="Author's name"),
         manuscript_fields.ABSTRACT: fields.String(description="Manuscript abstract"),
         manuscript_fields.CONTENT: fields.String(description="Manuscript content"),
+        manuscript_fields.STATE: fields.String(description="Manuscript state"),
     },
 )
 
@@ -498,6 +499,7 @@ class Manuscript(Resource):
             manuscript_fields.AUTHOR,
             manuscript_fields.ABSTRACT,
             manuscript_fields.CONTENT,
+            manuscript_fields.STATE,
         ]:
             if field in data:
                 manuscript[field] = data[field]
@@ -759,3 +761,12 @@ class Register(Resource):
             return {
                 "message": f"An error occurred: {str(e)}"
             }, HTTPStatus.INTERNAL_SERVER_ERROR
+
+
+@api.route(f'{MANUSCRIPTS_EP}/states')
+class ManuscriptStates(Resource):
+    def get(self):
+        """
+        Return the list of valid manuscript states.
+        """
+        return {"states": manuscript_query.VALID_STATES}, HTTPStatus.OK
