@@ -45,6 +45,7 @@ def is_valid_state(state: str) -> bool:
 # actions:
 SUBMITTED = 'SUB'
 ACCEPT = 'ACC'
+ACCEPT_WITH_REV = 'ACW'
 ASSIGN_REF = 'ARF'
 DELETE_REF = 'DRF'
 DONE = 'DON'
@@ -57,6 +58,7 @@ TEST_ACTION = SUBMITTED
 VALID_ACTIONS = [
     SUBMITTED,
     ACCEPT,
+    ACCEPT_WITH_REV,
     ASSIGN_REF,
     DELETE_REF,
     DONE,
@@ -134,6 +136,12 @@ STATE_TABLE = {
         DELETE_REF: {
             FUNC: delete_ref,
         },
+        ACCEPT: {
+            FUNC: lambda **kwargs: COPY_EDIT,
+        },
+        ACCEPT_WITH_REV: {
+            FUNC: lambda **kwargs: AUTHOR_REVISIONS,
+        }
         **COMMON_ACTIONS,
     },
     COPY_EDIT: {
