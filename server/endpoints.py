@@ -20,7 +20,7 @@ import data.text as text
 import data.users as users
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
-from data.manuscripts.query import update_manuscript
+from data.manuscripts.query import update_manuscript, STATE_TABLE
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
 
@@ -782,3 +782,32 @@ class ManuscriptStates(Resource):
         Return the list of valid manuscript states.
         """
         return {"states": manuscript_query.VALID_STATES}, HTTPStatus.OK
+
+
+MANU_VALID_ACTION_FLDS = api.model(
+    'ManuscriptValidAction',
+    {
+        manuscript_fields.STATE: fields.String(
+            required=True, default='SUB', description='Manuscript state to look up'
+        ),
+    },
+)
+
+
+@api.route(f'{MANUSCRIPTS_EP}/valid_actions')
+class ManuscriptValidActions(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(MANU_VALID_ACTION_FLDS)
+    def post(self):
+        """
+        Return the list of valid manuscript actions for each state.
+        """
+        state = request.json.get(manuscript_fields.STATE)
+
+        if state not in STATE_TABLE:
+            return {'message': f'Invalid state: {state}'}, HTTPStatus.NOT_ACCEPTABLE
+
+        valid_actions = list(STATE_TABLE[state].keys())
+
+        return {'state': state, 'valid_actions': valid_actions}, HTTPStatus.OK
