@@ -276,7 +276,7 @@ def is_permitted(feature_name: str, action: str, user_id: str, **kwargs) -> bool
 def is_permitted(feature_name: str, action: str, user_roles: list, **kwargs) -> bool:
     """Check if operation on feature is permitted for roles."""
     prot = read_feature(feature_name)
-    if prot is None:
+    if prot is None or not user_roles:
         return False
     if action not in prot:
         return False
