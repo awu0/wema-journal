@@ -90,14 +90,14 @@ ADMINS = {
 
 TEST_RECS = {
     PEOPLE: {
-        CREATE: ALL_ROLES,
+        CREATE: ADMINS,
         READ: ALL_ROLES,
         DELETE: ADMINS,
         UPDATE: ADMINS,
     },
     TEXTS: {
         CREATE: {
-            ROLE_LIST: ALL_ROLES,
+            ROLE_LIST: CREATORS,
             CHECKS: {
                 LOGIN: True,
             },
@@ -363,7 +363,7 @@ DELETE_PERMISSIONS = {
 }
 
 CREATE_PERMISSIONS = {
-    ROLE_LIST: ALL_ROLES,
+    ROLE_LIST: CREATORS,
     CHECKS: {
         LOGIN: True,
     },
