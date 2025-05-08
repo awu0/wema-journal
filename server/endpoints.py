@@ -636,8 +636,8 @@ LOGIN_FIELDS = api.model(
         users.PASSWORD: fields.String(required=True, description="User's password"),
     },
 )
-# Generate a secure random secret key
-SECRET_KEY = str(uuid.uuid4())
+
+SECRET_KEY = "213mkdlAMSDKLMkl213mkldmsam#mkdSLAMDk@#!@DASDkl21m3ds"
 JWT_EXPIRATION_DELTA = timedelta(days=1)  # Token expires in 1 day
 
 
