@@ -97,7 +97,7 @@ TEST_RECS = {
     },
     TEXTS: {
         CREATE: {
-            ROLE_LIST: CREATORS,
+            ROLE_LIST: ALL_ROLES,
             CHECKS: {
                 LOGIN: True,
             },
