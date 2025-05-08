@@ -90,7 +90,7 @@ ADMINS = {
 
 TEST_RECS = {
     PEOPLE: {
-        CREATE: ADMINS,
+        CREATE: ALL_ROLES,
         READ: ALL_ROLES,
         DELETE: ADMINS,
         UPDATE: ADMINS,
