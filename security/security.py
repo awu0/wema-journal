@@ -1,7 +1,7 @@
 from functools import wraps
 from logging import Logger
 import time
-# import data.db_connect as dbc
+from data.roles import Role
 
 """
 Our record format to meet our requirements (see security.md) will be:
@@ -58,6 +58,9 @@ USER_LIST = 'user_list'
 CHECKS = 'checks'
 LOGIN = 'login'
 LOGIN_KEY = 'login_key'
+IP_ADDR = 'ip_address'
+MFA = 'mfa'
+ROLE_LIST = 'role_list'
 
 # Features:
 PEOPLE = 'people'
@@ -67,24 +70,67 @@ PEOPLE_MISSING_ACTION = READ
 GOOD_USER_ID = 'ed2303@nyu.edu'
 
 security_recs = None
-# These will come from the DB soon:
+
+PEOPLE = 'people'
+TEXTS = 'texts'
+BAD_FEATURE = 'baaaad feature'
+PEOPLE_MISSING_ACTION = READ
+GOOD_USER_ID = 'wl2612@nyu.edu'
+
+ALL_ROLES = [role.value for role in Role]
+EDITORS = [Role.EDITOR.value, Role.CONSULTING_EDITOR.value, Role.MANAGING_EDITOR.value]
+CREATORS = [Role.AUTHOR.value, Role.EDITOR.value, Role.CONSULTING_EDITOR.value, Role.MANAGING_EDITOR.value]
+
+ADMINS = {
+    ROLE_LIST: [Role.EDITOR.value, Role.CONSULTING_EDITOR.value, Role.MANAGING_EDITOR.value],
+    CHECKS: {
+        LOGIN: True,
+    },
+}
+
 TEST_RECS = {
     PEOPLE: {
+        CREATE: ADMINS,
+        READ: ALL_ROLES,
+        DELETE: ADMINS,
+        UPDATE: ADMINS,
+    },
+    TEXTS: {
         CREATE: {
-            USER_LIST: [GOOD_USER_ID],
+            ROLE_LIST: CREATORS,
             CHECKS: {
                 LOGIN: True,
+            },
+        },
+        UPDATE: {
+            ROLE_LIST: CREATORS,
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        READ: {
+            ROLE_LIST: ALL_ROLES,
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        DELETE: {
+            ROLE_LIST: ADMINS,
+            CHECKS: {
+                LOGIN: True,
+                IP_ADDR: True,
+                MFA: True,
             },
         },
     },
     BAD_FEATURE: {
         CREATE: {
-            USER_LIST: [GOOD_USER_ID],
+            ROLE_LIST: ALL_ROLES,
             CHECKS: {
                 'Bad check': True,
-             },
-         },
-     },
+            },
+        },
+    },
 }
 
 
@@ -95,10 +141,10 @@ def is_valid_key(user_id: str, login_key: str):
     return True
 
 
-def check_login(user_id: str, **kwargs):
+def check_login(user_roles: list, **kwargs):
     if LOGIN_KEY not in kwargs:
         return False
-    return is_valid_key(user_id, kwargs[LOGIN_KEY])
+    return is_valid_key("dummy_user", kwargs[LOGIN_KEY])
 
 
 CHECK_FUNCS = {
@@ -206,30 +252,7 @@ def add_user_permission(feature_name: str, operation: str, user_email: str) -> b
     return  # write to database (Needs to be Implemented)
 
 
-@needs_recs
-def remove_user_permission(feature_name: str, operation: str, user_email: str) -> bool:
-    """
-    Remove permission for a user to perform an operation on a feature.
-    Args:
-        feature_name: The name of the feature
-        operation: The operation (CREATE, READ, UPDATE, DELETE)
-        user_email: The email of the user
-
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    # Check if feature and operation exist
-    if (feature_name not in security_recs or
-            operation not in security_recs[feature_name] or
-            USER_LIST not in security_recs[feature_name][operation]):
-        return True  # Nothing to remove
-    # Remove user if present
-    if user_email in security_recs[feature_name][operation][USER_LIST]:
-        security_recs[feature_name][operation][USER_LIST].remove(user_email)
-    return  # write to database (Needs to be Implemented)
-
-
-@needs_recs
+"""@needs_recs
 def is_permitted(feature_name: str, action: str, user_id: str, **kwargs) -> bool:
     prot = read_feature(feature_name)
     if prot is None:
@@ -246,6 +269,31 @@ def is_permitted(feature_name: str, action: str, user_id: str, **kwargs) -> bool
             raise ValueError(f'Bad check passed to is_permitted: {check}')
         if not CHECK_FUNCS[check](user_id, **kwargs):
             return False
+    return True"""
+
+
+@needs_recs
+def is_permitted(feature_name: str, action: str, user_roles: list, **kwargs) -> bool:
+    """Check if operation on feature is permitted for roles."""
+    prot = read_feature(feature_name)
+    if prot is None or not user_roles:
+        return False
+    if action not in prot:
+        return False
+    # Role check
+    if ROLE_LIST in prot[action]:
+        if not any(role in prot[action][ROLE_LIST] for role in user_roles):
+            return False
+    # Check for invalid check functions before executing any
+    if CHECKS in prot[action]:
+        for check_name in prot[action][CHECKS]:
+            if check_name not in CHECK_FUNCS:
+                # This should raise the ValueError
+                raise ValueError(f'Bad check passed to is_permitted: {check_name}')
+        # Now execute valid checks
+        for check_name, is_required in prot[action][CHECKS].items():
+            if is_required and not CHECK_FUNCS[check_name](user_roles, **kwargs):
+                return False
     return True
 
 
@@ -282,3 +330,70 @@ def get_feature_permissions(feature_name: str) -> dict:
     if feature_name not in security_recs:
         return {}
     return security_recs[feature_name]
+
+
+@needs_recs
+def get_role_permissions(role: str) -> dict:
+    """
+    Get all permissions for a specific role.
+    Args:
+        role: The role to check permissions for
+
+    Returns:
+        dict: A dictionary of features and operations the role has access to
+    """
+    result = {}
+    for feature_name, feature_data in security_recs.items():
+        feature_perms = {}
+        for operation, op_data in feature_data.items():
+            if ROLE_LIST in op_data and role in op_data[ROLE_LIST]:
+                feature_perms[operation] = True
+        if feature_perms:
+            result[feature_name] = feature_perms
+    return result
+
+
+# Role-based Access Control Security Feature
+
+DELETE_PERMISSIONS = {
+    ROLE_LIST: EDITORS,
+    CHECKS: {
+        LOGIN: True,
+    },
+}
+
+CREATE_PERMISSIONS = {
+    ROLE_LIST: CREATORS,
+    CHECKS: {
+        LOGIN: True,
+    },
+}
+
+READ_PERMISSIONS = {
+    ROLE_LIST: ALL_ROLES,
+    CHECKS: {
+        LOGIN: True,
+    },
+}
+
+UPDATE_PERMISSIONS = {
+    ROLE_LIST: CREATORS,
+    CHECKS: {
+        LOGIN: True,
+    },
+}
+
+TEST_RECS = {
+    PEOPLE: {
+        CREATE: CREATE_PERMISSIONS,
+        READ: READ_PERMISSIONS,
+        UPDATE: UPDATE_PERMISSIONS,
+        DELETE: DELETE_PERMISSIONS,
+    },
+    TEXTS: {
+        CREATE: CREATE_PERMISSIONS,
+        READ: READ_PERMISSIONS,
+        UPDATE: UPDATE_PERMISSIONS,
+        DELETE: DELETE_PERMISSIONS,
+    },
+}
