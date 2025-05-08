@@ -14,6 +14,7 @@ from flask import Flask, request  # , reques
 from flask_cors import CORS
 from flask_restx import Resource, Api, fields  # Namespace, fields
 from werkzeug.security import check_password_hash
+import security.security as sec
 
 import data.roles as rls
 import data.text as text
@@ -283,6 +284,18 @@ class User(Resource):
         """
         Delete a user by email
         """
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            raise wz.Unauthorized('Authorization required')
+        token = auth_header.split(' ')[1]
+        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        curr_user = users.get_user(payload['sub'])
+        if not curr_user:
+            raise wz.Unauthorized('User not found')
+        user_roles = curr_user.roles
+        kwargs = {sec.LOGIN_KEY: token}
+        if not sec.is_permitted(sec.PEOPLE, sec.DELETE, user_roles, **kwargs):
+            raise wz.Forbidden('You do not have permission to delete users. Editor role required.')
         ret = users.delete_user(_email)
         if ret is not None:
             return {"Deleted": ret.to_dict()}, HTTPStatus.OK
