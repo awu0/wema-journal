@@ -468,10 +468,10 @@ class Manuscripts(Resource):
         try:
             current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             new_manuscript = manuscript_query.create_manuscript(
-                title=data[manuscript_fields.TITLE],
-                author=data[manuscript_fields.AUTHOR],
-                abstract=data[manuscript_fields.ABSTRACT],
-                content=data[manuscript_fields.CONTENT],
+                title=data.get(manuscript_fields.TITLE),
+                author=data.get(manuscript_fields.AUTHOR),
+                abstract=data.get(manuscript_fields.ABSTRACT),
+                content=data.get(manuscript_fields.CONTENT),
                 submission_date=current_time,
             )
             return {
@@ -671,7 +671,7 @@ class Login(Resource):
             return {"message": "Missing required fields!"}, HTTPStatus.BAD_REQUEST
 
         # Find user by email
-        user = users.get_user_raw(data[users.EMAIL])
+        user = users.get_user_raw(data.get(users.EMAIL))
         if not user:
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
@@ -684,7 +684,7 @@ class Login(Resource):
         payload = {
             'exp': datetime.now() + JWT_EXPIRATION_DELTA,
             'iat': datetime.now(),
-            'sub': data[users.EMAIL],
+            'sub': data.get(users.EMAIL),
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
