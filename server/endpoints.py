@@ -203,17 +203,28 @@ class Users(Resource):
 
     def get(self):
         """
-        Retrieve the journal people.
-        If email query parameter is provided, return specific user.
+        Retrieve journal users.
+        - If ?email= is provided, returns that specific user.
+        - If ?role= is provided (and email is not), returns users with that role.
+        - If neither is provided, returns all users.
         """
         email = request.args.get(EMAIL)
+        role = request.args.get(ROLE)
+
         if email:
-            # Search through the users list for the matching email
-            users_list = users.get_users()  # This will use our mocked data
+            users_list = users.get_users()
             for user in users_list:
                 if user.email == email:
                     return {email: user.to_dict()}
             return {"message": f"User {email} not found"}, HTTPStatus.NOT_FOUND
+
+        if role:
+            try:
+                matched = users.get_users_by_role(role)
+                return {user.email: user.to_dict() for user in matched}
+            except ValueError as e:
+                return {"message": str(e)}, HTTPStatus.BAD_REQUEST
+
         return users.get_users_as_dict()
 
     @api.expect(USER_CREATE_FIELDS)

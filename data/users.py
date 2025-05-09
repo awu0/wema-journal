@@ -144,6 +144,14 @@ def get_user_raw(email: str):
     return next((user for user in users if user.get("email") == email), None)
 
 
+def get_users_by_role(role: str) -> list[User]:
+    """
+    Retrieve users who have the specified role in their roles list.
+    """
+    users = get_users()
+    return [user for user in users if role in user.roles]
+
+
 def update_user(
     email: str, name: str = None, roles: list = [], affiliation: str = None
 ) -> dict:
