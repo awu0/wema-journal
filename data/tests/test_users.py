@@ -99,15 +99,15 @@ def test_update_users():
     )
     
     new_name = "Lee"
-    new_role = "author"
+    new_roles = ["author"]
     new_affiliation = "NYU Alumni"
     
-    returned_user = users.update_user(email=email, name=new_name, role=new_role, affiliation=new_affiliation)
+    returned_user = users.update_user(email=email, name=new_name, roles=new_roles, affiliation=new_affiliation)
     updated_user = get_user(email).to_dict()
 
     assert updated_user == returned_user, "Updated user in the database should equal returned user."
     assert updated_user["name"] == new_name, "User name should be updated."
-    assert new_role in updated_user["roles"], "New role should be added to user roles."
+    assert new_roles == updated_user["roles"], "New role should be added to user roles."
     assert updated_user["affiliation"] == new_affiliation, "User affiliation should be updated."
 
     # Test case 2: Try to update a non-existing user

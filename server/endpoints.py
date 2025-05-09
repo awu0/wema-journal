@@ -66,7 +66,7 @@ USER_UPDATE_FIELDS = api.model(
         users.NAME: fields.String(description="User's name"),
         users.EMAIL: fields.String(description="User's email"),
         users.AFFILIATION: fields.String(description="User's affiliation"),
-        users.ROLE: fields.String(description="User's role"),
+        users.ROLES: fields.List(fields.String, description="User's roles"),
     },
 )
 
@@ -319,7 +319,7 @@ class User(Resource):
             updated_user = users.update_user(
                 email=_email,
                 name=data.get(NAME),
-                role=data.get(ROLE),
+                roles=data.get(ROLES),
                 affiliation=data.get(AFFILIATION),
             )
 

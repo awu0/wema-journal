@@ -298,7 +298,7 @@ def test_update_user_success(sample_user):
     # Update the user
     updated_user_data = {
         "name": "John Doe",  # Changing name
-        "role": "author",    # Changing role
+        "roles": ["author"],    # Changing role
     }
 
     user_email = sample_user["email"]
@@ -309,7 +309,7 @@ def test_update_user_success(sample_user):
     assert "message" in resp_json
     assert resp_json["message"] == "User updated successfully"
     assert resp_json["updated_user"]["name"] == updated_user_data["name"]
-    assert updated_user_data["role"] in resp_json["updated_user"]["roles"]
+    assert updated_user_data["roles"] == resp_json["updated_user"]["roles"]
 
 
 def test_update_user_invalid_role(sample_user):
@@ -319,7 +319,7 @@ def test_update_user_invalid_role(sample_user):
 
     # Try to update with an invalid role
     invalid_role_data = {
-        "role": "invalidrole42304"
+        "roles": ["invalidrole42304"]
     }
 
     user_email = sample_user["email"]

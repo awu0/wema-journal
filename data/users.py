@@ -145,13 +145,13 @@ def get_user_raw(email: str):
 
 
 def update_user(
-    email: str, name: str = None, role: str = None, affiliation: str = None
+    email: str, name: str = None, roles: list = [], affiliation: str = None
 ) -> dict:
     user_to_update = get_user(email)
 
     if not user_to_update:
         raise ValueError(f"User with email {email} not found.")
-    if not any([name, role, affiliation]):
+    if not any([name, roles, affiliation]):
         raise ValueError(
             "No updates provided. Please specify at least one field to update."
         )
@@ -161,13 +161,15 @@ def update_user(
         user_to_update.name = name
         updates[NAME] = name
 
-    if role:
-        valid_roles = get_roles()
+    # check that all rows are valid
+    valid_roles = get_roles()
+    final_roles = []  # the roles the user will end up with
+    for role in roles:
         if role not in valid_roles.values():
             raise ValueError(f"Invalid role '{role}'.")
-        if role not in user_to_update.roles:
-            user_to_update.roles.append(role)
-        updates[ROLES] = user_to_update.roles
+        final_roles.append(role)
+
+    updates[ROLES] = final_roles
 
     if affiliation:
         user_to_update.affiliation = affiliation
