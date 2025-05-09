@@ -24,6 +24,9 @@ from data.manuscripts.query import update_manuscript, STATE_TABLE
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
 
+import os
+from dotenv import load_dotenv
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -647,7 +650,8 @@ LOGIN_FIELDS = api.model(
     },
 )
 
-SECRET_KEY = "213mkdlAMSDKLMkl213mkldmsam#mkdSLAMDk@#!@DASDkl21m3ds"
+load_dotenv()
+SECRET_KEY = os.getenv('SECRET_KEY')
 JWT_EXPIRATION_DELTA = timedelta(days=1)  # Token expires in 1 day
 
 
