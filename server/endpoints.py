@@ -24,8 +24,8 @@ from data.manuscripts.query import update_manuscript, STATE_TABLE
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
 
-import os
-from dotenv import load_dotenv
+# import os
+# from dotenv import load_dotenv
 
 app = Flask(__name__)
 CORS(app)
@@ -471,10 +471,10 @@ class Manuscripts(Resource):
         try:
             current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             new_manuscript = manuscript_query.create_manuscript(
-                title=data.get(manuscript_fields.TITLE),
-                author=data.get(manuscript_fields.AUTHOR),
-                abstract=data.get(manuscript_fields.ABSTRACT),
-                content=data.get(manuscript_fields.CONTENT),
+                title=data[manuscript_fields.TITLE],
+                author=data[manuscript_fields.AUTHOR],
+                abstract=data[manuscript_fields.ABSTRACT],
+                content=data[manuscript_fields.CONTENT],
                 submission_date=current_time,
             )
             return {
@@ -650,8 +650,8 @@ LOGIN_FIELDS = api.model(
     },
 )
 
-load_dotenv()
-SECRET_KEY = os.getenv('SECRET_KEY')
+# load_dotenv()
+SECRET_KEY = "213mkdlAMSDKLMkl213mkldmsam#mkdSLAMDk@#!@DASDkl21m3ds"
 JWT_EXPIRATION_DELTA = timedelta(days=1)  # Token expires in 1 day
 
 
@@ -675,7 +675,7 @@ class Login(Resource):
             return {"message": "Missing required fields!"}, HTTPStatus.BAD_REQUEST
 
         # Find user by email
-        user = users.get_user_raw(data.get(users.EMAIL))
+        user = users.get_user_raw(data[users.EMAIL])
         if not user:
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
@@ -688,7 +688,7 @@ class Login(Resource):
         payload = {
             'exp': datetime.now() + JWT_EXPIRATION_DELTA,
             'iat': datetime.now(),
-            'sub': data.get(users.EMAIL),
+            'sub': data[users.EMAIL],
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
