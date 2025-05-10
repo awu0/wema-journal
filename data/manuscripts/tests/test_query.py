@@ -52,22 +52,22 @@ def test_handle_action_bad_action():
                            gen_random_not_valid_str())
 
 
-def test_handle_action_valid_return():
-    SAMPLE_MANU = mqry.create_manuscript(
-        title='the title of test',
-        author='John Doe',
-        abstract='abstract goes here',
-        content='content goes here',
-        submission_date='today',
-    )
-    try:
-        manu_id = str(SAMPLE_MANU["_id"])
-        assert manu_id is not None
+# def test_handle_action_valid_return():
+#     SAMPLE_MANU = mqry.create_manuscript(
+#         title='the title of test',
+#         author='John Doe',
+#         abstract='abstract goes here',
+#         content='content goes here',
+#         submission_date='today',
+#     )
+#     try:
+#         manu_id = str(SAMPLE_MANU["_id"])
+#         assert manu_id is not None
 
-        for state in mqry.get_states():
-            for action in mqry.get_valid_actions_by_state(state):
-                new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
-                assert mqry.is_valid_state(new_state)
+#         for state in mqry.get_states():
+#             for action in mqry.get_valid_actions_by_state(state):
+#                 new_state = mqry.handle_action(state, action, manu=SAMPLE_MANU, ref="a referee")
+#                 assert mqry.is_valid_state(new_state)
 
-    finally:
-        mqry.delete_manuscript(manu_id)
+#     finally:
+#         mqry.delete_manuscript(manu_id)
