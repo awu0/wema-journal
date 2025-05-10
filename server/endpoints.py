@@ -20,7 +20,9 @@ import data.text as text
 import data.users as users
 from data.manuscripts import fields as manuscript_fields
 from data.manuscripts import query as manuscript_query
+from data.manuscripts import role_permissions as role_perms
 from data.manuscripts.query import update_manuscript, STATE_TABLE
+from data.manuscripts.role_permissions import can_perform_action, ROLE_PERMISSIONS
 from data.text import read_texts, read_one, create, update, delete, KEY, TITLE, TEXT
 from data.users import get_user, NAME, EMAIL, AFFILIATION, ROLE, ROLES, PASSWORD
 
@@ -813,16 +815,47 @@ MANU_VALID_ACTION_FLDS = api.model(
 class ManuscriptValidActions(Resource):
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.response(HTTPStatus.UNAUTHORIZED, 'Unauthorized')
     @api.expect(MANU_VALID_ACTION_FLDS)
     def post(self):
         """
-        Return the list of valid manuscript actions for each state.
+        Get a list of valid actions for a manuscript state based on the user's roles.
         """
         state = request.json.get(manuscript_fields.STATE)
 
         if state not in STATE_TABLE:
             return {'message': f'Invalid state: {state}'}, HTTPStatus.NOT_ACCEPTABLE
 
-        valid_actions = list(STATE_TABLE[state].keys())
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return {'message': 'Missing or invalid token'}, HTTPStatus.UNAUTHORIZED
 
-        return {'state': state, 'valid_actions': valid_actions}, HTTPStatus.OK
+        try:
+            token = auth_header.split(' ')[1]
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            user_email = payload['sub']
+            
+            user = users.get_user(user_email)
+            if not user:
+                return {'message': 'User not found'}, HTTPStatus.UNAUTHORIZED
+                
+            user_roles = user.roles if hasattr(user, 'roles') and user.roles else []
+            
+            valid_actions = []
+            state_actions = STATE_TABLE[state].keys()
+            
+            for action in state_actions:
+                if role_perms.can_perform_action(state, action, user_roles):
+                    valid_actions.append(action)
+            
+            return {
+                'state': state, 
+                'valid_actions': valid_actions
+            }, HTTPStatus.OK
+            
+        except jwt.ExpiredSignatureError:
+            return {'message': 'Token expired'}, HTTPStatus.UNAUTHORIZED
+        except jwt.InvalidTokenError:
+            return {'message': 'Invalid token'}, HTTPStatus.UNAUTHORIZED
+        except Exception as e:
+            return {'message': f'Error: {str(e)}'}, HTTPStatus.INTERNAL_SERVER_ERROR
