@@ -675,7 +675,7 @@ class Login(Resource):
             return {"message": "Missing required fields!"}, HTTPStatus.BAD_REQUEST
 
         # Find user by email
-        user = users.get_user_raw(data[users.EMAIL])
+        user = users.get_user_raw(data.get(users.EMAIL))
         if not user:
             return {"message": "Invalid email or password!"}, HTTPStatus.UNAUTHORIZED
 
@@ -688,7 +688,7 @@ class Login(Resource):
         payload = {
             'exp': datetime.now() + JWT_EXPIRATION_DELTA,
             'iat': datetime.now(),
-            'sub': data[users.EMAIL],
+            'sub': data.get(users.EMAIL),
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
